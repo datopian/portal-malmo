@@ -1,0 +1,109 @@
+{
+  "Site": {
+    "title": "Malmö stads öppna dataportal",
+    "description": "Hitta öppna data från Malmö stad.",
+    "homeTitle": "Hem"
+  },
+
+  "Common": {
+    "organization": "Organisation",
+    "organizations": "Organisationer",
+    "groups": "Grupper",
+    "group": "Grupp",
+    "dataset": "Dataset",
+    "datasets": "Dataset",
+    "resource": "Resurs",
+    "resources": "Resurser",
+    "format": "Format",
+    "formats": "Format",
+    "tag": "Tagg",
+    "tags": "Taggar",
+    "noData": "Inga data hittades",
+    "noResults": "Inga resultat hittades",
+    "viewAll": "Utforska alla",
+    "metadata": "Metadata",
+    "copy": "Kopiera",
+    "copied": "Kopierat",
+    "exploreAll": "Utforska alla",
+    "export": "Exportera",
+    "preview": "Förhandsgranska",
+    "download": "Ladda ner",
+    "api": "API",
+    "activityStream": "Aktivitetsflöde",
+    "code": "Kod",
+    "created": "Skapad datum",
+    "updated": "Uppdaterad datum",
+    "version": "Version",
+    "license": "Licens",
+    "size": "Storlek",
+    "close": "Stäng",
+    "searchPlaceholder": "Sök...",
+    "showMore": "Visa mer",
+    "showLess": "Visa mindre",
+    "clearAll": "Rensa allt",
+    "loading": "Laddar...",
+    "loadingData": "Laddar data...",
+    "settings": "Inställningar",
+    "pagination": "Paginering",
+    "checkAll": "Markera alla",
+    "page": "Sida",
+    "previous": "Föregående",
+    "next": "Nästa",
+    "search": "Sök"
+  },
+
+  "Dataset": {
+    "latest": "Senaste dataset",
+    "datasetsCount": "{count, plural, one {# dataset} other {# dataset}}",
+    "total": "Totalt dataset",
+    "resourcesTitle": "Data och resurser ({count})",
+    "noResources": "Inga resurser finns för detta dataset."
+  },
+
+  "Activity": {
+    "error:": "Fel vid inläsning av {type}-aktivitetsflöde: {message}",
+    "notFound": "Inga aktiviteter hittades."
+  },
+
+  "Home": {
+    "title": "Malmö stads öppna dataportal",
+    "tagline": "Hitta öppna data från Malmö stad."
+  },
+
+  "OrganizationsPage": {
+    "description": "Utforska hela listan över organisationer som delar data på vår portal.",
+    "searchPlaceholder": "Sök organisationer...",
+    "noOrganizations": "Inga organisationer hittades"
+  },
+
+  "GroupsPage": {
+    "description": "Utforska alla grupper som organiserar och kuraterar dataset inom olika ämnen och teman.",
+    "searchPlaceholder": "Sök grupper...",
+    "noGroups": "Inga grupper hittades"
+  },
+
+  "Search": {
+    "title": "Sök dataset",
+    "subtitle": "Hitta dataset att utforska, analysera och ladda ner.",
+    "filters": "Filter",
+    "headerWithQuery": "Sökresultat för \"{query}\"",
+    "headerCount": "{count, plural, one {# dataset} other {# dataset}}",
+    "headerNoResults": "Inga resultat hittades",
+    "headerShowing": "Visar {count} resultat",
+    "sortLabel": "Sortera:",
+    "sortRelevance": "Relevans",
+    "sortLastModified": "Senast ändrad",
+    "sortNameAsc": "Namn (A–Ö)",
+    "sortNameDesc": "Namn (Ö–A)",
+    "searchPlaceholder": "Skriv för att söka..."
+  },
+
+  "Preview": {
+    "columns": "Kolumner",
+    "searchColumnsPlaceholder": "Sök kolumner...",
+    "checkAllColumns": "Markera alla kolumner",
+    "noColumns": "Inga kolumner hittades",
+    "rowsPerPage": "Rader per sida",
+    "pagination": "Sida {page} av {total}"
+  }
+}

@@ -1,0 +1,113 @@
+{
+  "Site": {
+    "title": "City of Malmö Open Data Portal",
+    "description": "Find open data from the City of Malmö.",
+    "homeTitle" : "Home"
+  },
+
+  "Common":{
+    "organization": "Organization",
+    "organizations": "Organizations",
+    "groups": "Groups",
+    "group": "Group",
+    "dataset": "Dataset",
+    "datasets": "Datasets",
+    "resource": "Resource",
+    "resources": "Resources",
+    "format": "Format",
+    "formats": "Formats",
+    "tag": "Tag",
+    "tags": "Tags",
+    "noData": "No data found",
+    "noResults" : "No results found",
+    "viewAll": "Explore All",
+    "metadata": "Metadata",
+    "copy": "Copy",
+    "copied": "Copied",
+    "exploreAll": "Explore all",
+    "export": "Export",
+    "preview": "Preview",
+    "download": "Download",
+    "api": "API",
+    "activityStream": "Activity Stream",
+    "code": "Code",
+    "created": "Date created",
+    "updated": "Date updated",
+    "version": "Version",
+    "license": "License",
+    "size" : "Size",
+    "close" : "Close",
+    "searchPlaceholder" : "Search...",
+    "showMore" : "Show more",
+    "showLess": "Show less",
+    "clearAll":"Clear all",
+    "loading" : "Loading...",
+    "loadingData": "Loading data...",
+    "settings" : "Settings",
+    "pagination" : "Pagination",
+    "checkAll" : "Check all",
+    "page" : "Page",
+    "previous": "Previous",
+    "next" : "Next",
+    "search" : "Search"
+  }, 
+
+  "Dataset" : {
+    "latest": "Latest datasets",
+    "datasetsCount": "{count, plural, one {# dataset} other {# datasets}}",
+    "total" : "Total datasets",
+    "resourcesTitle" : "Data and Resources ({count})",
+    "noResources" : "No resources available for this dataset."
+  },
+
+  "Activity" : {
+    "error:" : " Error loading {type} activity stream: {message}",
+    "notFound" : "No activities found."
+  },
+
+  "Home" : {
+    "title": "City of Malmö Open Data Portal",
+    "tagline": "Find open data from the City of Malmö."
+  },
+
+  "OrganizationsPage": {
+    "description": "Explore the full list of organizations sharing data on our portal.",
+    "searchPlaceholder": "Search organizations...",
+    "noOrganizations": "No organizations found"
+  },
+
+  "GroupsPage" : {
+    "description" : "Explore all groups that organize and curate datasets across topics and themes.",
+    "searchPlaceholder": "Search groups...",
+    "noGroups": "No groups found"
+  },
+
+  "Search" : {
+    "title":"Search Datasets",
+    "subtitle" : "Find datasets to explore, analyze, and download.",
+    "filters" : "Filters",
+    "headerWithQuery": "Search results for \"{query}\"",
+    "headerCount": "{count, plural, one {# dataset} other {# datasets}}",
+    "headerNoResults": "",
+    "headerShowing": "Showing {count} results",
+    "sortLabel": "Sort:",
+    "sortRelevance": "Relevance",
+    "sortLastModified": "Last modified",
+    "sortNameAsc": "Name (A–Z)",
+    "sortNameDesc": "Name (Z–A)",
+    "searchPlaceholder" : "Type to search..."
+  },
+
+  "Preview" : {
+    "columns" : "Columns",
+    "searchColumnsPlaceholder" : "Search columns...",
+    "checkAllColumns" : "Check all columns",
+    "noColumns" : "No columns found",
+    "rowsPerPage" : "Rows per page",
+    "pagination" : "Page {page} of {total}"
+  }
+
+  
+
+  
+}
