@@ -7,17 +7,16 @@ import { List } from "lucide-react";
 import { useState, useEffect } from "react";
 import { useTranslations } from "next-intl";
 import LanguageSwitcher from "./LanguageSwitcher";
+import Image from "next/image";
 
 export default function Header() {
   const [menuOpen, setMenuOpen] = useState(false);
-  const pathname = usePathname(); // now locale-stripped: "/search", "/organizations", etc.
+  const pathname = usePathname();
   const t = useTranslations();
 
   const menu = [
-    { href: "/", label: `🏠 ${t("Site.homeTitle")}` },
-    { href: "/search", label: `🧾 ${t("Common.search")}` },
-    { href: "/organizations", label: `🏛️ ${t("Common.organizations")}` },
-    { href: "/groups", label: `📁 ${t("Common.groups")}` },
+    { href: "/data", label: `${t("Common.data")}` },
+    { href: "/about-us", label: `${t("Common.aboutUs")}` },
   ];
 
   useEffect(() => {
@@ -26,20 +25,19 @@ export default function Header() {
 
   const isActive = (href: string) => {
     if (href === "/") return pathname === "/";
-    // highlight for subroutes too, e.g. /organizations/foo
     return pathname === href || pathname.startsWith(`${href}/`);
   };
 
   return (
-    <header className="text-lg relative z-10 bg-[#f0f9ff]">
+    <header className="text-lg relative z-10 bg-white">
       <Container>
         <div className="flex flex-col lg:flex-row lg:items-center lg:gap-4 w-full">
           <div className="flex items-center gap-4 w-full lg:w-auto">
             <Link
               href="/"
-              className="flex items-center gap-2 text-xl font-[700] py-5"
+              className="flex items-center gap-2 py-3 mr-3"
             >
-              <span>City of Malmö</span>
+              <Image src="/logo.png" width={252} height={40} alt={t("Site.title")}/>
             </Link>
             <div className="ml-auto lg:hidden">
               <LanguageSwitcher />
@@ -65,16 +63,16 @@ export default function Header() {
               "lg:max-h-full lg:overflow-visible"
             )}
           >
-            <ul className="flex flex-col lg:flex-row lg:items-center lg:gap-8 relative top-[1px]">
+            <ul className="flex flex-col lg:flex-row lg:items-center lg:gap-8 relative ">
               {menu.map((item) => (
                 <li key={item.href}>
                   <Link
                     href={item.href}
                     className={clsx(
                       isActive(item.href)
-                        ? "text-foreground font-medium lg:border-b-2 border-foreground"
+                        ? "text-theme-green font-medium"
                         : "text-gray-600",
-                      "hover:text-foreground transition-colors py-2 lg:py-5 block"
+                      "hover:text-foreground transition-colors py-2 lg:py-3 block"
                     )}
                   >
                     {item.label}
@@ -84,7 +82,7 @@ export default function Header() {
             </ul>
           </div>
 
-          <div className="ml-4 hidden lg:block">
+          <div className="ml-6 hidden lg:block ">
             <LanguageSwitcher />
           </div>
         </div>

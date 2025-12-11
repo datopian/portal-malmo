@@ -31,6 +31,9 @@
   --color-muted-foreground: var(--muted-foreground);
   --color-muted: var(--muted);
 
+  --color-theme-green: var(--theme-green);
+  --color-theme-green-foreground: var(--theme-green-foreground);
+
 
   --color-secondary-foreground: var(--secondary-foreground);
   --color-secondary: var(--secondary);
@@ -48,6 +51,8 @@
 
 :root {
   --theme: #f0f9ff;
+  --theme-green: #01351C;
+  --theme-green-foreground: #D1E0D7;
   --radius: 0.625rem;
   --background: oklch(1 0 0);
   --foreground: oklch(0.145 0 0);

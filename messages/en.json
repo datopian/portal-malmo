@@ -10,6 +10,8 @@
     "organizations": "Organizations",
     "groups": "Groups",
     "group": "Group",
+    "data" : "Data",
+    "aboutUs": "About Us",
     "dataset": "Dataset",
     "datasets": "Datasets",
     "resource": "Resource",
@@ -66,7 +68,8 @@
   },
 
   "Home" : {
-    "title": "City of Malmö Open Data Portal",
+    "title": "Open data for Malmö",
+    "titleStrong": "Malmö",
     "tagline": "Find open data from the City of Malmö."
   },
 

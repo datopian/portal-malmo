@@ -41,7 +41,7 @@ export default function Hero({
   return (
     <div
       className={cn(
-        "pt-10 pb-8 bg-[#f0f9ff] border-gray-200 border-t border-b border-dashed",
+        "pt-10 pb-8 bg-[#F6F6EF] border-gray-200 border-t border-b border-dashed",
         className
       )}
     >
