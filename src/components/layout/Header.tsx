@@ -37,7 +37,7 @@ export default function Header() {
               href="/"
               className="flex items-center gap-2 py-3 mr-3"
             >
-              <Image src="/logo.png" width={252} height={40} alt={t("Site.title")}/>
+              <Image src="/logo.svg" width={252} height={40} alt={t("Site.title")}/>
             </Link>
             <div className="ml-auto lg:hidden">
               <LanguageSwitcher />

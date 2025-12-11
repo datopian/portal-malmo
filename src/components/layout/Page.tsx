@@ -1,4 +1,3 @@
-import Head from "next/head";
 import Hero, { BreadcrumbProps } from "./PageHero";
 import PageTabs, { PageTabItem } from "./PageTabs";
 import Container from "../ui/container";
@@ -9,7 +8,7 @@ import Link from "next/link";
 
 export type PageProps = {
   preTitle?: string;
-  title: string;
+  title: React.ReactNode | string;
   description?: string;
   breadcrumb?: BreadcrumbProps;
   metadata?: { title?: string; value: React.ReactNode }[];
@@ -41,10 +40,6 @@ export default function Page({
 }: PageProps) {
   return (
     <div>
-      <Head>
-        <title>{title ?? ""}</title>
-        <link rel="icon" href="/favicon.ico" />
-      </Head>
 
       {(title || description || preTitle) && (
         <Hero

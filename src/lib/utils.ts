@@ -35,6 +35,35 @@ export const formatDateToHumanReadable = (timestamp: string) => {
   }
 };
 
+export function formatPrettyDate(
+  isoString: string,
+  locale: string = "en"
+): string {
+  const date = new Date(isoString);
+
+  const day = date.getDate();
+  const monthYear = new Intl.DateTimeFormat(locale, {
+    month: "long",
+    year: "numeric",
+  }).format(date);
+
+  const dayPart =
+    locale.startsWith("en") ? addOrdinal(day) : String(day);
+
+  return `${dayPart} ${monthYear}`;
+}
+
+function addOrdinal(day: number): string {
+  const rem10 = day % 10;
+  const rem100 = day % 100;
+
+  if (rem100 >= 11 && rem100 <= 13) return `${day}th`;
+  if (rem10 === 1) return `${day}st`;
+  if (rem10 === 2) return `${day}nd`;
+  if (rem10 === 3) return `${day}rd`;
+  return `${day}th`;
+}
+
 export const getApiCode = (
   url: string,
   language: "python" | "javascript",

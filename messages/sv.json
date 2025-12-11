@@ -1,6 +1,6 @@
 {
   "Site": {
-    "title": "Malmö stads öppna dataportal",
+    "title": "Malmö stads portal för öppna data",
     "description": "Hitta öppna data från Malmö stad.",
     "homeTitle": "Hem"
   },
@@ -8,10 +8,12 @@
   "Common": {
     "organization": "Organisation",
     "organizations": "Organisationer",
-    "groups": "Grupper",
-    "group": "Grupp",
+    "groups": "Teman",
+    "group": "Tema",
+    "data": "Data",
+    "aboutUs": "Om oss",
     "dataset": "Dataset",
-    "datasets": "Dataset",
+    "datasets": "Datasets",
     "resource": "Resurs",
     "resources": "Resurser",
     "format": "Format",
@@ -29,10 +31,10 @@
     "preview": "Förhandsgranska",
     "download": "Ladda ner",
     "api": "API",
-    "activityStream": "Aktivitetsflöde",
+    "activityStream": "Aktivitetsström",
     "code": "Kod",
-    "created": "Skapad datum",
-    "updated": "Uppdaterad datum",
+    "created": "Datum skapad",
+    "updated": "Datum uppdaterad",
     "version": "Version",
     "license": "Licens",
     "size": "Storlek",
@@ -40,7 +42,7 @@
     "searchPlaceholder": "Sök...",
     "showMore": "Visa mer",
     "showLess": "Visa mindre",
-    "clearAll": "Rensa allt",
+    "clearAll": "Rensa alla",
     "loading": "Laddar...",
     "loadingData": "Laddar data...",
     "settings": "Inställningar",
@@ -53,21 +55,25 @@
   },
 
   "Dataset": {
-    "latest": "Senaste dataset",
-    "datasetsCount": "{count, plural, one {# dataset} other {# dataset}}",
-    "total": "Totalt dataset",
+    "searchLabel": "Sök datasets",
+    "latest": "Senaste datasets",
+    "datasetsCount": "{count, plural, one {# dataset} other {# datasets}}",
+    "total": "Totala datasets",
     "resourcesTitle": "Data och resurser ({count})",
-    "noResources": "Inga resurser finns för detta dataset."
+    "noResources": "Inga resurser finns tillgängliga för detta dataset.",
+    "exploreAll": "Utforska alla datasets"
   },
 
   "Activity": {
-    "error:": "Fel vid inläsning av {type}-aktivitetsflöde: {message}",
+    "error:": "Fel vid inläsning av aktivitetströmen för {type}: {message}",
     "notFound": "Inga aktiviteter hittades."
   },
 
   "Home": {
-    "title": "Malmö stads öppna dataportal",
-    "tagline": "Hitta öppna data från Malmö stad."
+    "title": "Öppna data för",
+    "titleStrong": "Malmö",
+    "tagline": "Hitta öppna data från Malmö stad.",
+    "recentUpdates": "Senaste uppdateringar"
   },
 
   "OrganizationsPage": {
@@ -77,25 +83,26 @@
   },
 
   "GroupsPage": {
-    "description": "Utforska alla grupper som organiserar och kuraterar dataset inom olika ämnen och teman.",
-    "searchPlaceholder": "Sök grupper...",
-    "noGroups": "Inga grupper hittades"
+    "description": "Utforska alla grupper som organiserar och kuraterar datasets efter ämnen och teman.",
+    "searchPlaceholder": "Sök teman...",
+    "noGroups": "Inga teman hittades",
+    "discoverGroups": "Upptäck efter teman"
   },
 
   "Search": {
-    "title": "Sök dataset",
-    "subtitle": "Hitta dataset att utforska, analysera och ladda ner.",
+    "title": "Sök datasets",
+    "subtitle": "Hitta datasets att utforska, analysera och ladda ner.",
     "filters": "Filter",
     "headerWithQuery": "Sökresultat för \"{query}\"",
-    "headerCount": "{count, plural, one {# dataset} other {# dataset}}",
-    "headerNoResults": "Inga resultat hittades",
+    "headerCount": "{count, plural, one {# dataset} other {# datasets}}",
+    "headerNoResults": "",
     "headerShowing": "Visar {count} resultat",
     "sortLabel": "Sortera:",
     "sortRelevance": "Relevans",
     "sortLastModified": "Senast ändrad",
     "sortNameAsc": "Namn (A–Ö)",
     "sortNameDesc": "Namn (Ö–A)",
-    "searchPlaceholder": "Skriv för att söka..."
+    "searchPlaceholder": "Börja skriva ett nyckelord..."
   },
 
   "Preview": {
@@ -105,5 +112,17 @@
     "noColumns": "Inga kolumner hittades",
     "rowsPerPage": "Rader per sida",
     "pagination": "Sida {page} av {total}"
+  },
+
+  "Footer": {
+    "whatIsOpenData1": "Vad är öppen data?",
+    "requestData": "Ansök om data",
+    "privacyPolicy": "Sekretesspolicy",
+    "contactTitle": "Kontakt",
+    "newsletter": "Prenumerera på vårt nyhetsbrev",
+    "address": "Öppen Data Malmö\nHöck Kampmanns Plads 1\n8000 Århus C",
+    "accessibilityStatement": "Tillgänglighetsförklaring",
+    "builtWithPortaljs": "Byggt med PortalJS och CKAN-backend",
+    "exportCatalog": "Exportera DCAT-katalog i RDF eller JSON-LD"
   }
 }
