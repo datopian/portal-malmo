@@ -33,8 +33,8 @@
     "api": "API",
     "activityStream": "Activity Stream",
     "code": "Code",
-    "created": "Date created",
-    "updated": "Date updated",
+    "created": "Created",
+    "updated": "Updated",
     "version": "Version",
     "license": "License",
     "size": "Size",
@@ -51,7 +51,8 @@
     "page": "Page",
     "previous": "Previous",
     "next": "Next",
-    "search": "Search"
+    "search": "Search",
+    "more" : "more"
   },
 
   "Dataset": {
@@ -102,7 +103,8 @@
     "sortLastModified": "Last modified",
     "sortNameAsc": "Name (A–Z)",
     "sortNameDesc": "Name (Z–A)",
-    "searchPlaceholder": "Start typing your keyword..."
+    "searchPlaceholder": "Start typing your keyword...",
+    "datasetsFound": "{count, plural, =0 {No datasets found} one {# dataset found} other {# datasets found}}"
   },
 
   "Preview": {

@@ -1,8 +1,8 @@
 "use client";
 
-import { FormEventHandler, MouseEventHandler, useRef, useState } from "react";
+import { FormEventHandler, MouseEventHandler, useEffect, useRef, useState } from "react";
 import { X } from "lucide-react";
-import { usePathname, useRouter } from "next/navigation";
+import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { useTranslations } from "next-intl";
 import { envVars } from "@/lib/env";
 
@@ -22,7 +22,8 @@ export default function SearchForm({
   const ref = useRef<HTMLInputElement>(null);
   const router = useRouter();
   const pathname = usePathname();
-  const [q, setQuery] = useState(value);
+  const searchParams = useSearchParams();
+  const [q, setQuery] = useState(() => searchParams.get("query") ?? value);
   const t = useTranslations();
 
   const getLocaleFromPathname = () => {
@@ -59,6 +60,7 @@ export default function SearchForm({
       onSubmit(q ?? "");
     } else {
       const url = buildSearchUrl();
+      console.log(url);
       router.push(url);
     }
     return false;
@@ -76,8 +78,12 @@ export default function SearchForm({
     return false;
   };
 
+  useEffect(() => {
+    setQuery(searchParams.get("query") ?? "");
+  }, [searchParams]);
+
   return (
-    <div className="p-5 md:p-8 bg-theme-green text-white max-w-[768px] shadow-[0px_4px_6px_-4px_#0000001A]">
+    <div className="p-5 md:p-8 bg-theme-green text-white max-w-[768px] shadow-xl">
       {title && (
         <h3 className="text-xl md:text-2xl lg:text-4xl mb-4 font-semibold">
           {title}
@@ -99,7 +105,7 @@ export default function SearchForm({
             <button
               type="button"
               aria-label="Clear search"
-              className="cursor-pointer absolute right-15 top-[14px] text-gray-600 hover:text-gray-900 transition"
+              className="cursor-pointer absolute right-[140px] top-[14px] text-gray-600 hover:text-gray-900 transition"
               onClick={handleClearQuery}
             >
               <X className="size-5" />
@@ -108,7 +114,7 @@ export default function SearchForm({
           <button
             type="submit"
             aria-labelledby="search-label"
-            className="flex cursor-pointer hover:bg-theme-green-light/90 bg-theme-green-light items-center px-4 md:px-8 text-white font-bold transition h-[50px]"
+            className="flex min-w-[120px] justify-center cursor-pointer hover:bg-theme-green-light/90 bg-theme-green-light items-center px-4 md:px-8 text-white font-bold transition h-[50px]"
           >
             {t("Common.search")}
             <span className="sr-only" id="search-label">

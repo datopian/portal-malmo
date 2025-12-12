@@ -36,9 +36,9 @@ export default function ActiveFilters({
   return (
     hasFiltersApplied && (
       <div className="space-y-2">
-        <div className="flex gap-3">
+        <div className="flex gap-3 mb-2">
           {title && (
-            <div className="font-medium text-sm md:text-md">{title}</div>
+            <div className="font-medium  md:text-base ">{title}</div>
           )}
           <button
             type="button"
@@ -50,7 +50,7 @@ export default function ActiveFilters({
                 tags: [],
               });
             }}
-            className="text-sm underline decoration-foreground hover:text-foreground cursor-pointer font-light "
+            className="text-sm underline decoration-foreground hover:text-foreground cursor-pointer font-light  "
           >
             {t("Common.clearAll")}
           </button>
@@ -70,14 +70,14 @@ export default function ActiveFilters({
               onItemClick={(item) => {
                 removeItemFromFilter("orgs", item);
               }}
-              label={`🏛️`}
+              label={t("Common.organization")}
               description={t("Common.organization")}
             />
           )}
 
           {groups.length > 0 && (
             <FilterBadge
-              label={"📁"}
+              label={t("Common.groups")}
               description={t("Common.groups")}
               badgeClassName="hover:bg-gray-100 transition"
               items={groups}
@@ -96,7 +96,7 @@ export default function ActiveFilters({
 
           {resFormat.length > 0 && (
             <FilterBadge
-              label={"📦"}
+              label={t("Common.formats")}
               description={t("Common.formats")}
               items={resFormat}
               badgeClassName="hover:bg-gray-100 transition"
@@ -115,7 +115,7 @@ export default function ActiveFilters({
 
           {tags.length > 0 && (
             <FilterBadge
-              label={"🔖"}
+              label={t("Common.tags")}
               description={t("Common.tags")}
               items={tags}
               badgeClassName="hover:bg-gray-100 transition"

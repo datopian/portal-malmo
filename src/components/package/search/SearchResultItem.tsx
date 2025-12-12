@@ -3,8 +3,16 @@ import { Dataset } from "@/schemas/ckan";
 import { Skeleton } from "@/components/ui/skeleton";
 import { formatDateToDDMMYYYY } from "@/lib/utils";
 import { useTranslations } from "next-intl";
+import MarkdownRender from "@/components/ui/markdown";
+import { Calendar, Database, RefreshCcw } from "lucide-react";
+import React from "react";
 
-export default function SearchResultItem({ dataset,query }: { dataset: Dataset;query?:string; }) {
+export default function SearchResultItem({
+  dataset,
+}: {
+  dataset: Dataset;
+  query?: string;
+}) {
   const t = useTranslations();
   const uniqueFormats = [
     ...new Set(
@@ -14,80 +22,91 @@ export default function SearchResultItem({ dataset,query }: { dataset: Dataset;q
     ),
   ];
 
-  const highlightText = (text: string = "", query: string = "") => {
-    if (!query.trim()) return text;
-    const escapedQuery = query.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
-    const regex = new RegExp(`(${escapedQuery})`, "gi");
-    return text.split(regex).map((part, i) =>
-      regex.test(part) ? (
-        <mark key={i} className="bg-yellow-200">
-          {part}
-        </mark>
-      ) : (
-        part
-      )
-    );
-  };
-
   return (
-    <div className="space-y-2 w-full rounded  w-full border-b border-gray-200 border-dashed pb-4">
+    <Link href={`/@${dataset.organization?.name}/${dataset.name}`} className="space-y-2 w-full rounded flex flex-col sm:flex-row gap-4 w-full border-b border-gray-200  p-4 md:p-6">
+      <div className="rounded bg-[#D1E0D7] text-theme-green w-fit h-fit p-3">
+        <Database className="w-5 sm:w-6" />
+      </div>
       <div>
-        <h3 className="text-lg font-semibold">
-          <Link
-            href={`/@${dataset.organization?.name}/${dataset.name}`}
-            className="underline decoration-foreground hover:text-foreground"
-          >
-            {highlightText(dataset.title || dataset.name, query)}
-          </Link>
-        </h3>
-
-        <div className="dataset-source text-gray-700 text-sm flex flex-col sm:flex-row sm:items-center sm:gap-4 my-2">
-          <div>
-            <span title={t("Common.organization")}>🏛️ </span>
-            <Link
-              className="hover:underline"
-              href={`/@${dataset.organization?.name}`}
+        <div className="block sm:inline-flex gap-3">
+          <h3 className="text-lg font-semibold block gap-2 w-fit block sm:inline">
+            <span
+              
+              className="group text-theme-green font-bold text-xl"
             >
-              {
-                highlightText(
-                  dataset.organization?.title || "",
-                  query
-                )
-              }
-            
-            </Link>
+              <span className="group-hover:underline">
+                {dataset.title || dataset.name}
+              </span>
+            </span>
+            {dataset.groups?.[0] && (
+              <span className="flex space-x-3 sm:inline sm:ml-3">
+                {dataset.groups?.slice(0, 1)?.map((group) => (
+                  <span
+                    key={group.id}
+                    className="min-w-0 inline-block max-w-[120px] relative -bottom-1 truncate px-2 bg-[#D1E0D7] text-theme-green text-xs py-1 font-medium"
+                  >
+                    {group.display_name || group.name}
+                  </span>
+                ))}
+                {dataset.groups.length > 1 && (
+                  <span className="min-w-0 inline-block max-w-[120px] relative -bottom-1 truncate px-2 bg-[#D1E0D7] text-theme-green text-xs py-1 font-medium">
+                    +{dataset.groups.length - 1} {t("Common.more")}
+                  </span>
+                )}
+              </span>
+            )}
+          </h3>
+        </div>
+
+        {dataset.notes && (
+          <div className="text-gray-600 font-normal line-clamp-3 overflow-y-hidden mt-2">
+            <MarkdownRender
+              content={dataset.notes?.replace(/<\/?[^>]+(>|$)/g, "") || ""}
+              textOnly
+            />
           </div>
-          <div>
-            <span title={t("Common.updated")}>🕒 </span>
+        )}
+        <div className="dataset-source  text-sm flex flex-col sm:flex-row sm:items-center gap-3 sm:gap-4 my-3 text-[#6A7282]">
+          <div className="flex gap-1 items-center">
+            <span title={t("Common.created")}>
+              <Calendar size={14} />
+            </span>
+            <span>{t("Common.created")}</span>
+            {formatDateToDDMMYYYY(dataset.metadata_created ?? "")}
+          </div>
+          <div className="flex gap-1 items-center">
+            <span title={t("Common.updated")}>
+              <RefreshCcw size={14} />
+            </span>
+            <span>{t("Common.updated")}</span>
             {formatDateToDDMMYYYY(dataset.metadata_modified ?? "")}
           </div>
-
-          {dataset.resources.length > 0 && (
-            <div className="text-sm lowercase text-gray-600">
-              <span>
-                <span title={t("Common.format")}>📦</span> {dataset.resources.length}{" "}
-                file{dataset.resources.length > 1 ? "s" : ""}
-                {uniqueFormats.length > 0 &&
-                  `(${
-                    uniqueFormats.length <= 3
-                      ? uniqueFormats.join(", ")
-                      : `${uniqueFormats.slice(0, 3).join(", ")}...`
-                  })`}
-              </span>
+          {dataset.tags && dataset.tags.length > 0 && (
+            <div className="flex gap-1 items-center">
+              {dataset.tags.slice(0, 3).map((tag) => (
+                <React.Fragment key={tag.id}>
+                  #{tag.display_name || tag.name}{" "}
+                </React.Fragment>
+              ))}
             </div>
           )}
         </div>
+        {dataset.resources.length > 0 && (
+          <div className="text-sm lowercase text-gray-600 flex gap-3">
+            {uniqueFormats.slice(0, 5).map((f, i) => (
+              <span className="bg-gray-200 px-2 py-1 rounded" key={i}>
+                {f?.toUpperCase()}
+              </span>
+            ))}
+            {uniqueFormats.length > 5 && (
+              <span className="bg-gray-200 px-2 py-1 rounded">
+                +{uniqueFormats.length - 5} more
+              </span>
+            )}
+          </div>
+        )}
       </div>
-
-      {dataset.notes && (
-        <p className="text-gray-600 font-normal line-clamp-2 mt-2 overflow-y-hidden">
-          {highlightText(
-            dataset.notes?.replace(/<\/?[^>]+(>|$)/g, "") || "",
-            query
-          )}
-        </p>
-      )}
-    </div>
+    </Link>
   );
 }
 

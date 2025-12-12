@@ -10,23 +10,15 @@ export default function SearchResultHeader() {
   const count = result?.count ?? 0;
   const hasQuery = !!options?.query && options.query.trim().length > 0;
 
-  const title = hasQuery
-    ? t("headerWithQuery", { query: options!.query??"" })
-    : count > 0
-    ? t("headerCount", { count })
-    : !isLoading
-    ? t("headerNoResults")
-    : "";
-
   return (
     <div className="flex flex-col">
-      <h1 className="text-xl lg:text-2xl font-bold relative">
-        {title}
+      <h1 className="text-xl lg:text-2xl font-bold relative text-theme-green">
+        {t("datasetsFound", { count })}
       </h1>
 
-      {!isLoading && hasQuery && count > 0 && (
+      {!isLoading && hasQuery && (
         <p className="min-h-6">
-          {t("headerShowing", { count })}
+          {t("headerWithQuery", { query: options?.query ?? "" })}
         </p>
       )}
     </div>

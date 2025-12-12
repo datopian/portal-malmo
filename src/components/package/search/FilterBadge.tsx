@@ -22,8 +22,8 @@ const FilterBadge = ({
 }) => {
   
   return (
-    <div className="flex text-xs space-x-1">
-      <span className="font-light cursor-help mt-1 " { ...(description?{title:description}:{}) }>
+    <div className="flex text-sm space-x-1">
+      <span className=" " { ...(description?{title:description}:{}) }>
         {label}
       </span>
       <div className="flex items-center gap-1 flex-wrap ">

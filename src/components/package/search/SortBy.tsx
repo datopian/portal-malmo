@@ -22,8 +22,8 @@ export default function SortBy() {
   return (
     <Menu as="div" className="relative inline-block text-left">
       <div>
-        <MenuButton className="group inline-flex justify-center items-center text-black hover:text-gray-900">
-          <div className="flex gap-1 items-center">
+        <MenuButton className="group inline-flex justify-center items-center text-black hover:text-gray-900 ">
+          <div className="flex gap-1 items-center whitespace-nowrap">
             <span className="font-medium">{t("sortLabel")}</span>
             <span className="text-sm">
               {sortOptions.find((item) => item.value === options?.sort)?.name ||

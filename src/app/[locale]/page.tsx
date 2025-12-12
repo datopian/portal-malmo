@@ -43,12 +43,12 @@ export default async function Home() {
     <>
       <Hero
         title={
-          <>
+          <span className="font-semibold">
             {t("Home.title")}{" "}
             <span className="text-theme-green-light">
               {t("Home.titleStrong")}
             </span>
-          </>
+          </span>
         }
         description={t("Home.tagline")}
       >

@@ -1,19 +1,27 @@
 import { useTranslations } from "next-intl";
 import { useSearchState } from "./SearchContext";
 import FacetCard from "@/components/package/search/FacetCard";
+import { SlidersHorizontal } from "lucide-react";
 
-export default function Facets() {
-  const { result, options, defaultOrg,  setOptions } = useSearchState();
+export default function Facets({ title=false }: { title?: string | boolean }) {
+  const { result, options, defaultOrg, setOptions } = useSearchState();
   const searchResultFacets = result?.search_facets || {};
   const t = useTranslations();
   return (
     <div className="search-facets">
+      {title && (
+        <span className="flex items-center gap-2 mb-3 text-theme-green text-xl font-bold">
+          <SlidersHorizontal size={20} />
+          {t("Search.filters")}
+        </span>
+      )}
+
       {searchResultFacets?.organization?.items?.length > 0 && !defaultOrg && (
         <FacetCard
           name="orgs"
-          title={`🏛️ ${t("Common.organization")}`}
+          title={`${t("Common.organization")}`}
           items={searchResultFacets?.organization?.items}
-          options={options?.orgs}   
+          options={options?.orgs}
           onSelect={(updatedValues) => {
             setOptions({ orgs: updatedValues, offset: 0 });
           }}
@@ -22,7 +30,7 @@ export default function Facets() {
       {searchResultFacets?.groups?.items?.length > 0 && (
         <FacetCard
           name="groups"
-          title={`📁 ${t("Common.groups")}`}
+          title={`${t("Common.groups")}`}
           items={searchResultFacets?.groups?.items}
           options={options?.groups}
           onSelect={(updatedValues) => {
@@ -33,7 +41,7 @@ export default function Facets() {
       {searchResultFacets?.res_format?.items?.length > 0 && (
         <FacetCard
           name="resFormat"
-          title={`📦 ${t("Common.formats")}`}
+          title={`${t("Common.formats")}`}
           items={searchResultFacets?.res_format?.items}
           options={options?.resFormat}
           onSelect={(updatedValues) => {
@@ -44,7 +52,7 @@ export default function Facets() {
       {searchResultFacets?.tags?.items?.length > 0 && (
         <FacetCard
           name="tags"
-          title={`🔖 ${t("Common.tags")}`}
+          title={`${t("Common.tags")}`}
           items={searchResultFacets?.tags?.items}
           options={options?.tags}
           onSelect={(updatedValues) => {

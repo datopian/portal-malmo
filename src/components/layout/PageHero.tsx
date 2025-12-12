@@ -95,7 +95,7 @@ export default function Hero({
                 </span>
               )}
               {title && (
-                <h1 className="text-3xl md:text-[40px] font-semibold">
+                <h1 className="text-3xl md:text-[40px] font-bold text-theme-green">
                   {title}
                 </h1>
               )}
