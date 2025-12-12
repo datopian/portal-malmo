@@ -91,7 +91,7 @@ export default function SearchLayout({
                   />
                 </div>
               </div>
-              <div className="flex flex-col space-y-4 mt-4 w-full border">
+              <div className="flex flex-col space-y-4 mt-4 w-full border border-b-0">
                 {result?.datasets?.map((d) => (
                   <SearchResultItem
                     key={d.id}
@@ -106,7 +106,7 @@ export default function SearchLayout({
                     <Pagination count={result?.count ?? 0} />
                   </div>
                 ) : (
-                  !isLoading && !hasResults && <NoDataFound />
+                  <></>
                 )}
               </div>
             </div>
