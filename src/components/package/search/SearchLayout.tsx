@@ -5,7 +5,6 @@ import { useSearchState } from "./SearchContext";
 import SearchResultHeader from "./SearchResultHeader";
 import SearchResultItem from "./SearchResultItem";
 import Pagination from "./Pagination";
-import NoDataFound from "./NoDataFound";
 import SearchForm from "./SearchForm";
 import { Funnel, SlidersHorizontal, X } from "lucide-react";
 import ActiveFilters from "./ActiveFilters";
