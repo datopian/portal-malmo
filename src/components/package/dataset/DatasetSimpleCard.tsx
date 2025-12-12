@@ -20,9 +20,9 @@ const DatasetSimpleCard = ({ dataset }: { dataset: Dataset }) => {
           </span>
         </CardHeader>
 
-        <CardContent className="text-gray-600 px-0 py-0">
+        <CardContent className="text-gray-600 px-0 py-3">
           <div className="line-clamp-3 overflow-hidden mb-4">
-            <MarkdownRender content={dataset.notes} />
+            <MarkdownRender content={dataset.notes} textOnly />
           </div>
           <div className="text-sm flex items-center text-gray-500 w-full">
             {formatPrettyDate(dataset.metadata_modified ?? "", locale)}
