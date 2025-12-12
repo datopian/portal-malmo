@@ -100,7 +100,7 @@ export default function SearchResultItem({
             ))}
             {uniqueFormats.length > 5 && (
               <span className="bg-gray-200 px-2 py-1 rounded">
-                +{uniqueFormats.length - 5} more
+                +{uniqueFormats.length - 5} {t("Common.more")}
               </span>
             )}
           </div>
