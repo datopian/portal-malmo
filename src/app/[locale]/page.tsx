@@ -52,10 +52,13 @@ export default async function Home() {
         }
         description={t("Home.tagline")}
       >
+        <div className="mb-[50px]">
         <SearchForm
+        
           title={t("Dataset.searchLabel")}
           placeholder={t("Search.searchPlaceholder")}
         />
+        </div>
       </Hero>
       <Container>
         <div className="my-12">
