@@ -4,7 +4,7 @@ import FacetCard from "@/components/package/search/FacetCard";
 import { SlidersHorizontal } from "lucide-react";
 
 export default function Facets({ title=false }: { title?: string | boolean }) {
-  const { result, options, defaultOrg, setOptions } = useSearchState();
+  const { result, options, setOptions } = useSearchState();
   const searchResultFacets = result?.search_facets || {};
   const t = useTranslations();
   return (
