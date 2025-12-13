@@ -15,18 +15,6 @@ export default function Facets({ title=false }: { title?: string | boolean }) {
           {t("Search.filters")}
         </span>
       )}
-
-      {searchResultFacets?.organization?.items?.length > 0 && !defaultOrg && (
-        <FacetCard
-          name="orgs"
-          title={`${t("Common.organization")}`}
-          items={searchResultFacets?.organization?.items}
-          options={options?.orgs}
-          onSelect={(updatedValues) => {
-            setOptions({ orgs: updatedValues, offset: 0 });
-          }}
-        />
-      )}
       {searchResultFacets?.groups?.items?.length > 0 && (
         <FacetCard
           name="groups"
