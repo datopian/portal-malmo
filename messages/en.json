@@ -52,7 +52,10 @@
     "previous": "Previous",
     "next": "Next",
     "search": "Search",
-    "more" : "more"
+    "more" : "more",
+    "email": "E-mail",
+    "address": "Address",
+    "phone": "Phone"
   },
 
   "Dataset": {
@@ -117,14 +120,10 @@
   },
 
   "Footer": {
-    "whatIsOpenData1": "What is open data?",
-    "requestData": "Request data",
-    "privacyPolicy": "Privacy policy",
     "contactTitle": "Contact",
-    "newsletter": "Subscribe to our newsletter",
-    "address": "Open Data Malmö\nHöck Kampmanns Plads 1\n8000 Århus C",
-    "accessibilityStatement": "Accessibility statement",
-    "builtWithPortaljs": "Built with PortalJS and a CKAN backend",
+    "note": "Everyone – including private individuals as well as private and public organizations – is free to use the open data available on this portal.\nThe data may be freely reused, modified, and shared.",
+    "builtWith": "Built with",
+    "onCKAN": "on CKAN Backend",
     "exportCatalog": "Export DCAT catalog in RDF or JSON-LD"
   }
 }
