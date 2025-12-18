@@ -55,13 +55,16 @@
     "more": "mer",
     "email": "E-post",
     "address": "Adress",
-    "phone": "Telefon"
+    "phone": "Telefon",
+    "readMore": "Läs mer",
+    "readLess": "Läs mindre"
   },
 
   "Dataset": {
     "searchLabel": "Sök datamängder",
     "latest": "Senaste datamängderna",
     "datasetsCount": "{count, plural, one {# datamängd} other {# datamängder}}",
+    "resourcesCount": "{count, plural, one {# fil} other {# filer}}",
     "total": "Totalt antal datamängder",
     "resourcesTitle": "Data och resurser ({count})",
     "noResources": "Inga resurser tillgängliga för denna datamängd.",

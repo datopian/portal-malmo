@@ -33,9 +33,7 @@ const Heading: React.FC<HeadingProps> = ({
 
   return (
     <HeadingTag
-      className={`${headingClasses} ${
-        center ? "text-center" : "text-left"
-      } ${cn("text-theme-green block", className)}`}
+      className={`${cn( headingClasses, center ? "text-center" : "text-left", "text-theme-green block", className )}`}
     >
       {children}
     </HeadingTag>

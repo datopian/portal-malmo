@@ -55,13 +55,16 @@
     "more" : "more",
     "email": "E-mail",
     "address": "Address",
-    "phone": "Phone"
+    "phone": "Phone",
+    "readMore": "Read more",
+    "readLess": "Read less"
   },
 
   "Dataset": {
     "searchLabel": "Search datasets",
     "latest": "Latest datasets",
     "datasetsCount": "{count, plural, one {# dataset} other {# datasets}}",
+    "resourcesCount": "{count, plural, one {# data file} other {# data files}}",
     "total": "Total datasets",
     "resourcesTitle": "Data and Resources ({count})",
     "noResources": "No resources available for this dataset.",

@@ -1,3 +1,4 @@
+"use client";
 import { cn } from "@/lib/utils";
 import Container from "../ui/container";
 import MarkdownRender from "../ui/markdown";
@@ -8,11 +9,14 @@ import {
   BreadcrumbList,
   BreadcrumbSeparator,
 } from "../ui/breadcrumb";
-import React from "react";
+import React, { useState } from "react";
 import Link from "next/link";
 import { useTranslations } from "next-intl";
 import Image from "next/image";
-import heroBg from "@/assets/hero-home-bg.svg";
+import homeGraphic from "@/assets/hero-home-bg.svg";
+import navGraphic from "@/assets/hero-nav-bg.svg";
+import useIsClamped from "@/hooks/clamped";
+import { Button } from "../ui/button";
 
 export type BreadcrumbItemProps = {
   title: string;
@@ -30,6 +34,7 @@ export default function Hero({
   description,
   children,
   breadcrumb = { items: [], hide: false },
+  style = "navigation",
 }: {
   className?: string;
   breadcrumb?: BreadcrumbProps;
@@ -37,9 +42,12 @@ export default function Hero({
   title?: React.ReactNode | string;
   description?: string;
   children?: React.ReactNode;
+  style?: "home" | "navigation";
 }) {
   const breadcrumbItems = breadcrumb.items ?? [];
   const t = useTranslations();
+  const [expanded, setExpanded] = useState(false);
+  const { ref, isClamped } = useIsClamped([description, expanded]);
   return (
     <div
       className={cn(
@@ -48,15 +56,15 @@ export default function Hero({
       )}
     >
       <Container className="relative z-10">
-        <div className="hidden lg:flex pointer-events-none absolute inset-y-0 right-0 top-0 w-3/4  justify-end ">
+        <div className="hidden lg:flex pointer-events-none absolute inset-y-0 right-0 top-0 w-3/4 align-end justify-end overflow-hidden">
           <Image
-            src={heroBg}
+            src={style === "home" ? homeGraphic : navGraphic}
             alt=""
-            className="h-full w-full object-cover object-right"
+            className="object-contain object-right h-fit mt-auto"
             priority
           />
         </div>
-        <div className="relative py-[40px] lg:py-[64px]">
+        <div className={`relative py-[30px] ${ style === "home" ? "lg:py-[64px]" : "lg:py-12" } `}>
           {breadcrumb && breadcrumbItems?.length > 0 && !breadcrumb?.hide && (
             <Breadcrumb className="mb-2">
               <BreadcrumbList>
@@ -100,9 +108,37 @@ export default function Hero({
                 </h1>
               )}
               {description && (
-                <h2 className="mt-4 md:text-xl text-gray-600 ">
-                  <MarkdownRender content={description} />
-                </h2>
+                <div className="mt-4">
+                  <div
+                    ref={ref}
+                    className={[
+                      "md:text-xl text-gray-600",
+                      expanded ? "" : "line-clamp-5",
+                    ].join(" ")}
+                  >
+                    <MarkdownRender content={description} />
+                  </div>
+                  {!expanded && isClamped && (
+                    <Button
+                      type="button"
+                      variant="link"
+                      onClick={() => setExpanded(true)}
+                      className="mt-2 font-medium text-theme-green hover:underline underline p-0 cursor-pointer"
+                    >
+                      {t("Common.readMore")}
+                    </Button>
+                  )}
+                  {expanded && (
+                    <Button
+                      type="button"
+                      variant="link"
+                      onClick={() => setExpanded(false)}
+                      className="mt-2 font-medium text-theme-green hover:underline underline p-0 cursor-pointer"
+                    >
+                      {t("Common.readLess")}
+                    </Button>
+                  )}
+                </div>
               )}
             </div>
           )}
