@@ -45,7 +45,7 @@ export default async function DatasetResources({
                 </h4>
                 <div className="text-gray-600 flex gap-4 text-sm">
                   <Badge
-                  className="font-bold"
+                    className="font-bold"
                     style={{
                       backgroundColor: hex,
                     }}
@@ -74,7 +74,7 @@ export default async function DatasetResources({
                   type="button"
                   asChild
                   aria-label={`Download resource ${resource.name}`}
-                  rounded={"lg"}
+                 
                   variant={"theme"}
                   className="bg-[#666666] px-3 font-medium border-[#666666] border-1 text-white hover:bg-[#666666]/90"
                 >
@@ -91,7 +91,7 @@ export default async function DatasetResources({
                     type="button"
                     asChild
                     aria-label={`Resource Details: ${resource.name}`}
-                    rounded="lg"
+                   
                     variant={"outline"}
                     className="border-[#666666] px-3 font-medium text-[#666666] hover:bg-[#666666]"
                   >

@@ -21,6 +21,7 @@ import { Button } from "../ui/button";
 export type BreadcrumbItemProps = {
   title: string;
   href: string;
+  current?:boolean;
 };
 export type BreadcrumbProps = {
   items?: BreadcrumbItemProps[];
@@ -83,7 +84,7 @@ export default function Hero({
                           asChild
                           className="overflow-hidden text-ellipsis whitespace-nowrap block"
                         >
-                          <Link href={item.href} className="">
+                          <Link href={item.href} className={item.current ? "text-theme-green font-semibold" : ""}>
                             {item.title}
                           </Link>
                         </BreadcrumbLink>

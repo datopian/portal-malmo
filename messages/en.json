@@ -35,6 +35,7 @@
     "code": "Code",
     "created": "Created",
     "updated": "Updated",
+    "lastModified":"Last modified",
     "version": "Version",
     "license": "License",
     "size": "Size",

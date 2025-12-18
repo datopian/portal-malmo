@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useState } from "react";
 import { useResourceDataSafe } from "./DataProvider";
 import { PinButton } from "./TableHeadCell";
-import { CheckIcon, XIcon } from "lucide-react";
+import { CheckIcon, Settings2, XIcon } from "lucide-react";
 import { Button } from "../ui/button";
 import { useTranslations } from "next-intl";
 
@@ -15,9 +15,10 @@ export function SettingsDisplayButton() {
         onClick={toggleSettingsDropdown}
         aria-haspopup="true"
         aria-expanded={isSettingsDropdownOpen}
-        variant="outline"
+        variant="secondary"
+        className="cursor-pointer border "
       >
-        ⚙️
+        <Settings2 size={5}/>
         <span className="hidden sm:block">{t("Common.settings")}</span>
       </Button>
     </div>

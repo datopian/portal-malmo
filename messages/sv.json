@@ -35,6 +35,7 @@
     "code": "Kod",
     "created": "Skapad",
     "updated": "Uppdaterad",
+    "lastModified" : "Senast ändrad",
     "version": "Version",
     "license": "Licens",
     "size": "Storlek",

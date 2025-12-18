@@ -46,11 +46,11 @@ export default async function DatasetInfo({ dataset }: { dataset: Dataset }) {
             {authorName}
           </Link>
         ) : (
-          authorName
+          authorName||"--"
         )}
       </ListItem>
       <ListItem title={t("Metadata.updateFrequency")}>
-        {updateFrequencyLabel}
+        {updateFrequencyLabel||"--"}
       </ListItem>
       <ListItem title={t("Metadata.documentation")}>
         {documentation|| "--"}
