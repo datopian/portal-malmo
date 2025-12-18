@@ -76,7 +76,7 @@ export default async function DatasetPage({ params }: DatasetPageProps) {
           {
             title: dataset?.title ?? "",
             href: `/@${dataset.organization?.name}/${dataset.name}`,
-            current:true
+            current: true,
           },
         ],
       }}
@@ -101,21 +101,20 @@ export default async function DatasetPage({ params }: DatasetPageProps) {
     >
       <Container className="py-12">
         <div className="flex flex-col lg:flex-row gap-10">
-     
-            <div className=" w-full">
-              <Heading level={3} className="text-[24px] font-bold">
-                {t("Dataset.resourcesCount", {
-                  count: dataset?.resources?.length,
-                })}
-              </Heading>
-              <DatasetResources
-                resources={dataset.resources}
-                dataset={dataset.name}
-                organization={dataset.organization?.name || ""}
-              />
-            </div>
+          <div className=" w-full">
+            <Heading level={3} className="text-[24px] font-bold">
+              {t("Dataset.resourcesCount", {
+                count: dataset?.resources?.length,
+              })}
+            </Heading>
+            <DatasetResources
+              resources={dataset.resources}
+              dataset={dataset.name}
+              organization={dataset.organization?.name || ""}
+            />
+          </div>
 
-          <div className="w-full lg:max-w-[350px] space-y-6 lg:ml-auto">
+          <div className="w-full lg:max-w-[350px] space-y-6 lg:ml-auto lg:sticky top-10 h-fit">
             <div className="p-6 bg-[#F3F3F3]">
               <Heading
                 level={3}
