@@ -6,6 +6,7 @@ import { useTranslations } from "next-intl";
 import MarkdownRender from "@/components/ui/markdown";
 import { Calendar, Database, RefreshCcw } from "lucide-react";
 import React from "react";
+import { RESOURCE_COLORS } from "@/lib/resource";
 
 export default function SearchResultItem({
   dataset,
@@ -94,7 +95,9 @@ export default function SearchResultItem({
         {dataset.resources.length > 0 && (
           <div className="text-sm lowercase text-gray-600 flex gap-3">
             {uniqueFormats.slice(0, 5).map((f, i) => (
-              <span className="bg-gray-200 px-2 py-1 rounded" key={i}>
+              <span className="px-2 text-white py-1 rounded" key={i} style={{
+                backgroundColor: RESOURCE_COLORS[f?.toLocaleLowerCase()??""] || RESOURCE_COLORS.default
+              }}>
                 {f?.toUpperCase()}
               </span>
             ))}

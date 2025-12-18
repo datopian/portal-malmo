@@ -2,12 +2,12 @@ import { Resource } from "@/schemas/ckan";
 
 export const supportedPreviewFormats = [
   "csv",
-  "json",
+  //"json",
   "pdf",
   //"xlsx",
   //"xls",
   //"kml",
-  //"geojson",
+  "geojson",
   //"shp",
 ];
 

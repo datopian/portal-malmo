@@ -120,7 +120,8 @@
     "checkAllColumns": "Check all columns",
     "noColumns": "No columns found",
     "rowsPerPage": "Rows per page",
-    "pagination": "Page {page} of {total}"
+    "pagination": "Page {page} of {total}",
+    "errorLoadingGeoJSON" : "Error loading GeoJSON data"
   },
 
   "Footer": {

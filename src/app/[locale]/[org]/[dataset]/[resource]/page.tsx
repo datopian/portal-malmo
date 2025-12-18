@@ -16,6 +16,7 @@ import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import { DownloadIcon } from "lucide-react";
 import { Heading } from "@/components/ui/heading";
+import { formatFileSize } from "@/lib/utils";
 
 export const revalidate = 300;
 
@@ -155,7 +156,9 @@ export default async function ResourcePage({ params }: PageProps) {
             </div>
             <div>
               <span className="font-bold block">{t("Common.size")}</span>
-              <span>{resource.size || "--"}</span>
+              <span>
+                {resource.size ? formatFileSize(resource.size) : "--"}
+              </span>
             </div>
           </div>
           <div className="ml-auto">
@@ -167,7 +170,7 @@ export default async function ResourcePage({ params }: PageProps) {
               className="bg-[#666666] px-3 font-medium border-[#666666] border-1 text-white hover:bg-[#666666]/90"
             >
               <Link href={resource.url ?? ""} target="_blank" download={true}>
-                <DownloadIcon size={5}/>
+                <DownloadIcon size={5} />
                 {t("Common.download")}
               </Link>
             </Button>

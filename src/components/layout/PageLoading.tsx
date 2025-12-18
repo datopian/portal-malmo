@@ -79,6 +79,7 @@ export default function PageLoading({
       )}
 
       {type === "search" && <SearchSkeletonLayout />}
+      <div className="mb-12"></div>
     </div>
   );
 }

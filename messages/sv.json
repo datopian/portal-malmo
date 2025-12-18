@@ -120,7 +120,8 @@
     "checkAllColumns": "Markera alla kolumner",
     "noColumns": "Inga kolumner hittades",
     "rowsPerPage": "Rader per sida",
-    "pagination": "Sida {page} av {total}"
+    "pagination": "Sida {page} av {total}",
+    "errorLoadingGeoJSON" : "Error loading geojson data"
   },
 
   "Footer": {

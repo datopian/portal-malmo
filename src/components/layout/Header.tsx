@@ -3,7 +3,7 @@
 import Container from "../ui/container";
 import { Link, usePathname } from "@/i18n/navigation";
 import clsx from "clsx";
-import { List } from "lucide-react";
+import {  Menu } from "lucide-react";
 import { useState, useEffect } from "react";
 import { useTranslations } from "next-intl";
 import LanguageSwitcher from "./LanguageSwitcher";
@@ -50,7 +50,7 @@ export default function Header() {
                 aria-expanded={menuOpen}
                 aria-controls="navigation-menu"
               >
-                <List />
+                <Menu />
               </button>
             </div>
           </div>
