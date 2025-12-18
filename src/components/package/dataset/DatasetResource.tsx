@@ -3,10 +3,11 @@ import MarkdownRender from "@/components/ui/markdown";
 import { formatFileSize } from "@/lib/utils";
 import Link from "next/link";
 import React from "react";
-import { supportsPreview } from "@/lib/resource";
+import { RESOURCE_COLORS, supportsPreview } from "@/lib/resource";
 import { getTranslations } from "next-intl/server";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { EyeIcon } from "lucide-react";
 
 export default async function DatasetResources({
   resources,
@@ -21,26 +22,36 @@ export default async function DatasetResources({
 
   return (
     <div className="space-y-5">
-      <div className="w-full ">
+      <div className="w-full divide-y">
         {!resources?.length && (
           <p className="text-gray-600 py-3">{t("Dataset.noResources")}</p>
         )}
-        {resources?.map((resource) => (
-          <div
-            className="flex flex-col py-3  gap-y-1 gap-x-5"
-            key={resource.id}
-          >
-            <div className="flex flex-col  w-full">
-              <Link
-                href={`/@${organization}/${dataset}/${resource.id}`}
-                className="group block space-y-2"
-              >
-                <span className="block text-xl font-semibold text-theme-green group-hover:underline flex items-center gap-2">
-                  {resource.name}
-                </span>
+        {resources?.map((resource) => {
+          const formatKey = (format?: string | null) =>
+            (format ?? "").trim().toLowerCase();
 
+          const fmt = formatKey(resource.format);
+          const hex = RESOURCE_COLORS[fmt] ?? RESOURCE_COLORS.default;
+          return (
+            <div
+              className="flex flex-col py-3  gap-y-3 gap-x-5 py-[30px]"
+              key={resource.id}
+            >
+              <div className="flex flex-col  w-full space-y-2">
+                <h4 className="group block ">
+                  <span className="block text-xl font-semibold text-theme-green flex items-center gap-2">
+                    {resource.name}
+                  </span>
+                </h4>
                 <div className="text-gray-600 flex gap-4 text-sm">
-                  <Badge variant="themeGreen">{resource.format || "--"}</Badge>
+                  <Badge
+                  className="font-bold"
+                    style={{
+                      backgroundColor: hex,
+                    }}
+                  >
+                    {resource.format || "--"}
+                  </Badge>
                   {resource.size && (
                     <span>
                       <b className="font-light">{t("Common.size")}:</b>{" "}
@@ -49,46 +60,51 @@ export default async function DatasetResources({
                   )}
                 </div>
                 {resource.description && (
-                  <div className="line-clamp-1 text-[#4A5565]">
+                  <div className="line-clamp-2 text-[#4A5565]">
                     <MarkdownRender
                       textOnly={true}
                       content={resource.description}
                     />
                   </div>
                 )}
-              </Link>
-            </div>
+              </div>
 
-            <div className="mt-2 md:mt-0 flex items-center gap-2 -ml-2">
-              {supportsPreview(resource) && (
+              <div className="mt-2 md:mt-0 flex items-center gap-2 -ml-2">
                 <Button
                   type="button"
                   asChild
-                  aria-label={`Resource Details: ${resource.name}`}
-                  variant="outline"
+                  aria-label={`Download resource ${resource.name}`}
+                  rounded={"lg"}
+                  variant={"theme"}
+                  className="bg-[#666666] px-3 font-medium border-[#666666] border-1 text-white hover:bg-[#666666]/90"
                 >
-                  <Link href={`/@${organization}/${dataset}/${resource.id}`}>
-                    {t("Common.preview")}
+                  <Link
+                    href={resource.url ?? ""}
+                    target="_blank"
+                    download={true}
+                  >
+                    {t("Common.download")}
                   </Link>
                 </Button>
-              )}
-
-              <Link
-                type="button"
-                download={true}
-                href={resource.url ?? ""}
-                target="_blank"
-                className=" text-sm font-medium px-2 flex items-center rounded transition w-fit group"
-                aria-label={`Download resource ${resource.name}`}
-              >
-                ⬇️{" "}
-                <span className="group-hover:underline">
-                  {t("Common.download")}
-                </span>
-              </Link>
+                {supportsPreview(resource) && (
+                  <Button
+                    type="button"
+                    asChild
+                    aria-label={`Resource Details: ${resource.name}`}
+                    rounded="lg"
+                    variant={"outline"}
+                    className="border-[#666666] px-3 font-medium text-[#666666] hover:bg-[#666666]"
+                  >
+                    <Link href={`/@${organization}/${dataset}/${resource.id}`}>
+                      <EyeIcon size={5} />
+                      {t("Common.preview")}
+                    </Link>
+                  </Button>
+                )}
+              </div>
             </div>
-          </div>
-        ))}
+          );
+        })}
       </div>
     </div>
   );

@@ -3,12 +3,17 @@ import type { NextConfig } from "next";
 import createNextIntlPlugin from "next-intl/plugin";
 
 const withNextIntl = createNextIntlPlugin();
-const DMS_URL = new URL(`${(envVars.dms??"")}/**`);
-const imagesUrl = [ new URL("https://acc-ckan-malmo.dataplatform.se/**") ];
+
+const imagesUrl = [
+  envVars.dms ?? "",
+  "https://ckan-malmo.dataplatform.se",
+  "https://acc-ckan-malmo.dataplatform.se",
+].map((url) => new URL(`${url}/**`));
+
 const nextConfig: NextConfig = {
-    images:{
-        remotePatterns: [ DMS_URL, ...imagesUrl ]
-    }
+  images: {
+    remotePatterns: imagesUrl,
+  },
 };
 
 export default withNextIntl(nextConfig);

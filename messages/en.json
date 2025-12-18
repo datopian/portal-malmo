@@ -18,8 +18,8 @@
     "resources": "Resources",
     "format": "Format",
     "formats": "Formats",
-    "tag": "Tag",
-    "tags": "Tags",
+    "tag": "Keyword",
+    "tags": "Keywords",
     "noData": "No data found",
     "noResults": "No results found",
     "viewAll": "Explore All",
@@ -128,5 +128,13 @@
     "builtWith": "Built with",
     "onCKAN": "on CKAN Backend",
     "exportCatalog": "Export DCAT catalog in RDF or JSON-LD"
+  },
+
+  "Metadata" : {
+    "author" : "Author",
+    "updateFrequency" : "Update frequency",
+    "documentation" : "Documentation",
+    "temporalCoverageStart": "Temporal coverage start",
+    "temporalCoverageEnd": "Temporal coverage end"
   }
 }

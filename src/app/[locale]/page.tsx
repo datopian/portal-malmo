@@ -95,7 +95,7 @@ export default async function Home() {
               ))}
             </div>
             <div className="flex justify-center">
-              <Button asChild variant="outline" size="lg" className="w-fit">
+              <Button asChild variant="outline" size="lg" className="w-fit border-2">
                 <Link href={"/data"}>{t("Dataset.exploreAll")}</Link>
               </Button>
             </div>

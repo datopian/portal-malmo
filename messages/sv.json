@@ -128,5 +128,13 @@
     "builtWith": "Byggd med",
     "onCKAN": "med CKAN backend",
     "exportCatalog": "Exportera DCAT-katalog i RDF eller JSON-LD"
+  },
+
+  "Metadata": {
+    "author": "Ansvarig",
+    "updateFrequency": "Uppdateringsfrekvens",
+    "documentation": "Dokumentation",
+    "temporalCoverageStart": "Tidsperiod – start",
+    "temporalCoverageEnd": "Tidsperiod – slut"
   }
 }

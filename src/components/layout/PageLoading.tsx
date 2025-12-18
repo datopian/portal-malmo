@@ -30,7 +30,7 @@ export default function PageLoading({
 }) {
   return (
     <div>
-      <div className="pt-10 pb-8 bg-[#f0f9ff] border-gray-200 border-t border-b border-dashed flex flex-col justify-center min-h-[226px]">
+      <div className="pt-10 pb-8 bg-[#F6F6EF] border-gray-200 border-t border-b border-dashed flex flex-col justify-center min-h-[226px]">
         <Container>
           <Skeleton className="h-[36px] w-2/6" />
           <div className="space-y-2 mt-3 ">
