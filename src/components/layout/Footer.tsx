@@ -2,6 +2,7 @@ import { getTranslations } from "next-intl/server";
 import Container from "../ui/container";
 import Link from "next/link";
 import { Roboto } from "next/font/google";
+import { envVars } from "@/lib/env";
 
 const roboto = Roboto({
   weight: ["400", "500", "700", "900"],
@@ -36,10 +37,7 @@ export default async function Footer() {
             </li>
             <li>
               <span className="font-semibold">{t("Common.phone")}: </span>
-              <Link
-                href="tel:+46 40 341000"
-                className="hover:underline"
-              >
+              <Link href="tel:+46 40 341000" className="hover:underline">
                 +46 40 341000
               </Link>
             </li>
@@ -63,7 +61,28 @@ export default async function Footer() {
             </a>
             <span>{t("Footer.onCKAN")}</span>
           </div>
-          <p className="">{t("Footer.exportCatalog")}</p>
+          <p className="">
+            {t.rich("Footer.exportCatalog", {
+              rdf: (chunks) => (
+                <Link
+                  href={`${envVars.dms}/catalog.rdf`}
+                  target="_blank"
+                  className={"underline"}
+                >
+                  {chunks}
+                </Link>
+              ),
+              jsonld: (chunks) => (
+                <Link
+                  target="_blank"
+                  href={`${envVars.dms}/catalog.jsonld`}
+                  className={"underline"}
+                >
+                  {chunks}
+                </Link>
+              ),
+            })}
+          </p>
         </div>
       </Container>
     </footer>

@@ -91,9 +91,9 @@
   },
 
   "GroupsPage": {
-    "description": "Explore all groups that organize and curate datasets across topics and themes.",
-    "searchPlaceholder": "Search groups...",
-    "noGroups": "No groups found",
+    "description": "Explore all themes that organize and curate datasets across topics.",
+    "searchPlaceholder": "Search themes...",
+    "noGroups": "No theme found",
     "discoverGroups": "Discover by themes"
   },
 
@@ -129,7 +129,7 @@
     "note": "Everyone – including private individuals as well as private and public organizations – is free to use the open data available on this portal.\nThe data may be freely reused, modified, and shared.",
     "builtWith": "Built with",
     "onCKAN": "on CKAN Backend",
-    "exportCatalog": "Export DCAT catalog in RDF or JSON-LD"
+    "exportCatalog": "Export DCAT catalog in <rdf>RDF</rdf> or <jsonld>JSON-LD</jsonld>"
   },
 
   "Metadata" : {

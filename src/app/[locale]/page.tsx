@@ -68,7 +68,7 @@ export default async function Home() {
                 {t("GroupsPage.discoverGroups")}
               </Heading>
               <Button asChild variant="theme" className="w-fit">
-                <Link href={"/groups"}>{t("Common.groups")}</Link>
+                <Link href={"/themes"}>{t("Common.groups")}</Link>
               </Button>
             </div>
             <div className="grid grid-cols-1 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-4">
