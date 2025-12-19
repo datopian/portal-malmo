@@ -29,12 +29,8 @@ export default function FacetCard({
   const maxPerView = 10;
   const t = useTranslations();
 
-
   return (
-    <Disclosure
-      as="div"
-      className="border-b border-gray-200  py-6"
-    >
+    <Disclosure as="div" className="border-b border-gray-200  py-6">
       <h3 className="-my-3 mx-4 lg:mx-0 flow-root ">
         <DisclosureButton className="group flex w-full items-center justify-between bg-white py-3  cursor-pointer">
           <span className="font-medium text-theme-green font-semibold">
@@ -53,9 +49,11 @@ export default function FacetCard({
         </DisclosureButton>
       </h3>
       <DisclosurePanel className="pt-3">
-        <div className="space-y-3 mx-4 lg:mx-0">
+        <div className="space-y-3 mx-4 lg:mx-0 max-h-[500px] overflow-y-auto overflow-x-hidden">
           {items
-            ?.slice(0, seeMore ? items?.length : maxPerView)
+            ?.slice() 
+            .sort((a, b) => (b.count ?? 0) - (a.count ?? 0))
+            .slice(0, seeMore ? items.length : maxPerView)
             .map((item) => (
               <FacetOptions
                 name={name}
@@ -70,7 +68,7 @@ export default function FacetCard({
         </div>
         {items?.length > maxPerView && (
           <Button
-          variant={"outline"}
+            variant={"outline"}
             onClick={() => setSeeMore(!seeMore)}
             type="button"
             size={"sm"}

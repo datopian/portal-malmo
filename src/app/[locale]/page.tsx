@@ -42,6 +42,7 @@ export default async function Home() {
   return (
     <>
       <Hero
+        style="home"
         title={
           <span className="font-semibold">
             {t("Home.title")}{" "}
@@ -53,11 +54,10 @@ export default async function Home() {
         description={t("Home.tagline")}
       >
         <div className="mb-[50px]">
-        <SearchForm
-        
-          title={t("Dataset.searchLabel")}
-          placeholder={t("Search.searchPlaceholder")}
-        />
+          <SearchForm
+            title={t("Dataset.searchLabel")}
+            placeholder={t("Search.searchPlaceholder")}
+          />
         </div>
       </Hero>
       <Container>
@@ -95,7 +95,7 @@ export default async function Home() {
               ))}
             </div>
             <div className="flex justify-center">
-              <Button asChild variant="outline" size="lg" className="w-fit">
+              <Button asChild variant="outline" size="lg" className="w-fit border-2">
                 <Link href={"/data"}>{t("Dataset.exploreAll")}</Link>
               </Button>
             </div>

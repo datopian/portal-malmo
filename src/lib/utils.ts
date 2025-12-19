@@ -161,3 +161,48 @@ export async function fetchJsonRetry<T>({
 
   return (await res.json()) as T;
 }
+
+
+export const updateFrequencyValues = {    
+    "UNKNOWN": "Unknown",
+    "TRIENNIAL": "Triennial (every three years)",
+    "BIENNIAL": "Biennial (every two years)",
+    "ANNUAL": "Annual (every year)",
+    "ANNUAL_2": "Semiannual (twice a year)",
+    "ANNUAL_3": "Three times a year",
+    "QUARTERLY": "Quarterly (every three months)",
+    "BIMONTHLY": "Bimonthly (every two months)",
+    "MONTHLY": "Monthly (once a month)",
+    "MONTHLY_2": "Semimonthly (twice a month)",
+    "BIWEEKLY": "Biweekly (every two weeks)",
+    "MONTHLY_3": "Three times a month",
+    "WEEKLY": "Weekly (once a week)",
+    "WEEKLY_2": "Semiweekly (twice a week)",
+    "WEEKLY_3": "Three times a week",
+    "DAILY": "Daily (once a day)",
+    "UPDATE_CONT": "Continuously updated",
+    "IRREG": "Irregular",
+    "OTHER": "Other",
+    "DAILY_2": "Twice a day",
+    "CONTINOUOUS": "Continuous",
+    "NEVER": "Never",
+    "QUADRENNIAL": "Quadrennial (every four years)",
+    "QUINQUENNIAL": "Quinquennial (every five years)",
+    "HOURLY": "Hourly (every hour)",
+    "DECENNIAL": "Decennial (every ten years)",
+    "BIHOURLY": "Bihourly (every two hours)",
+    "TRIHOURLY": "Trihourly (every three hours)",
+    "BIDECENNIAL": "Bidecennial (every twenty years)",
+    "TRIDECENNIAL": "Tridecennial (every thirty years)",
+    "WEEKLY_5": "Five Times A Week",
+    "SEXENNIAL": "Sexennial",
+    "15MIN": "Every Fifteen Minutes",
+    "30MIN": "Every Thirty Minutes",
+    "10MIN": "Every Ten Minutes",
+    "1MIN": "Every Minute",
+    "NOT_PLANNED": "Not Planned",
+    "12HRS": "Every Twelve Hours",
+    "5MIN": "Every Five Minutes",
+    "CONT": "Continuous",
+    "AS_NEEDED": "As Needed"
+}

@@ -18,8 +18,8 @@
     "resources": "Resources",
     "format": "Format",
     "formats": "Formats",
-    "tag": "Tag",
-    "tags": "Tags",
+    "tag": "Keyword",
+    "tags": "Keywords",
     "noData": "No data found",
     "noResults": "No results found",
     "viewAll": "Explore All",
@@ -35,6 +35,7 @@
     "code": "Code",
     "created": "Created",
     "updated": "Updated",
+    "lastModified":"Last modified",
     "version": "Version",
     "license": "License",
     "size": "Size",
@@ -55,13 +56,16 @@
     "more" : "more",
     "email": "E-mail",
     "address": "Address",
-    "phone": "Phone"
+    "phone": "Phone",
+    "readMore": "Read more",
+    "readLess": "Read less"
   },
 
   "Dataset": {
     "searchLabel": "Search datasets",
     "latest": "Latest datasets",
     "datasetsCount": "{count, plural, one {# dataset} other {# datasets}}",
+    "resourcesCount": "{count, plural, one {# data file} other {# data files}}",
     "total": "Total datasets",
     "resourcesTitle": "Data and Resources ({count})",
     "noResources": "No resources available for this dataset.",
@@ -116,7 +120,8 @@
     "checkAllColumns": "Check all columns",
     "noColumns": "No columns found",
     "rowsPerPage": "Rows per page",
-    "pagination": "Page {page} of {total}"
+    "pagination": "Page {page} of {total}",
+    "errorLoadingGeoJSON" : "Error loading GeoJSON data"
   },
 
   "Footer": {
@@ -125,5 +130,13 @@
     "builtWith": "Built with",
     "onCKAN": "on CKAN Backend",
     "exportCatalog": "Export DCAT catalog in RDF or JSON-LD"
+  },
+
+  "Metadata" : {
+    "author" : "Author",
+    "updateFrequency" : "Update frequency",
+    "documentation" : "Documentation",
+    "temporalCoverageStart": "Temporal coverage start",
+    "temporalCoverageEnd": "Temporal coverage end"
   }
 }

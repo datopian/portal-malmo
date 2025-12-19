@@ -32,10 +32,14 @@ export interface Dataset {
   tags?: Array<Tag>;
   data_type?: string;
   total_downloads?: number;
+  extras?: {
+    key: string;
+    value: string;
+  }[];
 }
 
-export interface PortalJSDataset extends Dataset{
-  _name:string;
+export interface PortalJSDataset extends Dataset {
+  _name: string;
 }
 
 export interface PackageSearchOptions {
@@ -104,7 +108,7 @@ export interface Resource {
 export interface DatasetListQueryOptions {
   offset: number;
   limit: number;
-  sort?: string; 
+  sort?: string;
 }
 
 export interface Tag {

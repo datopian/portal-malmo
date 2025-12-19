@@ -19,6 +19,7 @@ const GroupCard = ({ group, colorClass="bg-gray-600" }: Props) => {
           height={32}
           src={group.image_display_url || "/graphics/group-default-group.svg"}
           alt={group.display_name}
+          className="invert"
         />
       </div>
       <div className="mt-auto">

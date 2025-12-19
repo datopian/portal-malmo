@@ -35,6 +35,7 @@
     "code": "Kod",
     "created": "Skapad",
     "updated": "Uppdaterad",
+    "lastModified" : "Senast ändrad",
     "version": "Version",
     "license": "Licens",
     "size": "Storlek",
@@ -55,13 +56,16 @@
     "more": "mer",
     "email": "E-post",
     "address": "Adress",
-    "phone": "Telefon"
+    "phone": "Telefon",
+    "readMore": "Läs mer",
+    "readLess": "Läs mindre"
   },
 
   "Dataset": {
     "searchLabel": "Sök datamängder",
     "latest": "Senaste datamängderna",
     "datasetsCount": "{count, plural, one {# datamängd} other {# datamängder}}",
+    "resourcesCount": "{count, plural, one {# fil} other {# filer}}",
     "total": "Totalt antal datamängder",
     "resourcesTitle": "Data och resurser ({count})",
     "noResources": "Inga resurser tillgängliga för denna datamängd.",
@@ -116,7 +120,8 @@
     "checkAllColumns": "Markera alla kolumner",
     "noColumns": "Inga kolumner hittades",
     "rowsPerPage": "Rader per sida",
-    "pagination": "Sida {page} av {total}"
+    "pagination": "Sida {page} av {total}",
+    "errorLoadingGeoJSON" : "Error loading geojson data"
   },
 
   "Footer": {
@@ -125,5 +130,13 @@
     "builtWith": "Byggd med",
     "onCKAN": "med CKAN backend",
     "exportCatalog": "Exportera DCAT-katalog i RDF eller JSON-LD"
+  },
+
+  "Metadata": {
+    "author": "Ansvarig",
+    "updateFrequency": "Uppdateringsfrekvens",
+    "documentation": "Dokumentation",
+    "temporalCoverageStart": "Tidsperiod – start",
+    "temporalCoverageEnd": "Tidsperiod – slut"
   }
 }

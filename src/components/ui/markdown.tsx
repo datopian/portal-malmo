@@ -93,7 +93,7 @@ export default function MarkdownRender({
           textOnly ? (
             props.children
           ) : (
-            <code className="bg-gray-100 rounded px-1 font-mono" {...props} />
+            <code className="rounded px-1 font-mono" {...props} />
           ),
         pre: (props) =>
           textOnly ? (
