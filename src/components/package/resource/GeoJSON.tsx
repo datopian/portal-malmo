@@ -123,7 +123,7 @@ export default function GeoJsonMap({ data, padding = [24, 24], maxZoom = 14 }: P
                 layerRef.current = layer;
               }}
             />
-            <FitToGeoJson layerRef={layerRef} padding={padding} maxZoom={maxZoom} />
+            <FitToGeoJson layerRef={layerRef} padding={padding} maxZoom={maxZoom}  />
           </>
         )}
       </MapContainer>
@@ -135,6 +135,6 @@ export default function GeoJsonMap({ data, padding = [24, 24], maxZoom = 14 }: P
       )}
     </div>
   ): (
-    <div className="text-sm">{t("Preview.errorLoadingGeoJSON")}</div>
+    <div className="text-sm">{t("Common.loading")}</div>
   );
 }

@@ -1,3 +1,5 @@
+"use client";
+
 import { Dataset } from "@/schemas/ckan";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { cn, formatPrettyDate } from "@/lib/utils";
