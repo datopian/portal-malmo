@@ -21,7 +21,7 @@ const CSVExplorer = () => {
       </div>
       <div className="flex w-full gap-[16px] bg-white">
         {isSettingsDropdownOpen && (
-          <div className="order-2 py-4 bg-theme border-l border-dashed border-accent-100 ml-auto min-w-[250px] max-w-[250px]">
+          <div className="order-2 py-4 bg-theme-green/5 border-l border-dashed border-accent-100 ml-auto min-w-[250px] max-w-[250px]">
             <SettingsDisplayPanel />
           </div>
         )}

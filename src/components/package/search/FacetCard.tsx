@@ -1,21 +1,20 @@
 import { PackageFacetOptions } from "@/schemas/ckan";
-import { useRef, useState } from "react";
-import { ChevronDown, ChevronUp, X } from "lucide-react";
+import { useState } from "react";
+import { ChevronDown, ChevronUp } from "lucide-react";
 import {
   Disclosure,
   DisclosureButton,
   DisclosurePanel,
 } from "@headlessui/react";
-import { Input } from "@/components/ui/input";
 import FacetOptions from "./FacetOptions";
 import { useTranslations } from "next-intl";
+import { Button } from "@/components/ui/button";
 
 export default function FacetCard({
   name,
   title,
   items,
   options,
-  searchPlaceholder = `Common.search`,
   onSelect,
 }: {
   name: string;
@@ -26,28 +25,15 @@ export default function FacetCard({
   searchPlaceholder?: string;
   onSelect: (v: string[]) => void;
 }) {
-  const inputRef = useRef<HTMLInputElement>(null);
   const [seeMore, setSeeMore] = useState(false);
-  const [facetOptionQuery, setFacetOptionQuery] = useState("");
-  const maxPerView = 6;
+  const maxPerView = 10;
   const t = useTranslations();
 
-  const visibleItems = facetOptionQuery
-    ? items.filter((item) =>
-        item.display_name
-          ?.toLocaleLowerCase()
-          ?.includes(facetOptionQuery?.toLowerCase())
-      )
-    : items;
-
   return (
-    <Disclosure
-      as="div"
-      className="border-b border-gray-200 border-dashed py-6"
-    >
+    <Disclosure as="div" className="border-b border-gray-200  py-6">
       <h3 className="-my-3 mx-4 lg:mx-0 flow-root ">
         <DisclosureButton className="group flex w-full items-center justify-between bg-white py-3  cursor-pointer">
-          <span className="font-medium ">
+          <span className="font-medium text-theme-green font-semibold">
             {title && <span className="">{title} </span>}
           </span>
           <span className="ml-6 flex items-center">
@@ -63,34 +49,11 @@ export default function FacetCard({
         </DisclosureButton>
       </h3>
       <DisclosurePanel className="pt-3">
-        {items.length > maxPerView && (
-          <div className="relative mx-4 lg:mx-0 mb-4 ">
-            <Input
-              ref={inputRef}
-              value={facetOptionQuery}
-              onChange={(e) => setFacetOptionQuery(e.target.value)}
-              placeholder={t(searchPlaceholder)}
-              className=""
-            />
-            {facetOptionQuery && (
-              <button
-                className="cursor-pointer text-gray-600 hover:text-black transition absolute right-2 top-2  z-10"
-                onClick={(e) => {
-                  e.preventDefault();
-                  setFacetOptionQuery("");
-                  inputRef.current?.focus();
-                  return false;
-                }}
-              >
-                <X width={16} />
-              </button>
-            )}
-          </div>
-        )}
-
-        <div className="space-y-3 mx-4 lg:mx-0">
-          {visibleItems
-            ?.slice(0, seeMore ? visibleItems?.length : maxPerView)
+        <div className="space-y-3 mx-4 lg:mx-0 max-h-[500px] overflow-y-auto overflow-x-hidden">
+          {items
+            ?.slice() 
+            .sort((a, b) => (b.count ?? 0) - (a.count ?? 0))
+            .slice(0, seeMore ? items.length : maxPerView)
             .map((item) => (
               <FacetOptions
                 name={name}
@@ -103,11 +66,13 @@ export default function FacetCard({
               />
             ))}
         </div>
-        {visibleItems?.length > maxPerView && (
-          <button
+        {items?.length > maxPerView && (
+          <Button
+            variant={"outline"}
             onClick={() => setSeeMore(!seeMore)}
             type="button"
-            className="flex items-center gap-1  mt-3 text-sm mx-4 lg:mx-0"
+            size={"sm"}
+            className="mt-4 max-w-fit cursor-pointer"
           >
             {seeMore ? (
               <>
@@ -120,7 +85,7 @@ export default function FacetCard({
                 <ChevronDown width={18} />
               </>
             )}
-          </button>
+          </Button>
         )}
       </DisclosurePanel>
     </Disclosure>

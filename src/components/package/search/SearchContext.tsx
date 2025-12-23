@@ -8,7 +8,6 @@ import {
   JSX,
   useContext,
   useMemo,
-  useState,
   useCallback,
 } from "react";
 
@@ -63,13 +62,15 @@ export const SearchStateProvider = ({
   const router = useRouter();
   const searchParams = useSearchParams();
 
-  // 1. Sync state from URL once
-  const initialOptions: PackageSearchOptions = useMemo(() => {
+  const options: PackageSearchOptions = useMemo(() => {
     const getParam = (key: string) => searchParams.get(key);
     const getParamArray = (key: string) => searchParams.getAll(key);
 
+    const offsetRaw = parseInt(getParam("offset") ?? "0", 10);
+    const offset = Number.isFinite(offsetRaw) ? offsetRaw : 0;
+
     return {
-      offset: parseInt(getParam("offset") ?? "0"),
+      offset,
       limit: 10,
       tags: getParamArray("tags"),
       groups: getParamArray("groups"),
@@ -81,43 +82,31 @@ export const SearchStateProvider = ({
     };
   }, [searchParams, defaultOrg]);
 
-  const [options, setOptionsState] =
-    useState<PackageSearchOptions>(initialOptions);
-
-  // 2. Apply new params to URL only (debounced, optional)
-  const updateURLParams = useCallback(
+  const setOptions = useCallback(
     (partial: Partial<PackageSearchOptions>) => {
       const url = new URL(window.location.href);
       const params = url.searchParams;
 
       Object.entries(partial).forEach(([key, value]) => {
-        if (!ignoredParams[key]) {
-          params.delete(key);
-          if (Array.isArray(value)) {
-            value.forEach((v) => params.append(key, v));
-          } else if (value !== undefined && value !== null) {
-            params.set(key, String(value));
-          }
+        if (ignoredParams[key]) return;
+
+        params.delete(key);
+
+        if (Array.isArray(value)) {
+          value.forEach((v) => params.append(key, v));
+          return;
+        }
+
+        if (value !== undefined && value !== null && value !== "") {
+          params.set(key, String(value));
         }
       });
 
-      router.push(`${url.pathname}?${params.toString()}`);
+      router.replace(`${url.pathname}?${params.toString()}`);
     },
     [router]
   );
 
-  const setOptions = useCallback(
-    (partial: Partial<PackageSearchOptions>) => {
-      setOptionsState((prev) => ({
-        ...prev,
-        ...partial,
-      }));
-      updateURLParams(partial);
-    },
-    [updateURLParams]
-  );
-
-  // 3. Determine filter state
   const hasFiltersApplied = useMemo(() => {
     return (
       (options.resFormat ?? []).length > 0 ||
@@ -127,22 +116,24 @@ export const SearchStateProvider = ({
     );
   }, [options, defaultOrg]);
 
-  // 4. Fetch data
-  const { data, error, isLoading, isFetching } = usePackageSearch(options, defaultOrg??undefined);
-
-  const value: SearchStateContext = {
-    defaultOrg,
+  const { data, error, isLoading, isFetching } = usePackageSearch(
     options,
-    result: data ?? null,
-    error,
-    isLoading,
-    isFetching,
-    hasFiltersApplied,
-    setOptions,
-  };
+    defaultOrg ?? undefined
+  );
 
   return (
-    <SearchStateContext.Provider value={value}>
+    <SearchStateContext.Provider
+      value={{
+        defaultOrg,
+        options,
+        result: data ?? null,
+        error,
+        isLoading,
+        isFetching,
+        hasFiltersApplied,
+        setOptions,
+      }}
+    >
       {children}
     </SearchStateContext.Provider>
   );

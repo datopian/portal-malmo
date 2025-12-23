@@ -126,7 +126,7 @@ export default function SearchDataForm() {
         <input
           type="text"
           placeholder={t("Search.searchPlaceholder")}
-          className="w-full border border-gray-200 rounded-md p-1.5 pr-8"
+          className="w-full border border-gray-200 p-1.5 pr-8"
           onChange={(e) => debouncedQueryData(e.target.value)}
           aria-label={t("Common.searchPlaceholder")}
           disabled={!context || !hasDataUrl}

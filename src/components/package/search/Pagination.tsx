@@ -1,8 +1,10 @@
 "use client";
+import { useTranslations } from "next-intl";
 import { useSearchState } from "./SearchContext";
-import { ArrowLeft, ArrowRight } from "lucide-react";
+import { ChevronLeft, ChevronRight } from "lucide-react";
 
 export default function Pagination({ count }: { count: number }) {
+  const t = useTranslations();
   const { options, setOptions } = useSearchState();
   const max = options?.limit ?? 0;
 
@@ -46,14 +48,14 @@ export default function Pagination({ count }: { count: number }) {
   };
 
   return (
-    <div className="flex  items-center w-full text-xl justify-center py-4">
+    <div className="flex  items-center w-full text-xl justify-center py-4 gap-2 md:gap-3">
       {currentPage > 1 && (
         <button
-          className="flex items-center gap-2 cursor-pointer text-gray-600 hover:text-foreground"
+          className="flex items-center gap-2 cursor-pointer  text-gray-600 hover:text-foreground"
           onClick={() => goToPage(currentPage - 1)}
         >
-          <ArrowLeft width={20} />
-          <span className="text-lg">Prev</span>
+          <ChevronLeft width={16} />
+          <span className="text-sm md:text-base hidden md:block">{t("Common.previous")}</span>
         </button>
       )}
 
@@ -65,9 +67,9 @@ export default function Pagination({ count }: { count: number }) {
         ) : (
           <button
             key={index}
-            className={`py-1 px-3 text-lg rounded cursor-pointer ${
+            className={`py-1 px-3 text-lg rounded-lg  cursor-pointer text-sm md:text-base ${
               page === currentPage
-                ? "text-foreground font-bold underline underline-offset-4"
+                ? "text-foreground border"
                 : "text-gray-600 font-light hover:text-foreground"
             }`}
             onClick={() => goToPage(page)}
@@ -79,11 +81,11 @@ export default function Pagination({ count }: { count: number }) {
 
       {currentPage < totalPages && (
         <button
-          className="flex items-center gap-2 cursor-pointer text-gray-600 hover:text-foreground"
+          className="flex items-center  gap-2 cursor-pointer text-gray-600 hover:text-foreground"
           onClick={() => goToPage(currentPage + 1)}
         >
-          <span className="text-lg">Next</span>
-          <ArrowRight width={20} />
+          <span className="hidden md:block text-sm md:text-base">{t("Common.next")}</span>
+          <ChevronRight width={16} />
         </button>
       )}
     </div>

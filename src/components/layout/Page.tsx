@@ -1,4 +1,3 @@
-import Head from "next/head";
 import Hero, { BreadcrumbProps } from "./PageHero";
 import PageTabs, { PageTabItem } from "./PageTabs";
 import Container from "../ui/container";
@@ -9,10 +8,14 @@ import Link from "next/link";
 
 export type PageProps = {
   preTitle?: string;
-  title: string;
+  title: React.ReactNode | string;
   description?: string;
   breadcrumb?: BreadcrumbProps;
-  metadata?: { title?: string; value: React.ReactNode }[];
+  metadata?: {
+    title?: string;
+    value: React.ReactNode;
+    icon?: React.ReactNode;
+  }[];
   actions?: {
     title?: string;
     href?: string;
@@ -41,11 +44,6 @@ export default function Page({
 }: PageProps) {
   return (
     <div>
-      <Head>
-        <title>{title ?? ""}</title>
-        <link rel="icon" href="/favicon.ico" />
-      </Head>
-
       {(title || description || preTitle) && (
         <Hero
           breadcrumb={breadcrumb}
@@ -61,7 +59,7 @@ export default function Page({
             {((metadata && metadata.length > 0) ||
               (actions && actions.length > 0)) && (
               <div className="flex flex-col gap-5 md:flex-row md:gap-10 w-full">
-                <div className="flex flex-col lg:flex-row lg:items-center flex-wrap gap-x-4 gap-y-2 text-gray-600">
+                <div className="flex flex-col lg:flex-row lg:items-center flex-wrap gap-x-4 gap-y-2 text-gray-600 text-sm">
                   {metadata?.map((data, i) => (
                     <div key={`${data.value}-${i}`}>
                       <span className="font-medium">{data.title}</span>{" "}

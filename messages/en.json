@@ -2,24 +2,26 @@
   "Site": {
     "title": "City of Malmö Open Data Portal",
     "description": "Find open data from the City of Malmö.",
-    "homeTitle" : "Home"
+    "homeTitle": "Home"
   },
 
-  "Common":{
+  "Common": {
     "organization": "Organization",
     "organizations": "Organizations",
-    "groups": "Groups",
-    "group": "Group",
+    "groups": "Themes",
+    "group": "theme",
+    "data": "Data",
+    "aboutUs": "About Us",
     "dataset": "Dataset",
     "datasets": "Datasets",
     "resource": "Resource",
     "resources": "Resources",
     "format": "Format",
     "formats": "Formats",
-    "tag": "Tag",
-    "tags": "Tags",
+    "tag": "Keyword",
+    "tags": "Keywords",
     "noData": "No data found",
-    "noResults" : "No results found",
+    "noResults": "No results found",
     "viewAll": "Explore All",
     "metadata": "Metadata",
     "copy": "Copy",
@@ -31,43 +33,55 @@
     "api": "API",
     "activityStream": "Activity Stream",
     "code": "Code",
-    "created": "Date created",
-    "updated": "Date updated",
+    "created": "Created",
+    "updated": "Updated",
+    "lastModified":"Last modified",
     "version": "Version",
     "license": "License",
-    "size" : "Size",
-    "close" : "Close",
-    "searchPlaceholder" : "Search...",
-    "showMore" : "Show more",
+    "size": "Size",
+    "close": "Close",
+    "searchPlaceholder": "Search...",
+    "showMore": "Show more",
     "showLess": "Show less",
-    "clearAll":"Clear all",
-    "loading" : "Loading...",
+    "clearAll": "Clear all",
+    "loading": "Loading...",
     "loadingData": "Loading data...",
-    "settings" : "Settings",
-    "pagination" : "Pagination",
-    "checkAll" : "Check all",
-    "page" : "Page",
+    "settings": "Settings",
+    "pagination": "Pagination",
+    "checkAll": "Check all",
+    "page": "Page",
     "previous": "Previous",
-    "next" : "Next",
-    "search" : "Search"
-  }, 
+    "next": "Next",
+    "search": "Search",
+    "more" : "more",
+    "email": "E-mail",
+    "address": "Address",
+    "phone": "Phone",
+    "readMore": "Read more",
+    "readLess": "Read less"
+  },
 
-  "Dataset" : {
+  "Dataset": {
+    "searchLabel": "Search datasets",
     "latest": "Latest datasets",
     "datasetsCount": "{count, plural, one {# dataset} other {# datasets}}",
-    "total" : "Total datasets",
-    "resourcesTitle" : "Data and Resources ({count})",
-    "noResources" : "No resources available for this dataset."
+    "resourcesCount": "{count, plural, one {# data file} other {# data files}}",
+    "total": "Total datasets",
+    "resourcesTitle": "Data and Resources ({count})",
+    "noResources": "No resources available for this dataset.",
+    "exploreAll": "Explore all datasets"
   },
 
-  "Activity" : {
-    "error:" : " Error loading {type} activity stream: {message}",
-    "notFound" : "No activities found."
+  "Activity": {
+    "error:": " Error loading {type} activity stream: {message}",
+    "notFound": "No activities found."
   },
 
-  "Home" : {
-    "title": "City of Malmö Open Data Portal",
-    "tagline": "Find open data from the City of Malmö."
+  "Home": {
+    "title": "Open data for",
+    "titleStrong": "Malmö",
+    "tagline": "Find open data from the City of Malmö.",
+    "recentUpdates": "Recent updates"
   },
 
   "OrganizationsPage": {
@@ -76,16 +90,17 @@
     "noOrganizations": "No organizations found"
   },
 
-  "GroupsPage" : {
-    "description" : "Explore all groups that organize and curate datasets across topics and themes.",
-    "searchPlaceholder": "Search groups...",
-    "noGroups": "No groups found"
+  "GroupsPage": {
+    "description": "Explore all themes that organize and curate datasets across topics.",
+    "searchPlaceholder": "Search themes...",
+    "noGroups": "No theme found",
+    "discoverGroups": "Discover by themes"
   },
 
-  "Search" : {
-    "title":"Search Datasets",
-    "subtitle" : "Find datasets to explore, analyze, and download.",
-    "filters" : "Filters",
+  "Search": {
+    "title": "Search Datasets",
+    "subtitle": "Find datasets to explore, analyze, and download.",
+    "filters": "Filters",
     "headerWithQuery": "Search results for \"{query}\"",
     "headerCount": "{count, plural, one {# dataset} other {# datasets}}",
     "headerNoResults": "",
@@ -95,19 +110,33 @@
     "sortLastModified": "Last modified",
     "sortNameAsc": "Name (A–Z)",
     "sortNameDesc": "Name (Z–A)",
-    "searchPlaceholder" : "Type to search..."
+    "searchPlaceholder": "Start typing your keyword...",
+    "datasetsFound": "{count, plural, =0 {No datasets found} one {# dataset found} other {# datasets found}}"
   },
 
-  "Preview" : {
-    "columns" : "Columns",
-    "searchColumnsPlaceholder" : "Search columns...",
-    "checkAllColumns" : "Check all columns",
-    "noColumns" : "No columns found",
-    "rowsPerPage" : "Rows per page",
-    "pagination" : "Page {page} of {total}"
+  "Preview": {
+    "columns": "Columns",
+    "searchColumnsPlaceholder": "Search columns...",
+    "checkAllColumns": "Check all columns",
+    "noColumns": "No columns found",
+    "rowsPerPage": "Rows per page",
+    "pagination": "Page {page} of {total}",
+    "errorLoadingGeoJSON" : "Error loading GeoJSON data"
+  },
+
+  "Footer": {
+    "contactTitle": "Contact",
+    "note": "Everyone – including private individuals as well as private and public organizations – is free to use the open data available on this portal.\nThe data may be freely reused, modified, and shared.",
+    "builtWith": "Built with",
+    "onCKAN": "on CKAN Backend",
+    "exportCatalog": "Export DCAT catalog in <rdf>RDF</rdf> or <jsonld>JSON-LD</jsonld>"
+  },
+
+  "Metadata" : {
+    "author" : "Author",
+    "updateFrequency" : "Update frequency",
+    "documentation" : "Documentation",
+    "temporalCoverageStart": "Temporal coverage start",
+    "temporalCoverageEnd": "Temporal coverage end"
   }
-
-  
-
-  
 }

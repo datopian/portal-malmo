@@ -20,21 +20,21 @@ export default function LanguageSwitcher() {
   };
 
   return (
-    <div className="flex items-center gap-2 text-sm font-medium">
+    <div className="flex items-center gap-1 text-sm font-medium">
       {locales.map((lang, index) => {
         const code = lang.toLowerCase();
         const isActive = code === locale;
 
         return (
-          <span key={code} className="flex items-center gap-2">
+          <span key={code} className="flex items-center gap-1">
             {index > 0 && <span>|</span>}
             <button
               type="button"
               onClick={() => setLocale(code)}
               className={`transition cursor-pointer ${
                 isActive
-                  ? "text-foreground"
-                  : "text-gray-400 hover:text-foreground"
+                  ? "text-theme-green font-semibold"
+                  : "text-gray-400 hover:text-theme-green"
               }`}
             >
               {code.toUpperCase()}

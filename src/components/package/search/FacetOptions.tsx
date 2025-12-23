@@ -51,7 +51,7 @@ export const FacetOptions = ({
         }
         className={cn(
           "mt-1 h-4 max-w-4 min-w-4 flex items-center justify-center rounded border-2 cursor-pointer transition-colors",
-           isActive ? "bg-foreground border-foreground" : "bg-white border-gray-200"
+           isActive ? "bg-theme-green border-theme-green" : "bg-white border-gray-200"
          )}
       >
         {isActive && <Check className="text-white" />}
@@ -59,7 +59,7 @@ export const FacetOptions = ({
       </label>
       <span
         onClick={toggleSelection}
-        className="ml-3 text-gray-600 cursor-pointer"
+        className="ml-3 text-[#364153] cursor-pointer"
       >
         {label} {count !== undefined && `(${count})`}
       </span>

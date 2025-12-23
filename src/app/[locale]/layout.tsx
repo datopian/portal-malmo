@@ -1,4 +1,4 @@
-import { Rubik } from "next/font/google";
+import { Open_Sans } from "next/font/google";
 import "../globals.css";
 import Header from "@/components/layout/Header";
 import Footer from "@/components/layout/Footer";
@@ -12,8 +12,8 @@ import { setRequestLocale } from "next-intl/server";
 import { Metadata } from "next";
 import { buildLocalizedMetadata } from "@/lib/seo";
 
-const rubik = Rubik({
-  weight: ["300", "400", "500", "600", "700", "900"],
+const mainFont = Open_Sans({
+  weight: ["300", "400", "500", "600", "700"],
   subsets: ["latin"],
 });
 
@@ -46,7 +46,7 @@ export default async function RootLayout({
   return (
     <html lang={locale}>
       <body
-        className={`${rubik.className} antialiased min-h-screen flex flex-col`}
+        className={`${mainFont.className} antialiased min-h-screen flex flex-col`}
       >
         <Suspense>
           <NextIntlClientProvider locale={locale} messages={messages}>

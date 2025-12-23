@@ -8,22 +8,24 @@
   "Common": {
     "organization": "Organisation",
     "organizations": "Organisationer",
-    "groups": "Grupper",
-    "group": "Grupp",
-    "dataset": "Dataset",
-    "datasets": "Dataset",
+    "groups": "Teman",
+    "group": "tema",
+    "data": "Data",
+    "aboutUs": "Om oss",
+    "dataset": "Datamängd",
+    "datasets": "Datamängder",
     "resource": "Resurs",
     "resources": "Resurser",
     "format": "Format",
     "formats": "Format",
     "tag": "Tagg",
     "tags": "Taggar",
-    "noData": "Inga data hittades",
+    "noData": "Ingen data hittades",
     "noResults": "Inga resultat hittades",
     "viewAll": "Utforska alla",
     "metadata": "Metadata",
     "copy": "Kopiera",
-    "copied": "Kopierat",
+    "copied": "Kopierad",
     "exploreAll": "Utforska alla",
     "export": "Exportera",
     "preview": "Förhandsgranska",
@@ -31,8 +33,9 @@
     "api": "API",
     "activityStream": "Aktivitetsflöde",
     "code": "Kod",
-    "created": "Skapad datum",
-    "updated": "Uppdaterad datum",
+    "created": "Skapad",
+    "updated": "Uppdaterad",
+    "lastModified" : "Senast ändrad",
     "version": "Version",
     "license": "Licens",
     "size": "Storlek",
@@ -40,7 +43,7 @@
     "searchPlaceholder": "Sök...",
     "showMore": "Visa mer",
     "showLess": "Visa mindre",
-    "clearAll": "Rensa allt",
+    "clearAll": "Rensa alla",
     "loading": "Laddar...",
     "loadingData": "Laddar data...",
     "settings": "Inställningar",
@@ -49,53 +52,66 @@
     "page": "Sida",
     "previous": "Föregående",
     "next": "Nästa",
-    "search": "Sök"
+    "search": "Sök",
+    "more": "mer",
+    "email": "E-post",
+    "address": "Adress",
+    "phone": "Telefon",
+    "readMore": "Läs mer",
+    "readLess": "Läs mindre"
   },
 
   "Dataset": {
-    "latest": "Senaste dataset",
-    "datasetsCount": "{count, plural, one {# dataset} other {# dataset}}",
-    "total": "Totalt dataset",
+    "searchLabel": "Sök datamängder",
+    "latest": "Senaste datamängderna",
+    "datasetsCount": "{count, plural, one {# datamängd} other {# datamängder}}",
+    "resourcesCount": "{count, plural, one {# fil} other {# filer}}",
+    "total": "Totalt antal datamängder",
     "resourcesTitle": "Data och resurser ({count})",
-    "noResources": "Inga resurser finns för detta dataset."
+    "noResources": "Inga resurser tillgängliga för denna datamängd.",
+    "exploreAll": "Utforska alla datamängder"
   },
 
   "Activity": {
-    "error:": "Fel vid inläsning av {type}-aktivitetsflöde: {message}",
+    "error:": " Fel vid laddning av aktivitetsflöde för {type}: {message}",
     "notFound": "Inga aktiviteter hittades."
   },
 
   "Home": {
-    "title": "Malmö stads öppna dataportal",
-    "tagline": "Hitta öppna data från Malmö stad."
+    "title": "Öppna data för",
+    "titleStrong": "Malmö",
+    "tagline": "Hitta öppna data från Malmö stad.",
+    "recentUpdates": "Senaste uppdateringar"
   },
 
   "OrganizationsPage": {
-    "description": "Utforska hela listan över organisationer som delar data på vår portal.",
+    "description": "Utforska den fullständiga listan över organisationer som delar data på vår portal.",
     "searchPlaceholder": "Sök organisationer...",
     "noOrganizations": "Inga organisationer hittades"
   },
 
   "GroupsPage": {
-    "description": "Utforska alla grupper som organiserar och kuraterar dataset inom olika ämnen och teman.",
-    "searchPlaceholder": "Sök grupper...",
-    "noGroups": "Inga grupper hittades"
+    "description": "Utforska alla grupper som organiserar och kuraterar datamängder efter ämnen och teman.",
+    "searchPlaceholder": "Sök teman...",
+    "noGroups": "Inga teman hittades",
+    "discoverGroups": "Upptäck efter teman"
   },
 
   "Search": {
-    "title": "Sök dataset",
-    "subtitle": "Hitta dataset att utforska, analysera och ladda ner.",
+    "title": "Sök datamängder",
+    "subtitle": "Hitta datamängder att utforska, analysera och ladda ner.",
     "filters": "Filter",
     "headerWithQuery": "Sökresultat för \"{query}\"",
-    "headerCount": "{count, plural, one {# dataset} other {# dataset}}",
-    "headerNoResults": "Inga resultat hittades",
+    "headerCount": "{count, plural, one {# datamängd} other {# datamängder}}",
+    "headerNoResults": "",
     "headerShowing": "Visar {count} resultat",
     "sortLabel": "Sortera:",
     "sortRelevance": "Relevans",
     "sortLastModified": "Senast ändrad",
     "sortNameAsc": "Namn (A–Ö)",
     "sortNameDesc": "Namn (Ö–A)",
-    "searchPlaceholder": "Skriv för att söka..."
+    "searchPlaceholder": "Börja skriva ditt sökord...",
+    "datasetsFound": "{count, plural, =0 {Inga datamängder hittades} one {# datamängd hittades} other {# datamängder hittades}}"
   },
 
   "Preview": {
@@ -104,6 +120,23 @@
     "checkAllColumns": "Markera alla kolumner",
     "noColumns": "Inga kolumner hittades",
     "rowsPerPage": "Rader per sida",
-    "pagination": "Sida {page} av {total}"
+    "pagination": "Sida {page} av {total}",
+    "errorLoadingGeoJSON" : "Error loading geojson data"
+  },
+
+  "Footer": {
+    "contactTitle": "Kontakt",
+    "note": "Alla – såväl privatpersoner som privata och offentliga organisationer – får fritt använda de öppna data som finns på denna portal.\nDatan är fri att återanvändas, modifieras och delas.",
+    "builtWith": "Byggd med",
+    "onCKAN": "med CKAN backend",
+    "exportCatalog": "Exportera DCAT-katalog i <rdf>RDF</rdf> eller <jsonld>JSON-LD</jsonld>"
+  },
+
+  "Metadata": {
+    "author": "Ansvarig",
+    "updateFrequency": "Uppdateringsfrekvens",
+    "documentation": "Dokumentation",
+    "temporalCoverageStart": "Tidsperiod – start",
+    "temporalCoverageEnd": "Tidsperiod – slut"
   }
 }

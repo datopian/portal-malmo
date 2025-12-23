@@ -1,14 +1,20 @@
 "use client";
 
-import { FormEventHandler, MouseEventHandler, useRef, useState } from "react";
-import { SearchIcon, X } from "lucide-react";
-import { usePathname, useRouter } from "next/navigation";
+import { FormEventHandler, MouseEventHandler, useEffect, useRef, useState } from "react";
+import { X } from "lucide-react";
+import { usePathname, useRouter, useSearchParams } from "next/navigation";
+import { useTranslations } from "next-intl";
+import { envVars } from "@/lib/env";
+
+const SUPPORTED_LOCALES = envVars.i18nSupportedLocales;
 
 export default function SearchForm({
+  title,
   value = "",
-  placeholder = "Enter a search term...",
+  placeholder = "",
   onSubmit,
 }: {
+  title?: string;
   value?: string;
   placeholder?: string;
   onSubmit?: (q: string) => void;
@@ -16,12 +22,47 @@ export default function SearchForm({
   const ref = useRef<HTMLInputElement>(null);
   const router = useRouter();
   const pathname = usePathname();
-  const [q, setQuery] = useState(value);
+  const searchParams = useSearchParams();
+  const [q, setQuery] = useState(() => searchParams.get("query") ?? value);
+  const t = useTranslations();
+
+  const getLocaleFromPathname = () => {
+    const segments = pathname.split("?")[0].split("/").filter(Boolean);
+    const first = segments[0];
+    if (SUPPORTED_LOCALES.length > 1 && SUPPORTED_LOCALES.includes(first)) {
+      return first;
+    }
+    return undefined;
+  };
+
+  const localeInPath = getLocaleFromPathname();
+
+  const isSearchPage = pathname.split("?")[0].endsWith("/data");
+
+  const buildSearchUrl = () => {
+    const baseSearchPath = isSearchPage
+      ? pathname.split("?")[0]
+      : localeInPath
+      ? `/${localeInPath}/data`
+      : `/data`;
+
+    const params = new URLSearchParams();
+    if (q) params.set("query", q);
+
+    const qs = params.toString();
+    return qs ? `${baseSearchPath}?${qs}` : baseSearchPath;
+  };
 
   const handleSubmit: FormEventHandler<HTMLFormElement> = (e) => {
     e.preventDefault();
-    if (onSubmit) onSubmit(q ?? "");
-    else router.push(`${pathname === "/" ? "search" : pathname}?query=${encodeURIComponent(q)}`);
+
+    if (onSubmit) {
+      onSubmit(q ?? "");
+    } else {
+      const url = buildSearchUrl();
+      console.log(url);
+      router.push(url);
+    }
     return false;
   };
 
@@ -37,10 +78,19 @@ export default function SearchForm({
     return false;
   };
 
+  useEffect(() => {
+    setQuery(searchParams.get("query") ?? "");
+  }, [searchParams]);
+
   return (
-    <div className="w-full">
-      <form className="" onSubmit={handleSubmit}>
-        <div className="flex w-full relative rounded-lg">
+    <div className="p-5 md:p-8 bg-theme-green text-white max-w-[768px] shadow-xl">
+      {title && (
+        <h3 className="text-xl md:text-2xl lg:text-4xl mb-4 font-semibold">
+          {title}
+        </h3>
+      )}
+      <form className="text-foreground" onSubmit={handleSubmit}>
+        <div className="flex w-full relative gap-2">
           <input
             ref={ref}
             aria-label={placeholder}
@@ -49,13 +99,13 @@ export default function SearchForm({
             placeholder={placeholder}
             onChange={(e) => setQuery(e.target.value)}
             value={q}
-            className="w-full px-4 py-3 bg-white pr-[60px] focus:shadow-lg rounded-lg outline-0 border border-gray-200"
+            className="w-full px-4 py-3 bg-white pr-[60px] focus:shadow-lg  outline-0 border border-gray-200"
           />
           {q && (
             <button
               type="button"
               aria-label="Clear search"
-              className="cursor-pointer absolute right-15 top-[14px] text-gray-600 hover:text-gray-900 transition"
+              className="cursor-pointer absolute right-[140px] top-[14px] text-gray-600 hover:text-gray-900 transition"
               onClick={handleClearQuery}
             >
               <X className="size-5" />
@@ -64,11 +114,11 @@ export default function SearchForm({
           <button
             type="submit"
             aria-labelledby="search-label"
-            className="flex cursor-pointer absolute right-0 h-full z-10 items-center px-4 rounded-r-lg text-gray-600 hover:text-gray-900 transition"
+            className="flex min-w-[120px] justify-center cursor-pointer hover:bg-theme-green-light/90 bg-theme-green-light items-center px-4 md:px-8 text-white font-bold transition h-[50px]"
           >
-            <SearchIcon className="size-5" />
+            {t("Common.search")}
             <span className="sr-only" id="search-label">
-              Search
+              {t("Common.search")}
             </span>
           </button>
         </div>

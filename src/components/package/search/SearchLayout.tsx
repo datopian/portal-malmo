@@ -5,9 +5,8 @@ import { useSearchState } from "./SearchContext";
 import SearchResultHeader from "./SearchResultHeader";
 import SearchResultItem from "./SearchResultItem";
 import Pagination from "./Pagination";
-import NoDataFound from "./NoDataFound";
 import SearchForm from "./SearchForm";
-import { Funnel, X } from "lucide-react";
+import { Funnel, SlidersHorizontal, X } from "lucide-react";
 import ActiveFilters from "./ActiveFilters";
 import SortBy from "./SortBy";
 import { Dialog, DialogBackdrop, DialogPanel } from "@headlessui/react";
@@ -15,8 +14,13 @@ import { useState } from "react";
 import { SearchSkeletonLayout } from "@/components/layout/PageLoading";
 import Facets from "./Facets";
 import { useTranslations } from "next-intl";
+import { Button } from "@/components/ui/button";
 
-export default function SearchLayout() {
+export default function SearchLayout({
+  showSearchForm = true,
+}: {
+  showSearchForm?: boolean;
+}) {
   const t = useTranslations();
   const [mobileFiltersOpen, setMobileFiltersOpen] = useState(false);
   const { result, isLoading, options, defaultOrg, setOptions } =
@@ -27,24 +31,16 @@ export default function SearchLayout() {
     <div className="relative">
       <div className="search-form-and-filters">
         <div className="flex items-center gap-2">
-          <SearchForm
-            value={options?.query}
-            onSubmit={(q) => {
-              setOptions({
-                query: q,
-              });
-            }}
-          />
-          <button
-            type="button"
-            onClick={() => {
-              setMobileFiltersOpen(true);
-            }}
-            className="p-3 cursor-pointer border border-gray-200 rounded-lg bg-white hover:shadow lg:hidden text-center flex flex-col items-center text-gray-600 hover:text-gray-900 transition"
-          >
-            <span className="sr-only">{t("Search.filters")}</span>
-            <Funnel aria-hidden="true" className="size-5" />
-          </button>
+          {showSearchForm && (
+            <SearchForm
+              value={options?.query}
+              onSubmit={(q) => {
+                setOptions({
+                  query: q,
+                });
+              }}
+            />
+          )}
         </div>
       </div>
       <section aria-labelledby="search-heading" className="pb-24">
@@ -59,30 +55,42 @@ export default function SearchLayout() {
             {/* Filters */}
             {hasResults && (
               <form className="hidden lg:block h-fit sticky top-5">
-                <Facets />
+                <Facets title={t("Search.filters")} />
               </form>
             )}
 
             <div
               className={`${hasResults ? "lg:col-span-3" : "lg:col-span-12"}`}
             >
-              <div className="mt-4 flex">
+              <div className="mt-4 flex flex-col gap-4 md:flex-row ">
                 <SearchResultHeader />
                 {hasResults && (
-                  <div className="ml-auto w-fit">
+                  <div className="md:ml-auto w-fit">
                     <SortBy />
                   </div>
                 )}
               </div>
               <div className="my-6 flex flex-col md:flex-row md:items-end">
                 <div className="">
+                  <Button
+                    onClick={() => {
+                      setMobileFiltersOpen(true);
+                    }}
+                    variant={"outline"}
+                    size={"sm"}
+                    className="cursor-pointer lg:hidden mb-4"
+                  >
+                    <span className="sr-only">{t("Search.filters")}</span>
+                    <Funnel aria-hidden="true" className="size-5" />
+                    {t("Search.filters")}
+                  </Button>
                   <ActiveFilters
                     title="Active Filters"
                     hide={defaultOrg ? ["orgs"] : []}
                   />
                 </div>
               </div>
-              <div className="flex flex-col space-y-4 mt-4 w-full ">
+              <div className="flex flex-col space-y-4 mt-4 w-full border border-b-0">
                 {result?.datasets?.map((d) => (
                   <SearchResultItem
                     key={d.id}
@@ -97,7 +105,7 @@ export default function SearchLayout() {
                     <Pagination count={result?.count ?? 0} />
                   </div>
                 ) : (
-                  !isLoading && !hasResults && <NoDataFound />
+                  <></>
                 )}
               </div>
             </div>
@@ -122,7 +130,10 @@ export default function SearchLayout() {
             className="relative ml-auto flex size-full max-w-xs transform flex-col overflow-y-auto bg-white py-4 pb-12 shadow-xl transition duration-300 ease-in-out data-closed:translate-x-full"
           >
             <div className="flex items-center justify-between px-4">
-              <h2 className="text-lg font-medium text-gray-900">{t("Search.filters")}</h2>
+              <span className="flex items-center gap-2 text-theme-green text-xl font-bold">
+                <SlidersHorizontal size={20} />
+                {t("Search.filters")}
+              </span>
               <button
                 type="button"
                 onClick={() => setMobileFiltersOpen(false)}

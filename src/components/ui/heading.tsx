@@ -14,9 +14,9 @@ type SubHeading = {
 };
 
 const headingSizeMap: Record<1 | 2 | 3 | 4 | 5 | 6, string> = {
-  1: "text-3xl sm:text-4xl font-extrabold",
-  2: "text-2xl sm:text-3xl font-bold",
-  3: "text-xl sm:text-2xl font-semibold",
+  1: "text-3xl sm:text-4xl lg:text-5xl font-extrabold",
+  2: "text-2xl sm:text-3xl lg:text-4xl font-bold",
+  3: "text-xl sm:text-2xl lg:text-3xl font-semibold",
   4: "text-lg sm:text-xl font-semibold",
   5: "text-base sm:text-lg font-medium",
   6: "text-base sm:text-lg font-medium",
@@ -33,9 +33,7 @@ const Heading: React.FC<HeadingProps> = ({
 
   return (
     <HeadingTag
-      className={`${headingClasses} ${
-        center ? "text-center" : "text-left"
-      } ${cn("text-gray-900 block", className)}`}
+      className={`${cn( headingClasses, center ? "text-center" : "text-left", "text-theme-green block", className )}`}
     >
       {children}
     </HeadingTag>

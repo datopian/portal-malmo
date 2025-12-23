@@ -1,12 +1,12 @@
 import Page from "@/components/layout/Page";
 import Container from "@/components/ui/container";
 import PageSearchInput from "@/components/ui/page-search-input";
-import Link from "next/link";
-
-import { getGroupsFromFacets } from "@/lib/ckan/dataset";
 import { getTranslations } from "next-intl/server";
 import { Metadata } from "next";
 import { buildLocalizedMetadata } from "@/lib/seo";
+import { ckan } from "@/lib/ckan";
+import GroupCard from "@/components/groups/GroupCard";
+import { GROUP_CARD_COLORS } from "@/lib/groups";
 
 export const revalidate = 300;
 
@@ -30,7 +30,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 export default async function GroupsPage({ searchParams }: Props) {
   const t = await getTranslations();
 
-  const groups = await getGroupsFromFacets();
+  const groups = await ckan().getGroupsWithDetails();
 
   const { q: qParam } = await searchParams;
 
@@ -46,43 +46,30 @@ export default async function GroupsPage({ searchParams }: Props) {
     <Page
       title={t("Common.groups")}
       description={t("GroupsPage.description")}
-      heroClass="pb-15"
       heroContent={
         <div className="space-y-3">
           <PageSearchInput
             defaultValue={query}
-            placeholder="Search Groups..."
+            placeholder="Search Themes..."
           />
-          <div>
-            {filtered.length > 0 ? (
-              <>
-                <span className="font-medium">{filtered.length}</span>{" "}
-                {filtered.length > 1 ? t("Common.groups") : t("Common.group")}
-              </>
-            ) : (
-              <span>{t("GroupsPage.noGroups")}</span>
-            )}
-          </div>
         </div>
       }
     >
-      <Container className="-mt-15 relative">
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-5 mt-5">
-          {filtered.map((group) => (
-            <Link
-              href={`/search/?groups=${group.name}`}
-              key={group.name}
-              className="shadow-lg hover:shadow-xl cursor-pointer p-5 bg-white rounded-lg border space-y-2 transition "
-            >
-              <div className="font-medium line-clamp-2">
-                {group.display_name}
-              </div>
+      <Container className="relative">
+        <div className="grid grid-cols-1 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-4 py-12">
 
-              <div className="text-gray-600">
-                {t("Dataset.datasetsCount", { count: group.count })}
-              </div>
-            </Link>
-          ))}
+            {filtered.length > 0 ? filtered.map((group, i) => (
+              <GroupCard
+                key={group.id}
+                group={group}
+                colorClass={GROUP_CARD_COLORS[i] || "bg-gray-600"}
+              />
+            )): (
+              <span className="text-sm">
+                {t("GroupsPage.noGroups")}
+              </span>
+            )}
+          
         </div>
       </Container>
     </Page>
