@@ -10,22 +10,22 @@ import { getTranslations } from "next-intl/server";
 export default async function DatasetInfo({ dataset }: { dataset: Dataset }) {
   const t = await getTranslations();
   const authorName = dataset.extras?.find(
-    (field) => field.key === "contact_point_name"
+    (field) => field.key.toLowerCase() === "contact_point_name"
   )?.value;
   const authorEmail = dataset.extras?.find(
-    (field) => field.key === "contact_point_email"
+    (field) => field.key.toLowerCase() === "contact_point_email"
   )?.value;
   const documentation = dataset.extras?.find(
-    (field) => field.key === "documentation"
+    (field) => field.key.toLowerCase() === "documentation"
   )?.value;
   const temporalStart = dataset.extras?.find(
-    (field) => field.key === "temporal_start"
+    (field) => field.key.toLowerCase() === "temporal_start"
   )?.value;
   const temporalEnd = dataset.extras?.find(
-    (field) => field.key === "temporal_end"
+    (field) => field.key.toLowerCase() === "temporal_end"
   )?.value;
   const updateFrequency = dataset.extras?.find(
-    (field) => field.key === "frequency"
+    (field) => field.key.toLowerCase() === "frequency"
   )?.value;
   const updateFrequencyCode = updateFrequency?.split("/").pop()?.trim();
   const updateFrequencyLabel =
