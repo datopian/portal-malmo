@@ -76,7 +76,7 @@ export default async function Home() {
                 <GroupCard
                   key={group.id}
                   group={group}
-                  colorClass={GROUP_CARD_COLORS[i]}
+                  colorClass={GROUP_CARD_COLORS[i] || "bg-gray-600"}
                 />
               ))}
             </div>

@@ -62,7 +62,7 @@ export default async function GroupsPage({ searchParams }: Props) {
               <GroupCard
                 key={group.id}
                 group={group}
-                colorClass={GROUP_CARD_COLORS[i]}
+                colorClass={GROUP_CARD_COLORS[i] || "bg-gray-600"}
               />
             )): (
               <span className="text-sm">
