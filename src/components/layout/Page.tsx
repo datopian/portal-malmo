@@ -4,7 +4,7 @@ import Container from "../ui/container";
 import { cn } from "@/lib/utils";
 import React from "react";
 import { Button, buttonVariants } from "../ui/button";
-import Link from "next/link";
+import { Link } from "@/i18n/navigation";
 
 export type PageProps = {
   preTitle?: string;

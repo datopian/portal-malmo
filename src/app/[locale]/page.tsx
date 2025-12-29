@@ -5,12 +5,12 @@ import SearchForm from "@/components/package/search/SearchForm";
 import { Button } from "@/components/ui/button";
 import Container from "@/components/ui/container";
 import { Heading } from "@/components/ui/heading";
+import { Link } from "@/i18n/navigation";
 import { ckan } from "@/lib/ckan";
 import { searchDatasets } from "@/lib/ckan/dataset";
 import { GROUP_CARD_COLORS } from "@/lib/groups";
 import { Metadata } from "next";
 import { getTranslations } from "next-intl/server";
-import Link from "next/link";
 
 type Props = { params: Promise<{ locale: string }> };
 

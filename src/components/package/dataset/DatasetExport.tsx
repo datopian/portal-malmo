@@ -1,7 +1,7 @@
 import { envVars } from "@/lib/env";
 import { Dataset } from "@/schemas/ckan";
 import { Download } from "lucide-react";
-import Link from "next/link";
+import { Link } from "@/i18n/navigation";
 import React from "react";
 
 const DatasetExport = ({

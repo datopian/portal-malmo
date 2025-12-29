@@ -10,7 +10,7 @@ import { Heading } from "@/components/ui/heading";
 import { DatasetResources } from "@/components/package";
 import DatasetInfo from "@/components/package/dataset/DatasetInfo";
 import { Badge } from "@/components/ui/badge";
-import Link from "next/link";
+import { Link } from "@/i18n/navigation";
 import { formatDate } from "date-fns";
 
 type DatasetPageParams = {

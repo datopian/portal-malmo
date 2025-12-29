@@ -3,10 +3,10 @@
 import { Dataset } from "@/schemas/ckan";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { cn, formatPrettyDate } from "@/lib/utils";
-import Link from "next/link";
 import MarkdownRender from "@/components/ui/markdown";
 import { useLocale } from "next-intl";
 import { ArrowRight } from "lucide-react";
+import { Link } from "@/i18n/navigation";
 
 const DatasetSimpleCard = ({ dataset }: { dataset: Dataset }) => {
   const locale = useLocale();

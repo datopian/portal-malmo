@@ -1,7 +1,7 @@
 import { Dataset } from "@/schemas/ckan";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { cn, formatDateToHumanReadable } from "@/lib/utils";
-import Link from "next/link";
+import { Link } from "@/i18n/navigation";
 
 export default function DatasetCard({
   dataset,
