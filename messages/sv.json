@@ -58,7 +58,8 @@
     "address": "Adress",
     "phone": "Telefon",
     "readMore": "Läs mer",
-    "readLess": "Läs mindre"
+    "readLess": "Läs mindre",
+    "error": "Något gick fel."
   },
 
   "Dataset": {
@@ -121,7 +122,7 @@
     "noColumns": "Inga kolumner hittades",
     "rowsPerPage": "Rader per sida",
     "pagination": "Sida {page} av {total}",
-    "errorLoadingGeoJSON" : "Error loading geojson data"
+    "errorLoadingGeoJSON": "Fel vid inläsning av GeoJSON-data"
   },
 
   "Footer": {

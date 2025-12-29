@@ -94,7 +94,7 @@ export default function GeoJsonMap({
 
       const trimmed = input.trim();
       if (!trimmed) {
-        setError(t("Common.invalidData", { default: "No GeoJSON provided." }));
+        setError(t("Preview.errorLoadingGeoJSON"));
         setState("error");
         return;
       }
@@ -110,9 +110,7 @@ export default function GeoJsonMap({
       // URL/path fetch
       if (!isProbablyUrl(trimmed)) {
         setError(
-          t("Common.invalidData", {
-            default: "Invalid GeoJSON (not JSON and not a URL/path).",
-          })
+          t("Preview.errorLoadingGeoJSON")
         );
         setState("error");
         return;

@@ -1,7 +1,6 @@
 import { Dataset } from "@/schemas/ckan";
 import ListItem from "@/components/ui/list-item";
 import { updateFrequencyValues } from "@/lib/utils";
-import { Link } from "@/i18n/navigation";
 import React from "react";
 import { getTranslations } from "next-intl/server";
 
@@ -37,12 +36,12 @@ export default async function DatasetInfo({ dataset }: { dataset: Dataset }) {
     <div className="divide-y  ">
       <ListItem title={t("Metadata.author")}>
         {authorEmail ? (
-          <Link
+          <a
             href={`mailto:${authorEmail}`}
             className="underline text-theme-green"
           >
             {authorName}
-          </Link>
+          </a>
         ) : (
           authorName||"--"
         )}
