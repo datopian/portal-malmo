@@ -25,7 +25,7 @@ export default function TableData() {
                 <TableColumnValue
                   key={`col-${z}`}
                   column={key}
-                  value={row[key] as string }
+                  value={row[key] }
                 />
               ))}
             </tr>
