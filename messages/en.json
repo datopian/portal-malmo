@@ -58,7 +58,8 @@
     "address": "Address",
     "phone": "Phone",
     "readMore": "Read more",
-    "readLess": "Read less"
+    "readLess": "Read less",
+    "error" : "Something went wrong."
   },
 
   "Dataset": {

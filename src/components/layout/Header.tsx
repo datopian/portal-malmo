@@ -5,7 +5,7 @@ import { Link, usePathname } from "@/i18n/navigation";
 import clsx from "clsx";
 import {  Menu } from "lucide-react";
 import { useState, useEffect } from "react";
-import { useTranslations } from "next-intl";
+import { useLocale, useTranslations } from "next-intl";
 import LanguageSwitcher from "./LanguageSwitcher";
 import Image from "next/image";
 
@@ -13,6 +13,7 @@ export default function Header() {
   const [menuOpen, setMenuOpen] = useState(false);
   const pathname = usePathname();
   const t = useTranslations();
+  const locale = useLocale();
 
   const menu = [
     { href: "/data", label: `${t("Common.data")}` },
@@ -37,7 +38,7 @@ export default function Header() {
               href="/"
               className="flex items-center gap-2 py-3 mr-3"
             >
-              <Image src="/logo.svg" width={252} height={40} alt={t("Site.title")}/>
+              <Image src={`/logo-${locale}.svg`} width={252} height={40} alt={t("Site.title")}/>
             </Link>
             <div className="ml-auto lg:hidden">
               <LanguageSwitcher />

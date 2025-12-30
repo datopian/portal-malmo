@@ -1,6 +1,6 @@
 import { getTranslations } from "next-intl/server";
 import Container from "../ui/container";
-import Link from "next/link";
+import { Link } from "@/i18n/navigation";
 import { Roboto } from "next/font/google";
 import { envVars } from "@/lib/env";
 

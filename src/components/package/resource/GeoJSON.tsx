@@ -1,14 +1,19 @@
 "use client";
 
 import { useEffect, useMemo, useRef, useState } from "react";
-import { GeoJSON as RLGeoJSON, MapContainer, TileLayer, useMap } from "react-leaflet";
+import {
+  GeoJSON as RLGeoJSON,
+  MapContainer,
+  TileLayer,
+  useMap,
+} from "react-leaflet";
 import type { GeoJsonObject } from "geojson";
 import type { GeoJSON as LeafletGeoJSON } from "leaflet";
 import "leaflet/dist/leaflet.css";
 import { useTranslations } from "next-intl";
 
 type Props = {
-  data: GeoJsonObject | string; // string can be URL or raw JSON string
+  data: GeoJsonObject | string; // string can be URL/path or raw JSON string
   padding?: [number, number];
   maxZoom?: number;
 };
@@ -29,7 +34,7 @@ function FitToGeoJson({
     if (!layer) return;
 
     const bounds = layer.getBounds();
-    if (!bounds.isValid()) return;
+    if (!bounds?.isValid()) return;
 
     map.fitBounds(bounds, { padding, maxZoom });
   }, [map, layerRef, padding, maxZoom]);
@@ -38,7 +43,6 @@ function FitToGeoJson({
 }
 
 function isProbablyUrl(value: string) {
-  // supports https://, http://, /path, ./path, ../path
   return /^(https?:\/\/|\/|\.\/|\.\.\/)/.test(value.trim());
 }
 
@@ -54,87 +58,132 @@ function safeParseGeoJson(value: string): GeoJsonObject | null {
   }
 }
 
-export default function GeoJsonMap({ data, padding = [24, 24], maxZoom = 14 }: Props) {
+type LoadState = "idle" | "loading" | "ready" | "error";
+
+export default function GeoJsonMap({
+  data,
+  padding = [24, 24],
+  maxZoom = 14,
+}: Props) {
   const t = useTranslations();
   const layerRef = useRef<LeafletGeoJSON | null>(null);
+
   const [geoJson, setGeoJson] = useState<GeoJsonObject | null>(
     typeof data === "string" ? null : data
+  );
+  const [state, setState] = useState<LoadState>(
+    typeof data === "string" ? "loading" : "ready"
   );
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    let cancelled = false;
-
-    async function load() {
+    // non-string: immediate
+    if (typeof data !== "string") {
+      setGeoJson(data);
       setError(null);
+      setState("ready");
+      return;
+    }
 
-      if (typeof data !== "string") {
-        setGeoJson(data);
+    const controller = new AbortController();
+
+    async function loadFromString(input: string) {
+      setState("loading");
+      setError(null);
+      setGeoJson(null);
+
+      const trimmed = input.trim();
+      if (!trimmed) {
+        setError(t("Preview.errorLoadingGeoJSON"));
+        setState("error");
         return;
       }
 
-      const trimmed = data.trim();
-
-      // raw JSON string?
+      // raw JSON string
       const parsed = safeParseGeoJson(trimmed);
       if (parsed) {
         setGeoJson(parsed);
+        setState("ready");
         return;
       }
 
-      // URL/path -> fetch
+      // URL/path fetch
       if (!isProbablyUrl(trimmed)) {
-        setError("GeoJSON string is not valid JSON and doesn't look like a URL/path.");
+        setError(
+          t("Preview.errorLoadingGeoJSON")
+        );
+        setState("error");
         return;
       }
 
       try {
-        const res = await fetch(trimmed);
-        if (!res.ok) throw new Error(`Failed to fetch GeoJSON: ${res.status} ${res.statusText}`);
+        const res = await fetch(trimmed, { signal: controller.signal });
+        if (!res.ok) {
+          throw new Error(`Failed to fetch GeoJSON (${res.status} ${res.statusText})`);
+        }
 
-        const json = (await res.json()) as GeoJsonObject;
-        if (!cancelled) setGeoJson(json);
+        const json = (await res.json()) as unknown;
+        if (!json || typeof json !== "object" || !("type" in (json as Record<string, unknown>))) {
+          throw new Error("Response is not valid GeoJSON.");
+        }
+
+        setGeoJson(json as GeoJsonObject);
+        setState("ready");
       } catch (e) {
-        if (!cancelled) setError(e instanceof Error ? e.message : "Failed to load GeoJSON");
+        if (controller.signal.aborted) return;
+        setError(e instanceof Error ? e.message : "Failed to load GeoJSON.");
+        setState("error");
       }
     }
 
-    load();
-    return () => {
-      cancelled = true;
-    };
-  }, [data]);
+    loadFromString(data);
+
+    return () => controller.abort();
+  }, [data, t]);
 
   const memoGeoJson = useMemo(() => geoJson, [geoJson]);
 
-  return memoGeoJson ? (
+  if (state === "loading") {
+    return <div className="text-sm">{t("Common.loading")}</div>;
+  }
+
+  if (state === "error") {
+    return (
+      <div className="text-sm text-red-600">
+        {error ?? t("Common.error", { default: "Something went wrong." })}
+      </div>
+    );
+  }
+
+  if (!memoGeoJson) {
+    return (
+      <div className="text-sm text-gray-600">
+        {t("Common.noData", { default: "No data found." })}
+      </div>
+    );
+  }
+
+  return (
     <div className="h-[420px] w-full overflow-hidden rounded-xl">
-      <MapContainer center={[0, 0]} zoom={2} scrollWheelZoom style={{ height: "100%", width: "100%" }}>
+      <MapContainer
+        center={[0, 0]}
+        zoom={2}
+        scrollWheelZoom
+        style={{ height: "100%", width: "100%" }}
+      >
         <TileLayer
           attribution="&copy; OpenStreetMap contributors"
           url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
         />
 
-        {memoGeoJson && (
-          <>
-            <RLGeoJSON
-              data={memoGeoJson}
-              ref={(layer) => {
-                layerRef.current = layer;
-              }}
-            />
-            <FitToGeoJson layerRef={layerRef} padding={padding} maxZoom={maxZoom}  />
-          </>
-        )}
+        <RLGeoJSON
+          data={memoGeoJson}
+          ref={(layer) => {
+            layerRef.current = layer;
+          }}
+        />
+        <FitToGeoJson layerRef={layerRef} padding={padding} maxZoom={maxZoom} />
       </MapContainer>
-
-      {error && (
-        <div className="mt-2 text-sm text-red-600">
-          {error}
-        </div>
-      )}
     </div>
-  ): (
-    <div className="text-sm">{t("Common.loading")}</div>
   );
 }

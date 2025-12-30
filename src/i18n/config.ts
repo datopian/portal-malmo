@@ -6,6 +6,4 @@ export const locales = envVars.i18nSupportedLocales
 
 export const defaultLocale = envVars.i18nDefaultLocale ?? locales[0];
 
-// If there is only 1 locale -> no prefix in URL
-// If there are multiple -> always prefix (/en, /pt, ...)
-export const localePrefix = locales.length === 1 ? "never" : "always";
+export const localePrefix = locales.length === 1 ? "never" : "as-needed";

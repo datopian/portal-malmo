@@ -6,7 +6,7 @@ import { getAllOrganizations } from "@/lib/ckan/organization";
 import { buildLocalizedMetadata } from "@/lib/seo";
 import { Metadata } from "next";
 import { getTranslations } from "next-intl/server";
-import Link from "next/link";
+import { Link } from "@/i18n/navigation";
 
 export const revalidate = 300;
 

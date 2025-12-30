@@ -1,4 +1,3 @@
-import Link from "next/link";
 import { Dataset } from "@/schemas/ckan";
 import { Skeleton } from "@/components/ui/skeleton";
 import { formatDateToDDMMYYYY } from "@/lib/utils";
@@ -7,6 +6,7 @@ import MarkdownRender from "@/components/ui/markdown";
 import { Calendar, Database, RefreshCcw } from "lucide-react";
 import React from "react";
 import { RESOURCE_COLORS } from "@/lib/resource";
+import { Link } from "@/i18n/navigation";
 
 export default function SearchResultItem({
   dataset,

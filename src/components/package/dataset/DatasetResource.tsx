@@ -1,7 +1,7 @@
 import { Resource } from "@/schemas/ckan";
 import MarkdownRender from "@/components/ui/markdown";
 import { formatFileSize } from "@/lib/utils";
-import Link from "next/link";
+import { Link } from "@/i18n/navigation";
 import React from "react";
 import { RESOURCE_COLORS, supportsPreview } from "@/lib/resource";
 import { getTranslations } from "next-intl/server";

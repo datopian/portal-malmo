@@ -13,7 +13,7 @@ import { getOrganization } from "@/lib/ckan/organization";
 import Container from "@/components/ui/container";
 import { formatDate } from "date-fns";
 import { Button } from "@/components/ui/button";
-import Link from "next/link";
+import { Link } from "@/i18n/navigation";
 import { DownloadIcon } from "lucide-react";
 import { Heading } from "@/components/ui/heading";
 import { formatFileSize } from "@/lib/utils";

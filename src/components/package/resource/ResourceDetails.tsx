@@ -1,7 +1,7 @@
 import { Dataset, Resource } from "@/schemas/ckan";
 import ListItem from "@/components/ui/list-item";
 import { formatDateToDDMMYYYY } from "@/lib/utils";
-import Link from "next/link";
+import { Link } from "@/i18n/navigation";
 import { getTranslations } from "next-intl/server";
 
 export interface ResourceWithDataset extends Resource {

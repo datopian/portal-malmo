@@ -1,16 +1,16 @@
+import { Link } from "@/i18n/navigation";
 import { Group } from "@/schemas/ckan";
 import Image from "next/image";
-import Link from "next/link";
 
 type Props = {
   group: Group;
   colorClass: string;
 };
 
-const GroupCard = ({ group, colorClass="bg-gray-600" }: Props) => {
+const GroupCard = ({ group, colorClass = "bg-gray-600" }: Props) => {
   return (
     <Link
-    href={`/data/?groups=${group.name}`}
+      href={`/data/?groups=${group.name}`}
       className={`relative flex flex-col justify-between p-4 text-white md:aspect-square ${colorClass}`}
     >
       <div className="mb-4">
