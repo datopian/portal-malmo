@@ -26,15 +26,11 @@ declare global {
 function ensureMatomoLoaded() {
   if (!MATOMO_URL || !MATOMO_SITE_ID) return;
 
-  // init queue
   window._paq = window._paq || ([] as MatomoQueue);
-
-  // configure once
   window._paq.push(["setTrackerUrl", `${MATOMO_URL}/matomo.php`]);
   window._paq.push(["setSiteId", MATOMO_SITE_ID]);
   window._paq.push(["enableLinkTracking"]);
 
-  // load script once
   const id = "matomo-js";
   if (document.getElementById(id)) return;
 
@@ -49,23 +45,25 @@ export default function MatomoTracker() {
   const pathname = usePathname();
   const searchParams = useSearchParams();
 
-  // Load Matomo once on first client render
   useEffect(() => {
     ensureMatomoLoaded();
   }, []);
 
-  // Track App Router navigations
   useEffect(() => {
     if (!MATOMO_URL || !MATOMO_SITE_ID) return;
     if (typeof window === "undefined") return;
 
     window._paq = window._paq || [];
 
+    const origin = window.location.origin;
     const qs = searchParams?.toString();
-    const url = qs ? `${pathname}?${qs}` : pathname;
+    const path = qs ? `${pathname}?${qs}` : pathname;
+    const url = `${origin}${path}`;
+
     window._paq.push(["setCustomUrl", url]);
     window._paq.push(["setDocumentTitle", document.title]);
     window._paq.push(["trackPageView"]);
+
   }, [pathname, searchParams]);
 
   return null;
