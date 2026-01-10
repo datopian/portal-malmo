@@ -3,7 +3,7 @@
 import { useEffect } from "react";
 import { usePathname, useSearchParams } from "next/navigation";
 
-const MATOMO_URL = process.env.NEXT_PUBLIC_MATOMO_URL ?? "";
+const MATOMO_URL = (process.env.NEXT_PUBLIC_MATOMO_URL ?? "").replace(/\/+$/, "");
 const MATOMO_SITE_ID = process.env.NEXT_PUBLIC_MATOMO_SITE_ID ?? "";
 
 type MatomoCommand =
