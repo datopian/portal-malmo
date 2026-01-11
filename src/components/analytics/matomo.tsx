@@ -6,8 +6,6 @@ import { usePathname, useSearchParams } from "next/navigation";
 const MATOMO_URL = (process.env.NEXT_PUBLIC_MATOMO_URL ?? "").replace(/\/+$/, "");
 const MATOMO_SITE_ID = (process.env.NEXT_PUBLIC_MATOMO_SITE_ID ?? "").trim();
 
-console.log("Matomo Config:", { MATOMO_URL, MATOMO_SITE_ID });
-
 type MatomoCommand =
   | ["trackPageView"]
   | ["enableLinkTracking"]
@@ -101,7 +99,5 @@ export default function MatomoTracker() {
     })();
   }, [pathname, searchParams, ensureMatomoLoaded]);
 
-  return <div className="hidden">
-    matomo: {MATOMO_URL} / {MATOMO_SITE_ID}
-  </div>;
+  return null;
 }
