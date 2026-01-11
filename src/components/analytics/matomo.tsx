@@ -101,5 +101,7 @@ export default function MatomoTracker() {
     })();
   }, [pathname, searchParams, ensureMatomoLoaded]);
 
-  return null;
+  return <div className="hidden">
+    matomo: {MATOMO_URL} / {MATOMO_SITE_ID}
+  </div>;
 }
