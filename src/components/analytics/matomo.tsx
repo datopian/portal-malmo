@@ -3,7 +3,10 @@
 import { useEffect, useMemo, useRef } from "react";
 import { usePathname, useSearchParams } from "next/navigation";
 
-const MATOMO_URL = (process.env.NEXT_PUBLIC_MATOMO_URL ?? "").replace(/\/+$/, "");
+const MATOMO_URL = (process.env.NEXT_PUBLIC_MATOMO_URL ?? "").replace(
+  /\/+$/,
+  ""
+);
 const MATOMO_SITE_ID = (process.env.NEXT_PUBLIC_MATOMO_SITE_ID ?? "").trim();
 
 type MatomoCommand =
@@ -42,7 +45,8 @@ function createEnsureMatomoLoaded(matomoUrl: string, siteId: string) {
 
     const id = "matomo-js";
     const existing = document.getElementById(id) as HTMLScriptElement | null;
-    if (existing) return Promise.resolve();
+
+    if (existing) return window.__matomoLoading ?? Promise.resolve();
 
     if (window.__matomoLoading) return window.__matomoLoading;
 
@@ -53,7 +57,13 @@ function createEnsureMatomoLoaded(matomoUrl: string, siteId: string) {
       script.defer = true;
       script.src = `${matomoUrl}/matomo.js`;
       script.onload = () => resolve();
-      script.onerror = () => resolve();
+
+      script.onerror = () => {
+        // allow retry on a later navigation
+        delete window.__matomoLoading;
+        script.remove();
+        resolve();
+      };
       document.head.appendChild(script);
     });
 
@@ -75,7 +85,6 @@ export default function MatomoTracker() {
   useEffect(() => {
     void ensureMatomoLoaded();
   }, [ensureMatomoLoaded]);
-
 
   useEffect(() => {
     if (!MATOMO_URL || !MATOMO_SITE_ID) return;
