@@ -1,4 +1,4 @@
-import { Dataset, Organization, Resource } from "@/schemas/ckan";
+import { Dataset, Resource } from "@/schemas/ckan";
 import { ckan } from "@/lib/ckan";
 import Page from "@/components/layout/Page";
 import { Badge } from "@/components/ui/badge";
@@ -9,7 +9,6 @@ import ResourcePreview from "@/components/package/resource/ResourcePreview";
 import { getTranslations } from "next-intl/server";
 import { Metadata } from "next";
 import { buildLocalizedMetadata } from "@/lib/seo";
-import { getOrganization } from "@/lib/ckan/organization";
 import Container from "@/components/ui/container";
 import { formatDate } from "date-fns";
 import { Button } from "@/components/ui/button";
@@ -40,7 +39,6 @@ type PageProps = {
 export default async function ResourcePage({ params }: PageProps) {
   let resource: Resource | null = null;
   let dataset: Dataset | null = null;
-  let organization: Organization | null = null;
 
   const {
     locale,
@@ -64,28 +62,19 @@ export default async function ResourcePage({ params }: PageProps) {
 
     orgName = orgName.split("@")[1];
 
-    organization = await getOrganization({
-      name: orgName as string,
-      include_datasets: false,
-    });
-
-    if (!organization) {
-      return notFound();
-    }
-
     dataset = await ckan().getDatasetDetails(datasetName);
 
     if (!dataset) {
       return notFound();
     }
 
-    resource = await ckan().getResourceMetadata(resourceId);
-
-    if (!resource) {
+    if (dataset?.organization?.name !== orgName) {
       return notFound();
     }
 
-    if (dataset?.organization?.name !== orgName) {
+    resource = await ckan().getResourceMetadata(resourceId);
+
+    if (!resource) {
       return notFound();
     }
 

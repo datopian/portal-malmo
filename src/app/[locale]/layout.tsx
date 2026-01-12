@@ -11,6 +11,7 @@ import { notFound } from "next/navigation";
 import { setRequestLocale } from "next-intl/server";
 import { Metadata } from "next";
 import { buildLocalizedMetadata } from "@/lib/seo";
+import MatomoTracker from "@/components/analytics/matomo";
 
 const mainFont = Open_Sans({
   weight: ["300", "400", "500", "600", "700"],
@@ -48,6 +49,7 @@ export default async function RootLayout({
       <body
         className={`${mainFont.className} antialiased min-h-screen flex flex-col`}
       >
+        <MatomoTracker />
         <Suspense>
           <NextIntlClientProvider locale={locale} messages={messages}>
             <Header />
