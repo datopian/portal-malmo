@@ -7,6 +7,9 @@ const MATOMO_URL = (process.env.NEXT_PUBLIC_MATOMO_URL ?? "").replace(
   /\/+$/,
   ""
 );
+
+console.log("MATOMO_URL:", MATOMO_URL);
+
 const MATOMO_SITE_ID = (process.env.NEXT_PUBLIC_MATOMO_SITE_ID ?? "").trim();
 
 type MatomoCommand =
