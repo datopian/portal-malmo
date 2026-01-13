@@ -49,8 +49,8 @@ export default async function RootLayout({
       <body
         className={`${mainFont.className} antialiased min-h-screen flex flex-col`}
       >
-        <MatomoTracker />
         <Suspense>
+          <MatomoTracker />
           <NextIntlClientProvider locale={locale} messages={messages}>
             <Header />
             <QueryProvider>
@@ -64,15 +64,15 @@ export default async function RootLayout({
   );
 }
 
-export async function generateMetadata(
-  { params }: LayoutProps
-): Promise<Metadata> {
+export async function generateMetadata({
+  params,
+}: LayoutProps): Promise<Metadata> {
   const { locale } = await params;
   const t = await getTranslations({ locale, namespace: "Site" });
 
   return buildLocalizedMetadata({
     locale,
-    pathname: "/",              
+    pathname: "/",
     title: t("title"),
     description: t("description"),
   });
