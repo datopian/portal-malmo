@@ -1,6 +1,7 @@
 "use client";
 
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState, useCallback } from "react";
+import L from "leaflet";
 import {
   GeoJSON as RLGeoJSON,
   MapContainer,
@@ -11,9 +12,21 @@ import type { GeoJsonObject } from "geojson";
 import type { GeoJSON as LeafletGeoJSON } from "leaflet";
 import "leaflet/dist/leaflet.css";
 import { useTranslations } from "next-intl";
+import { escapeHtml } from "@/lib/utils";
+
+const DefaultIcon = L.Icon.Default as unknown as {
+  prototype: { _getIconUrl?: unknown };
+};
+delete DefaultIcon.prototype._getIconUrl;
+
+L.Icon.Default.mergeOptions({
+  iconRetinaUrl: "/leaflet/marker-icon-2x.png",
+  iconUrl: "/leaflet/marker-icon.png",
+  shadowUrl: "/leaflet/marker-shadow.png",
+});
 
 type Props = {
-  data: GeoJsonObject | string; // string can be URL/path or raw JSON string
+  data: GeoJsonObject | string;
   padding?: [number, number];
   maxZoom?: number;
 };
@@ -49,7 +62,11 @@ function isProbablyUrl(value: string) {
 function safeParseGeoJson(value: string): GeoJsonObject | null {
   try {
     const parsed = JSON.parse(value) as unknown;
-    if (parsed && typeof parsed === "object" && "type" in (parsed as Record<string, unknown>)) {
+    if (
+      parsed &&
+      typeof parsed === "object" &&
+      "type" in (parsed as Record<string, unknown>)
+    ) {
       return parsed as GeoJsonObject;
     }
     return null;
@@ -59,6 +76,29 @@ function safeParseGeoJson(value: string): GeoJsonObject | null {
 }
 
 type LoadState = "idle" | "loading" | "ready" | "error";
+
+function formatProperties(props: Record<string, unknown> | null | undefined) {
+  if (!props || typeof props !== "object") return "<em>No attributes</em>";
+
+  return `
+    <div class="text-sm space-y-1">
+      ${Object.entries(props)
+        .map(
+          ([key, value]) =>
+            `<div><strong>${escapeHtml(key)}:</strong> ${escapeHtml(String(value))}</div>`
+        )
+        .join("")}
+    </div>
+  `;
+}
+
+function isGeoJsonObject(value: unknown): value is GeoJsonObject {
+  return (
+    !!value &&
+    typeof value === "object" &&
+    "type" in (value as Record<string, unknown>)
+  );
+}
 
 export default function GeoJsonMap({
   data,
@@ -77,7 +117,6 @@ export default function GeoJsonMap({
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    // non-string: immediate
     if (typeof data !== "string") {
       setGeoJson(data);
       setError(null);
@@ -99,7 +138,6 @@ export default function GeoJsonMap({
         return;
       }
 
-      // raw JSON string
       const parsed = safeParseGeoJson(trimmed);
       if (parsed) {
         setGeoJson(parsed);
@@ -107,11 +145,8 @@ export default function GeoJsonMap({
         return;
       }
 
-      // URL/path fetch
       if (!isProbablyUrl(trimmed)) {
-        setError(
-          t("Preview.errorLoadingGeoJSON")
-        );
+        setError(t("Preview.errorLoadingGeoJSON"));
         setState("error");
         return;
       }
@@ -119,15 +154,17 @@ export default function GeoJsonMap({
       try {
         const res = await fetch(trimmed, { signal: controller.signal });
         if (!res.ok) {
-          throw new Error(`Failed to fetch GeoJSON (${res.status} ${res.statusText})`);
+          throw new Error(
+            `Failed to fetch GeoJSON (${res.status} ${res.statusText})`
+          );
         }
 
         const json = (await res.json()) as unknown;
-        if (!json || typeof json !== "object" || !("type" in (json as Record<string, unknown>))) {
+        if (!isGeoJsonObject(json)) {
           throw new Error("Response is not valid GeoJSON.");
         }
 
-        setGeoJson(json as GeoJsonObject);
+        setGeoJson(json);
         setState("ready");
       } catch (e) {
         if (controller.signal.aborted) return;
@@ -142,6 +179,10 @@ export default function GeoJsonMap({
   }, [data, t]);
 
   const memoGeoJson = useMemo(() => geoJson, [geoJson]);
+
+  const setLayerRef = useCallback((layer: LeafletGeoJSON | null) => {
+    layerRef.current = layer;
+  }, []);
 
   if (state === "loading") {
     return <div className="text-sm">{t("Common.loading")}</div>;
@@ -178,10 +219,19 @@ export default function GeoJsonMap({
 
         <RLGeoJSON
           data={memoGeoJson}
-          ref={(layer) => {
-            layerRef.current = layer;
+          ref={setLayerRef}
+          pointToLayer={(_, latlng) => L.marker(latlng)}
+          onEachFeature={(feature, layer) => {
+            if (feature.properties) {
+              layer.bindPopup(formatProperties(feature.properties));
+            }
+
+            layer.on("click", () => {
+              layer.openPopup();
+            });
           }}
         />
+
         <FitToGeoJson layerRef={layerRef} padding={padding} maxZoom={maxZoom} />
       </MapContainer>
     </div>
