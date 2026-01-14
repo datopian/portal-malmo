@@ -3,11 +3,7 @@
 import { useEffect, useMemo, useRef } from "react";
 import { usePathname, useSearchParams } from "next/navigation";
 
-const MATOMO_URL = (process.env.NEXT_PUBLIC_MATOMO_URL ?? "").replace(
-  /\/+$/,
-  ""
-);
-
+const MATOMO_URL = (process.env.NEXT_PUBLIC_MATOMO_URL ?? "").replace(/\/+$/, "");
 const MATOMO_SITE_ID = (process.env.NEXT_PUBLIC_MATOMO_SITE_ID ?? "").trim();
 
 type MatomoCommand =
@@ -46,9 +42,7 @@ function createEnsureMatomoLoaded(matomoUrl: string, siteId: string) {
 
     const id = "matomo-js";
     const existing = document.getElementById(id) as HTMLScriptElement | null;
-
     if (existing) return window.__matomoLoading ?? Promise.resolve();
-
     if (window.__matomoLoading) return window.__matomoLoading;
 
     window.__matomoLoading = new Promise<void>((resolve) => {
@@ -60,16 +54,63 @@ function createEnsureMatomoLoaded(matomoUrl: string, siteId: string) {
       script.onload = () => resolve();
 
       script.onerror = () => {
-        // allow retry on a later navigation
         delete window.__matomoLoading;
         script.remove();
         resolve();
       };
+
       document.head.appendChild(script);
     });
 
     return window.__matomoLoading;
   };
+}
+
+function getTitleElement(): HTMLTitleElement | null {
+  return document.querySelector("head > title");
+}
+
+function waitForTitleUpdate(prevTitle: string, timeoutMs = 800): Promise<string> {
+  if (typeof document === "undefined") return Promise.resolve(prevTitle);
+
+  const initial = document.title?.trim() ?? "";
+  if (initial && initial !== prevTitle) return Promise.resolve(initial);
+
+  return new Promise((resolve) => {
+    const titleEl = getTitleElement();
+
+    let settled = false;
+    const finish = () => {
+      if (settled) return;
+      settled = true;
+      observer?.disconnect();
+      resolve((document.title?.trim() ?? "") || prevTitle);
+    };
+
+    const timer = window.setTimeout(finish, timeoutMs);
+
+    let observer: MutationObserver | null = null;
+
+    if (titleEl) {
+      observer = new MutationObserver(() => {
+        const next = document.title?.trim() ?? "";
+        if (next && next !== prevTitle) {
+          window.clearTimeout(timer);
+          finish();
+        }
+      });
+
+      observer.observe(titleEl, { childList: true, subtree: true, characterData: true });
+    } else {
+      queueMicrotask(() => {
+        const next = document.title?.trim() ?? "";
+        if (next && next !== prevTitle) {
+          window.clearTimeout(timer);
+          finish();
+        }
+      });
+    }
+  });
 }
 
 export default function MatomoTracker() {
@@ -82,6 +123,7 @@ export default function MatomoTracker() {
   );
 
   const lastTrackedUrlRef = useRef<string | null>(null);
+  const lastTrackedTitleRef = useRef<string>("");
 
   useEffect(() => {
     void ensureMatomoLoaded();
@@ -102,10 +144,17 @@ export default function MatomoTracker() {
     void (async () => {
       await ensureMatomoLoaded();
 
+      const title = await waitForTitleUpdate(lastTrackedTitleRef.current);
+      lastTrackedTitleRef.current = title;
+
       window._paq = window._paq ?? ([] as MatomoQueue);
       window._paq.push(["setCustomUrl", url]);
-      window._paq.push(["setDocumentTitle", document.title]);
+      window._paq.push(["setDocumentTitle", title || document.title || url]);
       window._paq.push(["trackPageView"]);
+
+      // debug
+      // eslint-disable-next-line no-console
+      console.log(title, url);
     })();
   }, [pathname, searchParams, ensureMatomoLoaded]);
 
