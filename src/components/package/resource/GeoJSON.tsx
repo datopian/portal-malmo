@@ -12,6 +12,7 @@ import type { GeoJsonObject } from "geojson";
 import type { GeoJSON as LeafletGeoJSON } from "leaflet";
 import "leaflet/dist/leaflet.css";
 import { useTranslations } from "next-intl";
+import { escapeHtml } from "@/lib/utils";
 
 const DefaultIcon = L.Icon.Default as unknown as {
   prototype: { _getIconUrl?: unknown };
@@ -84,7 +85,7 @@ function formatProperties(props: Record<string, unknown> | null | undefined) {
       ${Object.entries(props)
         .map(
           ([key, value]) =>
-            `<div><strong>${key}:</strong> ${String(value)}</div>`
+            `<div><strong>${escapeHtml(key)}:</strong> ${escapeHtml(String(value))}</div>`
         )
         .join("")}
     </div>
