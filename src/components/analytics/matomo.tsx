@@ -152,9 +152,6 @@ export default function MatomoTracker() {
       window._paq.push(["setDocumentTitle", title || document.title || url]);
       window._paq.push(["trackPageView"]);
 
-      // debug
-      // eslint-disable-next-line no-console
-      console.log(title, url);
     })();
   }, [pathname, searchParams, ensureMatomoLoaded]);
 
