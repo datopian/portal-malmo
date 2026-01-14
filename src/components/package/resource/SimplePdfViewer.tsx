@@ -88,7 +88,7 @@ export default function SimplePdfViewer({
     <div className={["w-full", className].filter(Boolean).join(" ")}>
       {/* Toolbar */}
       <div className="mb-2 flex flex-wrap items-center gap-2 border bg-background p-2">
-        <div className="flex items-center gap-2">
+        <div className="items-center gap-2 hidden sm:flex">
           <button
             onClick={goPrev}
             disabled={!canPrev}
