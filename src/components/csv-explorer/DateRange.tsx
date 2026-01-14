@@ -27,7 +27,6 @@ const DateRange = ({ onSelect }: DateRangeProps) => {
 
 
   const handleChange = (newValue: DateValueType) => {
-    console.log(newValue);
     setValue(newValue);
     onSelect([
       newValue?.startDate ? newValue.startDate.toString() : null,
