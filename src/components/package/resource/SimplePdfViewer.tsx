@@ -155,9 +155,13 @@ export default function SimplePdfViewer({
       >
         <div ref={containerRef} className="flex justify-center p-3">
           <Document
-            loading={<div className="p-4">
+            loading={<div className="p-4 text-sm">
               {t("Common.loading")}
             </div>}
+            error={<div className="p-4 text-sm ">
+              {t("Preview.failedToLoad")}
+            </div>}
+            
             file={url}
             onLoadSuccess={(i) => setNumPages(i.numPages)}
           >

@@ -3,12 +3,13 @@
 import CSVExplorerWrapper from "@/components/csv-explorer";
 //import CodeViewer from "@/components/ui/code-viewer";
 import IframeWrapper from "@/components/ui/iframe";
-
 import { Resource } from "@/schemas/ckan";
 import dynamic from "next/dynamic";
-import PdfViewer from "./SimplePdfViewer";
 
-
+const PdfViewerClient = dynamic(
+  () => import("./SimplePdfViewer"),
+  { ssr: false }
+);
 const GeoJsonMap = dynamic(() => import("@/components/package/resource/GeoJSON"), { ssr: false });
 
 export default function ResourcePreview({ resource }: { resource: Resource }) {
@@ -20,7 +21,7 @@ export default function ResourcePreview({ resource }: { resource: Resource }) {
 
     case "pdf":
       return (
-        <PdfViewer url={resource.url || ""} />
+        <PdfViewerClient url={resource.url || ""} />
       );
 
     case "geojson":

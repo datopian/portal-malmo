@@ -124,7 +124,8 @@
     "rowsPerPage": "Rader per sida",
     "pagination": "Sida {page} av {total}",
     "errorLoadingGeoJSON": "Fel vid inläsning av GeoJSON-data",
-    "fitWidth": "Anpassa till sidbredd"
+    "fitWidth": "Anpassa till sidbredd",
+    "failedToLoad": "Misslyckades med att ladda data"
   },
 
   "Footer": {

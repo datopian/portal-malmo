@@ -124,7 +124,8 @@
     "rowsPerPage": "Rows per page",
     "pagination": "Page {page} of {total}",
     "errorLoadingGeoJSON" : "Error loading GeoJSON data",
-    "fitWidth": "Fit width"
+    "fitWidth": "Fit width",
+    "failedToLoad": "Failed to load data"
   },
 
   "Footer": {
