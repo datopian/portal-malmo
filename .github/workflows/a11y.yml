@@ -1,4 +1,4 @@
-name: CI
+name: Accessibility E2E Tests
 
 on:
   pull_request:
