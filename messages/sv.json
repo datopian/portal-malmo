@@ -59,7 +59,8 @@
     "phone": "Telefon",
     "readMore": "Läs mer",
     "readLess": "Läs mindre",
-    "error": "Något gick fel."
+    "error": "Något gick fel.",
+    "skipToContent": "Hoppa till huvudinnehåll"
   },
 
   "Dataset": {

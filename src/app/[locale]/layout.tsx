@@ -12,6 +12,7 @@ import { setRequestLocale } from "next-intl/server";
 import { Metadata } from "next";
 import { buildLocalizedMetadata } from "@/lib/seo";
 import MatomoTracker from "@/components/analytics/matomo";
+import SkipToContent from "@/components/layout/SkipToContent";
 
 const mainFont = Open_Sans({
   weight: ["300", "400", "500", "600", "700"],
@@ -52,9 +53,10 @@ export default async function RootLayout({
         <Suspense>
           <MatomoTracker />
           <NextIntlClientProvider locale={locale} messages={messages}>
+            <SkipToContent />
             <Header />
             <QueryProvider>
-              <main className="flex-grow">{children}</main>
+              <main className="flex-grow" id="main-content">{children}</main>
             </QueryProvider>
             <Footer />
           </NextIntlClientProvider>

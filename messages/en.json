@@ -59,7 +59,8 @@
     "phone": "Phone",
     "readMore": "Read more",
     "readLess": "Read less",
-    "error" : "Something went wrong."
+    "error" : "Something went wrong.",
+    "skipToContent": "Skip to main content"
   },
 
   "Dataset": {
