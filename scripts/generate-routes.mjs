@@ -162,12 +162,16 @@ async function fetchFirstDatasetAndResource() {
       return null;
     }
 
+   
+
     const data = await res.json();
     const first = data?.result?.results?.[0];
     if (!first?.name || !first?.organization?.name) {
       console.warn("[routes] CKAN returned dataset without name or organization.name");
       return null;
     }
+
+    console.log("[routes] fetched sample dataset from CKAN:", first.name);
 
     const orgName = first.organization.name;
     const datasetName = first.name;
