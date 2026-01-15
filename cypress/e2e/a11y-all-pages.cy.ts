@@ -11,6 +11,14 @@ describe("Accessibility (WCAG 2.2 AA) – per page", () => {
     const url = String(route);
 
     it(`has no a11y violations: ${url}`, () => {
+      const consoleErrors: string[] = [];
+
+      cy.on("window:before:load", (win) => {
+        cy.stub(win.console, "error").callsFake((...args: unknown[]) => {
+          consoleErrors.push(args.map(String).join(" "));
+        });
+      });
+
       cy.request({
         url,
         failOnStatusCode: false,
@@ -21,8 +29,9 @@ describe("Accessibility (WCAG 2.2 AA) – per page", () => {
           return;
         }
 
-        cy.visit(url);
-        cy.get("body").should("be.visible");
+        cy.visit(url, { failOnStatusCode: false });
+        cy.get("main", { timeout: 10000 }).should("exist");
+        cy.contains("Not Found", { matchCase: false }).should("not.exist");
 
         cy.injectAxe();
         cy.checkA11y(
@@ -47,6 +56,18 @@ describe("Accessibility (WCAG 2.2 AA) – per page", () => {
             );
           }
         );
+
+        cy.then(() => {
+          const meaningful = consoleErrors.filter(
+            (m) => !m.includes("ResizeObserver loop limit exceeded")
+          );
+
+          if (meaningful.length) {
+            // eslint-disable-next-line no-console
+            console.table(meaningful);
+            throw new Error(`Console errors on ${url}`);
+          }
+        });
       });
     });
   });
