@@ -15,7 +15,7 @@ const OUT = path.join(ROOT, "public", "__routes.json");
 
 const PAGE_RE = /^page\.(js|jsx|ts|tsx)$/;
 
-const CKAN_URL = process.env.NEXT_PUBLIC_DMS?.trim() || "";
+const CKAN_URL = process.env.NEXT_PUBLIC_DMS?.trim() || "https://ckan.city-of-malmo-staging.datopian.com";
 const CKAN_SORT =  "metadata_modified desc";
 
 const DEFAULT_LOCALE = process.env.NEXT_PUBLIC_I18N_DEFAULT_LOCALE?.trim() || "en";
