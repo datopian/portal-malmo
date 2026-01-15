@@ -60,7 +60,8 @@
     "readMore": "Read more",
     "readLess": "Read less",
     "error" : "Something went wrong.",
-    "skipToContent": "Skip to main content"
+    "skipToContent": "Skip to main content",
+    "reset": "Reset"
   },
 
   "Dataset": {
@@ -123,7 +124,9 @@
     "noColumns": "No columns found",
     "rowsPerPage": "Rows per page",
     "pagination": "Page {page} of {total}",
-    "errorLoadingGeoJSON" : "Error loading GeoJSON data"
+    "errorLoadingGeoJSON" : "Error loading GeoJSON data",
+    "fitWidth": "Fit width",
+    "failedToLoad": "Failed to load data"
   },
 
   "Footer": {
