@@ -59,7 +59,8 @@
     "phone": "Phone",
     "readMore": "Read more",
     "readLess": "Read less",
-    "error" : "Something went wrong."
+    "error" : "Something went wrong.",
+    "reset": "Reset"
   },
 
   "Dataset": {
@@ -122,7 +123,9 @@
     "noColumns": "No columns found",
     "rowsPerPage": "Rows per page",
     "pagination": "Page {page} of {total}",
-    "errorLoadingGeoJSON" : "Error loading GeoJSON data"
+    "errorLoadingGeoJSON" : "Error loading GeoJSON data",
+    "fitWidth": "Fit width",
+    "failedToLoad": "Failed to load data"
   },
 
   "Footer": {
