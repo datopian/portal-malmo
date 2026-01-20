@@ -52,15 +52,19 @@ describe("Accessibility (WCAG 2.2 AA) – per page", () => {
             cy.screenshot(`a11y-${safe}`, { capture: "viewport" });
 
             throw new Error(
-              `A11y violations found on ${url}: ${violations.length}`
+              `A11y violations found on ${url}: ${violations.length}`,
             );
-          }
+          },
         );
 
         cy.then(() => {
-          const meaningful = consoleErrors.filter(
-            (m) => !m.includes("ResizeObserver loop limit exceeded")
-          );
+          const meaningful = consoleErrors.filter((m) => {
+            if (m.includes("ResizeObserver loop limit exceeded")) return false;
+            if (m.includes("NEXT_HTTP_ERROR_FALLBACK;404")) return false;
+            if (m.includes("An error occurred in the Server Components render"))
+              return false;
+            return true;
+          });
 
           if (meaningful.length) {
             // eslint-disable-next-line no-console

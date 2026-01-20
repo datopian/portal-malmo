@@ -100,9 +100,7 @@ export default async function ResourcePage({ params }: PageProps) {
           },
           {
             title: resource?.name ?? t("Common.resource"),
-            href: `/@${dataset?.organization?.name}/${dataset?.name ?? ""}/${
-              resource.name
-            }`,
+            href: `/@${dataset?.organization?.name}/${dataset?.name ?? ""}/${resource.id}`,
             current: true,
           },
         ],
