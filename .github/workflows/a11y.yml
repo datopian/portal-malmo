@@ -27,4 +27,7 @@ jobs:
       - name: Run E2E (Cypress + Axe)
         env:
           NEXT_PUBLIC_DMS: ${{ secrets.NEXT_PUBLIC_DMS }}
+          ISR_REVALIDATE: 300
+          NEXT_PUBLIC_I18N_DEFAULT_LOCALE: sv
+          NEXT_PUBLIC_I18N_SUPPORTED_LOCALES: sv,en
         run: npm run test:e2e
