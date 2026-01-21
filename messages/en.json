@@ -61,7 +61,8 @@
     "readLess": "Read less",
     "error" : "Something went wrong.",
     "skipToContent": "Skip to main content",
-    "reset": "Reset"
+    "reset": "Reset",
+    "visit" : "Visit"
   },
 
   "Dataset": {
@@ -142,6 +143,10 @@
     "updateFrequency" : "Update frequency",
     "documentation" : "Documentation",
     "temporalCoverageStart": "Temporal coverage start",
-    "temporalCoverageEnd": "Temporal coverage end"
+    "temporalCoverageEnd": "Temporal coverage end",
+    "landingPage" : "Landing page",
+    "contactPoint" : "Contact point",
+    "issued" : "Issued",
+    "conformsTo" : "Conforms to"
   }
 }
