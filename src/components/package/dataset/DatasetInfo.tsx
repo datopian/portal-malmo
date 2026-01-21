@@ -37,7 +37,7 @@ export default async function DatasetInfo({ dataset }: { dataset: Dataset }) {
   return (
     <div className="divide-y  ">
       <ListItem title={t("Common.organization")}>
-        {dataset.organization.name}
+        {dataset.organization.title}
       </ListItem>
       <ListItem title={t("Metadata.updateFrequency")}>
         {updateFrequencyLabel || "--"}
