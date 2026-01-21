@@ -61,7 +61,8 @@
     "readLess": "Läs mindre",
     "error": "Något gick fel.",
     "skipToContent": "Hoppa till huvudinnehåll",
-    "reset": "Återställ"
+    "reset": "Återställ",
+    "visit": "Besök"
   },
 
   "Dataset": {
@@ -142,6 +143,10 @@
     "updateFrequency": "Uppdateringsfrekvens",
     "documentation": "Dokumentation",
     "temporalCoverageStart": "Tidsperiod – start",
-    "temporalCoverageEnd": "Tidsperiod – slut"
+    "temporalCoverageEnd": "Tidsperiod – slut",
+    "landingPage": "Landningssida",
+    "contactPoint": "Kontaktpunkt",
+    "issued": "Utfärdad",
+    "conformsTo": "Överensstämmer med"
   }
 }
