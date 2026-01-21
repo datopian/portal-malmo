@@ -1,6 +1,6 @@
 # Accessibility checks (developer guide)
 
-This project includes **automated accessibility checks** using **Cypress + Axe**.
+This project includes **automated accessibility checks** using **[Cypress](https://docs.cypress.io/app/get-started/why-cypress) + [Axe](https://github.com/dequelabs/axe-core)**.
 
 The goal is to:
 
@@ -154,6 +154,11 @@ In CI:
 * Tests run automatically on PRs
 * Test status is visible in GitHub
 * PRs cannot be merged if accessibility checks fail
+
+---
+
+## Report example
+![alt text](report-example.png)
 
 ---
 
