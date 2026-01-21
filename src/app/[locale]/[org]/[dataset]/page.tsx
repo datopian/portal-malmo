@@ -83,14 +83,7 @@ export default async function DatasetPage({ params }: DatasetPageProps) {
             dataset.metadata_modified ?? "",
             "dd/MM/yyyy, hh:mm:ss"
           ),
-        },
-        {
-          title: t("Common.created"),
-          value: formatDate(
-            dataset.metadata_created ?? "",
-            "dd/MM/yyyy, hh:mm:ss"
-          ),
-        },
+        }
       ]}
     >
       <Container className="py-12">
