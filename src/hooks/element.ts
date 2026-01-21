@@ -1,18 +1,28 @@
-import { useCallback, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 
 export function useElementWidth() {
-  const [width, setWidth] = useState<number>(0);
+  const [width, setWidth] = useState(0);
+  const observerRef = useRef<ResizeObserver | null>(null);
 
   const ref = useCallback((node: HTMLDivElement | null) => {
+    observerRef.current?.disconnect();
+    observerRef.current = null;
+
     if (!node) return;
 
     const update = () => setWidth(node.clientWidth);
 
     update();
-    const observer = new ResizeObserver(update);
-    observer.observe(node);
 
-    return () => observer.disconnect();
+    observerRef.current = new ResizeObserver(update);
+    observerRef.current.observe(node);
+  }, []);
+
+  useEffect(() => {
+    return () => {
+      observerRef.current?.disconnect();
+      observerRef.current = null;
+    };
   }, []);
 
   return { ref, width };
