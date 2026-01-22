@@ -3,10 +3,7 @@
 import { X } from "lucide-react";
 import { useEffect, useState } from "react";
 import Container from "../ui/container";
-import { Button } from "../ui/button";
-import { useTranslations } from "next-intl";
 import MarkdownRender from "../ui/markdown";
-import { useIsClamped } from "@/hooks/element";
 
 const STORAGE_KEY = "disclaimerBannerDismissed";
 
@@ -16,9 +13,7 @@ export default function DisclaimerBanner({
   content: string | null;
 }) {
   const [show, setShow] = useState<boolean | null>(null);
-  const [expanded, setExpanded] = useState(false);
-  const { ref, isClamped } = useIsClamped([content, expanded]);
-  const t = useTranslations();
+
 
   useEffect(() => {
     const dismissed = localStorage.getItem(STORAGE_KEY);
@@ -39,36 +34,10 @@ export default function DisclaimerBanner({
           <div className="flex items-center gap-x-6 bg-gray-900 ">
             <div className="block">
               <div
-                ref={ref}
-                className={[
-                  "text-white text-sm/6",
-                  expanded ? "" : " line-clamp-3  ",
-                ].join(" ")}
+                className="text-white text-sm/6"
               >
                 <MarkdownRender content={content} />
               </div>
-
-              {!expanded && isClamped && (
-                <Button
-                  type="button"
-                  variant="theme"
-                  onClick={() => setExpanded(true)}
-                  className="mt-2 font-medium text-theme-green hover:underline underline p-0 cursor-pointer"
-                >
-                  {t("Common.readMore")}
-                </Button>
-              )}
-
-              {expanded && (
-                <Button
-                  type="button"
-                  variant="theme"
-                  onClick={() => setExpanded(false)}
-                  className="mt-2 font-medium text-theme-green hover:underline underline p-0 cursor-pointer"
-                >
-                  {t("Common.readLess")}
-                </Button>
-              )}
             </div>
 
             <div className="flex flex-1 justify-end">
