@@ -62,7 +62,7 @@ export default async function RootLayout({
           <NextIntlClientProvider locale={locale} messages={messages}>
             <MatomoTracker />
             <SkipToContent />
-            {bannerContent && <DisclaimerBanner content={bannerContent} />}
+            <DisclaimerBanner content={bannerContent} />
             <Header />
             <QueryProvider>
               <main className="flex-grow" id="main-content">
