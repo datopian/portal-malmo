@@ -3,7 +3,7 @@ import path from "path";
 
 export async function getMarkdownContent(fileName: string): Promise<string> {
   try {
-    const filePath = path.join(process.cwd(), "src/content", fileName);
+    const filePath = path.join(process.cwd(), "content", fileName);
     const content = fs.readFileSync(filePath, "utf8");
     return content;
   } catch (error) {
