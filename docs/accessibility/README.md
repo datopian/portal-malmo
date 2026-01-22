@@ -158,7 +158,7 @@ In CI:
 ---
 
 ## Report example
-![alt text](report-example.png)
+![alt text](report.png)
 
 ---
 
