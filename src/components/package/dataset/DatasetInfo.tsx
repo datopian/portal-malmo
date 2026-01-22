@@ -5,7 +5,7 @@ import React from "react";
 import { getTranslations } from "next-intl/server";
 import Link from "next/link";
 import { ExternalLink } from "lucide-react";
-import { formatDate } from "date-fns";
+import { format, isValid, parseISO } from "date-fns";
 
 export default async function DatasetInfo({ dataset }: { dataset: Dataset }) {
   const t = await getTranslations();
@@ -48,6 +48,7 @@ export default async function DatasetInfo({ dataset }: { dataset: Dataset }) {
             className="underline text-theme-green hover:text-theme-green-900 flex items-center justify-end gap-2"
             href={landingPage}
             target="_blank"
+            rel="noopener noreferrer"
           >
             {t("Common.visit")} <ExternalLink size={16}/>
           </Link>
@@ -68,12 +69,15 @@ export default async function DatasetInfo({ dataset }: { dataset: Dataset }) {
         )}
       </ListItem>
       <ListItem title={t("Metadata.issued")}>
-        {issued  ? formatDate(issued ?? "", "dd/MM/yyy") : "--"}
+        {issued && isValid(parseISO(issued))
+          ? format(parseISO(issued), "dd/MM/yyyy")
+          : "--"}
       </ListItem>
       <ListItem title={t("Metadata.conformsTo")}>
         {conformsTo ? <Link
             className="underline text-theme-green hover:text-theme-green-900 flex items-center justify-end gap-2"
             href={conformsTo}
+            rel="noopener noreferrer"
             target="_blank"
           >
             {t("Common.visit")} <ExternalLink size={16}/>
