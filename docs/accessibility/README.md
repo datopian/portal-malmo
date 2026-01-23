@@ -160,6 +160,10 @@ In CI:
 ## Report example
 ![alt text](report.png)
 
+
+## Lighthouse report
+<img width="1899" height="990" alt="image" src="https://github.com/user-attachments/assets/73b561c8-02cb-4db1-8a0e-30d3281b56f5" />
+
 ---
 
 ## Summary
