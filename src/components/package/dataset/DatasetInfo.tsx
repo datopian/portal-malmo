@@ -8,6 +8,7 @@ import { ExternalLink } from "lucide-react";
 import { format, isValid, parseISO } from "date-fns";
 
 export default async function DatasetInfo({ dataset }: { dataset: Dataset }) {
+
   const t = await getTranslations();
   const landingPage = dataset.extras?.find(
     (field) => field.key.toLowerCase() === "landing_page",
@@ -41,6 +42,9 @@ export default async function DatasetInfo({ dataset }: { dataset: Dataset }) {
       </ListItem>
       <ListItem title={t("Metadata.updateFrequency")}>
         {updateFrequencyLabel || "--"}
+      </ListItem>
+      <ListItem title={t("Common.license")}>
+        {dataset.license_title || "--"}
       </ListItem>
       <ListItem title={t("Metadata.landingPage")}>
         {landingPage ? (
