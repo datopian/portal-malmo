@@ -81,7 +81,7 @@ export default async function DatasetPage({ params }: DatasetPageProps) {
           title: t("Common.updated"),
           value: formatDate(
             dataset.metadata_modified ?? "",
-            "dd/MM/yyyy, hh:mm:ss"
+            "dd/MM/yyyy, HH:mm:ss"
           ),
         }
       ]}

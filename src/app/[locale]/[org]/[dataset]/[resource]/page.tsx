@@ -132,7 +132,7 @@ export default async function ResourcePage({ params }: PageProps) {
               <span>
                 {formatDate(
                   resource.metadata_modified ?? "",
-                  "dd/MM/yyyy, hh:mm"
+                  "dd/MM/yyyy, HH:mm"
                 )}
               </span>
             </div>
