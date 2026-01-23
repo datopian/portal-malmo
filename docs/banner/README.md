@@ -15,6 +15,6 @@ Note that markdown is supported.
 
 To **disable** the banner, simply clear the contents of the files.
 
-Screenshot:
+**Screenshot:**
 ![alt text](disclaimer-banner.png)
 
