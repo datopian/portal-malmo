@@ -1,15 +1,18 @@
+"use client";
+
 import { Resource } from "@/schemas/ckan";
 import MarkdownRender from "@/components/ui/markdown";
 import { formatFileSize } from "@/lib/utils";
 import { Link } from "@/i18n/navigation";
 import React from "react";
 import { RESOURCE_COLORS, supportsPreview } from "@/lib/resource";
-import { getTranslations } from "next-intl/server";
+
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { EyeIcon } from "lucide-react";
+import { useTranslations } from "next-intl";
 
-export default async function DatasetResources({
+export default function DatasetResources({
   resources,
   dataset,
   organization,
@@ -18,7 +21,7 @@ export default async function DatasetResources({
   dataset: string;
   organization: string;
 }) {
-  const t = await getTranslations();
+  const t = useTranslations();
 
   return (
     <div className="space-y-5">

@@ -14,6 +14,10 @@ const nextConfig: NextConfig = {
   images: {
     remotePatterns: imagesUrl,
   },
+
+  outputFileTracingIncludes: {
+    "/*": ["content/**/*"],
+  },
 };
 
 export default withNextIntl(nextConfig);
