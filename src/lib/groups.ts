@@ -1,15 +1,15 @@
 export const GROUP_CARD_COLORS = [
-  "bg-[#4B9650]", // 1 - green
-  "bg-[#86B5E8]", // 2 - blue
-  "bg-[#F59A2A]", // 3 - orange
-  "bg-[#E0B425]", // 4 - yellow
-  "bg-[#94B8A8]", // 5 - teal/green
-  "bg-[#4F4F9F]", // 6 - purple/blue
-  "bg-[#E4573B]", // 7 - red
-  "bg-[#6C1E64]", // 8 - dark purple
-  "bg-[#F28A76]", // 9 - salmon
-  "bg-[#072C57]", // 10 - dark navy
-  "bg-[#F4D668]", // 11 - light yellow
-  "bg-[#D5E1DA]", // 12 - pale green
-  "bg-[#E2C6AA]", // 13 - beige
+  "bg-[#1F5A2D]", // 1 green
+  "bg-[#1F4E7A]", // 2 blue
+  "bg-[#8A3E00]", // 3 orange
+  "bg-[#6F5A00]", // 4 yellow
+  "bg-[#24594A]", // 5 teal/green
+  "bg-[#2D2F6F]", // 6 purple/blue
+  "bg-[#8C2B1A]", // 7 red
+  "bg-[#4A1446]", // 8 dark purple
+  "bg-[#8F3A2D]", // 9 salmon
+  "bg-[#041C36]", // 10 dark navy
+  "bg-[#7A6400]", // 11 dark yellow
+  "bg-[#344B43]", // 12 pale green (darkened)
+  "bg-[#6B4A2D]", // 13 beige
 ];

@@ -44,31 +44,25 @@ export default async function ResourcePage({ params }: PageProps) {
     locale,
     resource: resourceId,
     dataset: datasetName,
-    org,
+    org
   } = await params;
+
+  if(decodeURIComponent(org) !== "@malmo"){
+    return notFound();
+  }
 
   const t = await getTranslations({ locale });
 
   try {
-    if (!resourceId || !datasetName || !org) {
-      return notFound();
-    }
-
-    let orgName = decodeURIComponent(org);
-
-    if (!orgName.includes("@")) {
-      return notFound();
-    }
-
-    orgName = orgName.split("@")[1];
 
     dataset = await ckan().getDatasetDetails(datasetName);
+    
 
     if (!dataset) {
       return notFound();
     }
 
-    if (dataset?.organization?.name !== orgName) {
+    if (!resourceId) {
       return notFound();
     }
 
@@ -81,6 +75,7 @@ export default async function ResourcePage({ params }: PageProps) {
     if (resource.package_id !== dataset.id) {
       return notFound();
     }
+
   } catch (e) {
     console.log(e);
     return notFound();
@@ -96,13 +91,11 @@ export default async function ResourcePage({ params }: PageProps) {
           },
           {
             title: dataset?.title ?? t("Common.dataset"),
-            href: `/@${dataset?.organization?.name}/${dataset?.name ?? ""}`,
+            href: `/@malmo/${dataset?.name ?? ""}`,
           },
           {
             title: resource?.name ?? t("Common.resource"),
-            href: `/@${dataset?.organization?.name}/${dataset?.name ?? ""}/${
-              resource.name
-            }`,
+            href: `/@malmo/${dataset?.name ?? ""}/${resource.id}`,
             current: true,
           },
         ],
@@ -139,7 +132,7 @@ export default async function ResourcePage({ params }: PageProps) {
               <span>
                 {formatDate(
                   resource.metadata_modified ?? "",
-                  "dd/MM/yyyy, hh:mm"
+                  "dd/MM/yyyy, HH:mm"
                 )}
               </span>
             </div>

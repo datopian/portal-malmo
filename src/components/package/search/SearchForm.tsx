@@ -85,9 +85,9 @@ export default function SearchForm({
   return (
     <div className="p-5 md:p-8 bg-theme-green text-white max-w-[768px] shadow-xl">
       {title && (
-        <h3 className="text-xl md:text-2xl lg:text-4xl mb-4 font-semibold">
+        <h2 className="text-xl md:text-2xl lg:text-4xl mb-4 font-semibold">
           {title}
-        </h3>
+        </h2>
       )}
       <form className="text-foreground" onSubmit={handleSubmit}>
         <div className="flex w-full relative gap-2">

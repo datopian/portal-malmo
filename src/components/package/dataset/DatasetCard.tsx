@@ -14,7 +14,7 @@ export default function DatasetCard({
 }) {
   return (
     <Link
-      href={`/@${dataset.organization?.name}/${dataset.name}`}
+      href={`/@malmo/${dataset.name}`}
       className={linkClassName}
     >
       <Card key={dataset.id} className={cn("flex flex-col", cardClassName)}>

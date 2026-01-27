@@ -171,6 +171,7 @@ export function escapeHtml(str: string): string {
     .replace(/'/g, "&#039;");
 }
 
+
 export const updateFrequencyValues = {    
     "UNKNOWN": "Unknown",
     "TRIENNIAL": "Triennial (every three years)",

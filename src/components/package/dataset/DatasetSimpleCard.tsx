@@ -11,7 +11,7 @@ import { Link } from "@/i18n/navigation";
 const DatasetSimpleCard = ({ dataset }: { dataset: Dataset }) => {
   const locale = useLocale();
   return (
-    <Link href={`/@${dataset.organization?.name}/${dataset.name}`}>
+    <Link href={`/@malmo/${dataset.name}`}>
       <Card
         key={dataset.id}
         className={cn("flex flex-col rounded-none h-full p-6", "")}

@@ -15,8 +15,8 @@ import { useTranslations } from "next-intl";
 import Image from "next/image";
 import homeGraphic from "@/assets/hero-home-bg.svg";
 import navGraphic from "@/assets/hero-nav-bg.svg";
-import useIsClamped from "@/hooks/clamped";
 import { Button } from "../ui/button";
+import { useIsClamped } from "@/hooks/element";
 
 export type BreadcrumbItemProps = {
   title: string;

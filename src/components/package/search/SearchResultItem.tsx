@@ -24,7 +24,7 @@ export default function SearchResultItem({
   ];
 
   return (
-    <Link href={`/@${dataset.organization?.name}/${dataset.name}`} className="space-y-2 w-full rounded flex flex-col sm:flex-row gap-4 w-full border-b border-gray-200  p-4 md:p-6">
+    <Link href={`/@malmo/${dataset.name}`} className="space-y-2 w-full rounded flex flex-col sm:flex-row gap-4 w-full border-b border-gray-200  p-4 md:p-6">
       <div className="rounded bg-[#D1E0D7] text-theme-green w-fit h-fit p-3">
         <Database className="w-5 sm:w-6" />
       </div>

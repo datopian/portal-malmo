@@ -1,0 +1,33 @@
+name: Accessibility E2E Tests
+
+on:
+  pull_request:
+  push:
+    branches:
+      - main
+      - staging
+
+jobs:
+  cypress:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+
+      - name: Install
+        run: npm ci
+
+      - name: Run E2E (Cypress + Axe)
+        env:
+          NEXT_PUBLIC_DMS: ${{ secrets.NEXT_PUBLIC_DMS }}
+          ISR_REVALIDATE: 300
+          NEXT_PUBLIC_I18N_DEFAULT_LOCALE: sv
+          NEXT_PUBLIC_I18N_SUPPORTED_LOCALES: sv,en
+        run: npm run test:e2e

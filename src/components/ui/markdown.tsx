@@ -100,7 +100,7 @@ export default function MarkdownRender({
             props.children
           ) : (
             <pre
-              className="bg-gray-100 rounded p-2 overflow-x-auto"
+              className="bg-gray-100 text-foreground rounded p-2 overflow-x-auto"
               {...props}
             />
           ),

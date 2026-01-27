@@ -37,7 +37,7 @@ function createEnsureMatomoLoaded(matomoUrl: string, siteId: string) {
       window._paq.push(["setTrackerUrl", `${matomoUrl}/matomo.php`]);
       window._paq.push(["setSiteId", siteId]);
       window._paq.push(["enableLinkTracking"]);
-      // window._paq.push(["disableCookies"]); // optional
+      window._paq.push(["disableCookies"]); // optional
     }
 
     const id = "matomo-js";

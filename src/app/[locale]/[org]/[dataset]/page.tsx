@@ -36,18 +36,14 @@ export default async function DatasetPage({ params }: DatasetPageProps) {
 
   const { locale, dataset: datasetName, org } = await params;
 
-  const t = await getTranslations({ locale });
-
-  let orgName = decodeURIComponent(org);
-
-  if (!orgName.includes("@")) {
+  if(decodeURIComponent(org) !== "@malmo"){
     return notFound();
   }
 
-  orgName = orgName.split("@")[1];
+  const t = await getTranslations({ locale });
 
   try {
-    if (!datasetName || !orgName) {
+    if (!datasetName ) {
       return notFound();
     }
 
@@ -57,9 +53,7 @@ export default async function DatasetPage({ params }: DatasetPageProps) {
       return notFound();
     }
 
-    if (orgName !== dataset?.organization?.name) {
-      return notFound();
-    }
+ 
   } catch (e) {
     console.log(e);
     return notFound();
@@ -75,7 +69,7 @@ export default async function DatasetPage({ params }: DatasetPageProps) {
           },
           {
             title: dataset?.title ?? "",
-            href: `/@${dataset.organization?.name}/${dataset.name}`,
+            href: `/@malmo/${dataset.name}`,
             current: true,
           },
         ],
@@ -87,16 +81,9 @@ export default async function DatasetPage({ params }: DatasetPageProps) {
           title: t("Common.updated"),
           value: formatDate(
             dataset.metadata_modified ?? "",
-            "dd/MM/yyyy, hh:mm:ss"
+            "dd/MM/yyyy, HH:mm:ss"
           ),
-        },
-        {
-          title: t("Common.created"),
-          value: formatDate(
-            dataset.metadata_created ?? "",
-            "dd/MM/yyyy, hh:mm:ss"
-          ),
-        },
+        }
       ]}
     >
       <Container className="py-12">
@@ -110,7 +97,7 @@ export default async function DatasetPage({ params }: DatasetPageProps) {
             <DatasetResources
               resources={dataset.resources}
               dataset={dataset.name}
-              organization={dataset.organization?.name || ""}
+              organization={"malmo"}
             />
           </div>
 

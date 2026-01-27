@@ -34,7 +34,7 @@ export default function LanguageSwitcher() {
               className={`transition cursor-pointer ${
                 isActive
                   ? "text-theme-green font-semibold"
-                  : "text-gray-400 hover:text-theme-green"
+                  : "text-gray-600 font-light hover:text-theme-green"
               }`}
             >
               {code.toUpperCase()}
