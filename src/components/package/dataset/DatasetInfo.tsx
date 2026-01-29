@@ -22,9 +22,6 @@ export default async function DatasetInfo({ dataset }: { dataset: Dataset }) {
   const issued = dataset.extras?.find(
     (field) => field.key.toLowerCase() === "issued",
   )?.value;
-  const conformsTo = dataset.extras?.find(
-    (field) => field.key.toLowerCase() === "conforms_to",
-  )?.value;
   const updateFrequency = dataset.extras?.find(
     (field) => field.key.toLowerCase() === "frequency",
   )?.value;
@@ -77,16 +74,7 @@ export default async function DatasetInfo({ dataset }: { dataset: Dataset }) {
           ? format(parseISO(issued), "dd/MM/yyyy")
           : "--"}
       </ListItem>
-      <ListItem title={t("Metadata.conformsTo")}>
-        {conformsTo ? <Link
-            className="underline text-theme-green hover:text-theme-green-900 flex items-center justify-end gap-2"
-            href={conformsTo}
-            rel="noopener noreferrer"
-            target="_blank"
-          >
-            {t("Common.visit")} <ExternalLink size={16}/>
-          </Link> : "--"}
-      </ListItem>
+ 
     </div>
   );
 }
