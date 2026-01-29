@@ -279,7 +279,7 @@ export default function GeoJsonMap({
 
   return (
     <>
-    <div className="h-[420px] w-full overflow-hidden rounded-xl">
+    <div className="h-[550px] pr-4 md:pr-0 md:h-[600px] lg:h-[800px] w-full overflow-hidden rounded-xl">
       <MapContainer
         center={[0, 0]}
         zoom={2}
