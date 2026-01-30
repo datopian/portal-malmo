@@ -29,14 +29,14 @@ export default async function ResourceDetails({
             <ListItem title={t("dataset")}>
               <Link
                 className="underline"
-                href={`/@${dataset.organization?.name}/${dataset.name}`}
+                href={`/@malmo/${dataset.name}`}
               >
                 {dataset?.title}
               </Link>
             </ListItem>
             <ListItem title={t("organization")}>
               <Link
-                href={`/@${dataset.organization?.name}`}
+                href={`/@malmo`}
                 className="underline"
               >
                 {dataset.organization?.title}

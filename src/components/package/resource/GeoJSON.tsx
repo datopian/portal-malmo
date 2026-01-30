@@ -85,7 +85,7 @@ function formatProperties(props: Record<string, unknown> | null | undefined) {
       ${Object.entries(props)
         .map(
           ([key, value]) =>
-            `<div><strong>${escapeHtml(key)}:</strong> ${escapeHtml(String(value))}</div>`
+            `<div><strong>${escapeHtml(key)}:</strong> ${escapeHtml(String(value))}</div>`,
         )
         .join("")}
     </div>
@@ -100,6 +100,73 @@ function isGeoJsonObject(value: unknown): value is GeoJsonObject {
   );
 }
 
+/* detect EPSG from optional GeoJSON crs (RFC 7946 ignores crs, but files still include it) */
+function getEpsgFromGeoJsonCrs(value: unknown): number | null {
+  if (!value || typeof value !== "object") return null;
+
+  const crs = (value as Record<string, unknown>).crs;
+  if (!crs || typeof crs !== "object") return null;
+
+  const props = (crs as Record<string, unknown>).properties;
+  if (!props || typeof props !== "object") return null;
+
+  const name = (props as Record<string, unknown>).name;
+  if (typeof name !== "string") return null;
+
+  const match = name.match(/EPSG(?::|::)\s*(\d+)/i);
+  if (!match?.[1]) return null;
+
+  const epsg = Number(match[1]);
+  return Number.isFinite(epsg) ? epsg : null;
+}
+
+/* sample coordinate numbers quickly (avoid walking entire huge file) */
+function collectCoordinateNumbers(
+  value: unknown,
+  out: number[],
+  limit: number,
+) {
+  if (out.length >= limit) return;
+
+  if (Array.isArray(value)) {
+    for (const v of value) {
+      if (out.length >= limit) break;
+      collectCoordinateNumbers(v, out, limit);
+    }
+    return;
+  }
+
+  if (typeof value === "number" && Number.isFinite(value)) {
+    out.push(value);
+  }
+}
+
+/* “Leaflet-ready” = lon/lat degrees (WGS84-ish). Otherwise use CRS.Simple */
+function isLeafletReadyGeoJson(value: GeoJsonObject): boolean {
+  const epsg = getEpsgFromGeoJsonCrs(value);
+  if (epsg !== null && epsg !== 4326) return false;
+
+  const coords: number[] = [];
+  collectCoordinateNumbers(value as unknown, coords, 40);
+
+  if (coords.length < 2) return true;
+
+  let maxAbsX = 0;
+  let maxAbsY = 0;
+
+  for (let i = 0; i + 1 < coords.length; i += 2) {
+    const x = coords[i] ?? 0;
+    const y = coords[i + 1] ?? 0;
+    maxAbsX = Math.max(maxAbsX, Math.abs(x));
+    maxAbsY = Math.max(maxAbsY, Math.abs(y));
+  }
+
+  if (maxAbsX <= 180 && maxAbsY <= 90) return true;
+  if (maxAbsX > 1000 || maxAbsY > 1000) return false;
+
+  return false;
+}
+
 export default function GeoJsonMap({
   data,
   padding = [24, 24],
@@ -109,10 +176,10 @@ export default function GeoJsonMap({
   const layerRef = useRef<LeafletGeoJSON | null>(null);
 
   const [geoJson, setGeoJson] = useState<GeoJsonObject | null>(
-    typeof data === "string" ? null : data
+    typeof data === "string" ? null : data,
   );
   const [state, setState] = useState<LoadState>(
-    typeof data === "string" ? "loading" : "ready"
+    typeof data === "string" ? "loading" : "ready",
   );
   const [error, setError] = useState<string | null>(null);
 
@@ -155,7 +222,7 @@ export default function GeoJsonMap({
         const res = await fetch(trimmed, { signal: controller.signal });
         if (!res.ok) {
           throw new Error(
-            `Failed to fetch GeoJSON (${res.status} ${res.statusText})`
+            `Failed to fetch GeoJSON (${res.status} ${res.statusText})`,
           );
         }
 
@@ -184,6 +251,12 @@ export default function GeoJsonMap({
     layerRef.current = layer;
   }, []);
 
+
+  const isSimple = useMemo(() => {
+    if (!memoGeoJson) return false; // TS guard
+    return !isLeafletReadyGeoJson(memoGeoJson);
+  }, [memoGeoJson]);
+
   if (state === "loading") {
     return <div className="text-sm">{t("Common.loading")}</div>;
   }
@@ -205,17 +278,32 @@ export default function GeoJsonMap({
   }
 
   return (
-    <div className="h-[420px] w-full overflow-hidden rounded-xl">
+    <>
+    <div className="h-[550px] pr-4 md:pr-0 md:h-[600px] lg:h-[800px] w-full overflow-hidden rounded-xl">
       <MapContainer
         center={[0, 0]}
         zoom={2}
         scrollWheelZoom
-        style={{ height: "100%", width: "100%" }}
+        {...(isSimple
+          ? {
+              crs: L.CRS.Simple,
+              minZoom: -10,
+              maxZoom: 10,
+              zoomSnap: 0.1,
+              zoomDelta: 0.5,
+            }
+          : {})}
+        style={{
+          height: "100%",
+          width: "100%",
+        }}
       >
-        <TileLayer
-          attribution="&copy; OpenStreetMap contributors"
-          url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-        />
+        {!isSimple && (
+          <TileLayer
+            attribution="&copy; OpenStreetMap contributors"
+            url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+          />
+        )}
 
         <RLGeoJSON
           data={memoGeoJson}
@@ -235,5 +323,6 @@ export default function GeoJsonMap({
         <FitToGeoJson layerRef={layerRef} padding={padding} maxZoom={maxZoom} />
       </MapContainer>
     </div>
+    </>
   );
 }

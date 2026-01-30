@@ -12,6 +12,9 @@ import { setRequestLocale } from "next-intl/server";
 import { Metadata } from "next";
 import { buildLocalizedMetadata } from "@/lib/seo";
 import MatomoTracker from "@/components/analytics/matomo";
+import SkipToContent from "@/components/layout/SkipToContent";
+import DisclaimerBanner from "@/components/layout/DisclaimerBanner";
+import { getMarkdownContent } from "@/lib/markdown";
 
 const mainFont = Open_Sans({
   weight: ["300", "400", "500", "600", "700"],
@@ -44,17 +47,27 @@ export default async function RootLayout({
 
   const messages = await getMessages();
 
+  const bannerContent: string | null = await getMarkdownContent(
+    `banner/${locale}.md`,
+  );
+
   return (
     <html lang={locale}>
       <body
         className={`${mainFont.className} antialiased min-h-screen flex flex-col`}
       >
         <Suspense>
-          <MatomoTracker />
+          
+          
           <NextIntlClientProvider locale={locale} messages={messages}>
+            <MatomoTracker />
+            <SkipToContent />
+            <DisclaimerBanner content={bannerContent} />
             <Header />
             <QueryProvider>
-              <main className="flex-grow">{children}</main>
+              <main className="flex-grow" id="main-content">
+                {children}
+              </main>
             </QueryProvider>
             <Footer />
           </NextIntlClientProvider>

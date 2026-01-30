@@ -34,7 +34,7 @@
     "activityStream": "Activity Stream",
     "code": "Code",
     "created": "Created",
-    "updated": "Updated",
+    "updated": "Last updated",
     "lastModified":"Last modified",
     "version": "Version",
     "license": "License",
@@ -59,7 +59,10 @@
     "phone": "Phone",
     "readMore": "Read more",
     "readLess": "Read less",
-    "error" : "Something went wrong."
+    "error" : "Something went wrong.",
+    "skipToContent": "Skip to main content",
+    "reset": "Reset",
+    "visit" : "Visit"
   },
 
   "Dataset": {
@@ -122,7 +125,9 @@
     "noColumns": "No columns found",
     "rowsPerPage": "Rows per page",
     "pagination": "Page {page} of {total}",
-    "errorLoadingGeoJSON" : "Error loading GeoJSON data"
+    "errorLoadingGeoJSON" : "Error loading GeoJSON data",
+    "fitWidth": "Fit width",
+    "failedToLoad": "Failed to load data"
   },
 
   "Footer": {
@@ -138,6 +143,10 @@
     "updateFrequency" : "Update frequency",
     "documentation" : "Documentation",
     "temporalCoverageStart": "Temporal coverage start",
-    "temporalCoverageEnd": "Temporal coverage end"
+    "temporalCoverageEnd": "Temporal coverage end",
+    "landingPage" : "Landing page",
+    "contactPoint" : "Contact point",
+    "issued" : "Issued",
+    "conformsTo" : "Conforms to"
   }
 }

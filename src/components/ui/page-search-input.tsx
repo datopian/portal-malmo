@@ -45,7 +45,11 @@ export default function PageSearchInput({
 
   return (
     <form onSubmit={handleSubmit} className="relative w-full ">
+      <label htmlFor="search-input" className="sr-only">
+        {placeholder}
+      </label>
       <Input
+        id="search-input"
         type="text"
         value={value}
         onChange={(e) => setValue(e.target.value)}
