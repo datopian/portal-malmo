@@ -7,8 +7,8 @@ Adding a dismissable banner on top of all pages, with translatable markdown cont
 To **enable** the disclaimer banner:
 
 * Navigate to `/content/banner` in your repository
-* Add the [English](../../../content/banner/en.md) content to `en.md`
-* Add the [Swedish](../../../content/banner/sv.md) content to `sv.md`
+* Add the [English](../../content/banner/en.md) content to `en.md`
+* Add the [Swedish](../../content/banner/sv.md) content to `sv.md`
 * Commit your changes to `main` (production) or `staging` (staging environment)
 
 Note that markdown is supported.
