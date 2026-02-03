@@ -16,6 +16,7 @@ import SkipToContent from "@/components/layout/SkipToContent";
 import DisclaimerBanner from "@/components/layout/DisclaimerBanner";
 import { getMarkdownContent } from "@/lib/markdown";
 
+
 const mainFont = Open_Sans({
   weight: ["300", "400", "500", "600", "700"],
   subsets: ["latin"],
@@ -57,8 +58,6 @@ export default async function RootLayout({
         className={`${mainFont.className} antialiased min-h-screen flex flex-col`}
       >
         <Suspense>
-          
-          
           <NextIntlClientProvider locale={locale} messages={messages}>
             <MatomoTracker />
             <SkipToContent />

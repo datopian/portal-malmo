@@ -23,7 +23,7 @@ export default function DisclaimerBanner({
     content && (
       <div className="bg-gray-900 py-2.5 ">
         <Container>
-          <div className="flex gap-x-6 bg-gray-900 ">
+          <div className="flex gap-x-6 bg-gray-900 pr-[48px] relative">
             <div className="block">
               <div
                 className="text-white text-sm/6"
@@ -32,7 +32,7 @@ export default function DisclaimerBanner({
               </div>
             </div>
 
-            <div className="flex flex-1 h-fit w-fit  justify-end">
+            <div className="flex absolute -top-1 right-0 flex-1 h-fit w-fit  justify-end z-10">
               <button
                 type="button"
                 className=" p-3 focus-visible:-outline-offset-4 text-white cursor-pointer"
