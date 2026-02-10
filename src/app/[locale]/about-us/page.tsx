@@ -12,7 +12,7 @@ export const revalidate = 300;
 export default async function SearchPage({ params }: Props) {
   const { locale } = await params;
   const t = await getTranslations({ locale });
-  const content = getMarkdownContent(`about-us/${locale}.md`);
+  const content = await getMarkdownContent(`about-us/${locale}.md`);
   return (
     <Page title={t("Common.aboutUs")} description={""} heroClass="">
       <Container className="relative py-10">
