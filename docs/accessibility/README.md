@@ -6,7 +6,6 @@ The goal is to:
 
 * Catch common accessibility issues early
 * Fail PRs when regressions are introduced
-* Keep the setup simple and repeatable across projects
 
 ---
 

@@ -1,0 +1,2 @@
+Inom Malmö stad produceras mängder av data varje dag, och vi lagrar mycket historisk data. Öppna data handlar om att vi delar med oss av den data vi har till bland annat medborgare, forskning, media och näringsliv.
+Vi sitter inte alltid på svaren om hur data kan användas eller vem som kan tänkas ha behov av den. Genom att arbeta med öppna data skapar vi möjligheter för andra att använda den data som finns.
