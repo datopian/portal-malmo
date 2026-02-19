@@ -170,18 +170,18 @@ export default function DataExplorerInner({
   }, [window, windowWidth, windowHeight, containerWidth]);
 
   return (
-    <div className="relative flex w-full overflow-hidden ">
+    <div className="relative flex w-full gap-4 ">
       <div
         ref={containerRef}
         className={cn(
-          "container max-w-6xl mx-auto px-4",
-          "w-full pt-4 transition-[padding] duration-200",
-          isSettingsDropdownOpen ? "min-h-[850px]" : "",
+          //"container max-w-6xl mx-auto px-4",
+          "w-full pt-4 transition-padding duration-200",
+          //isSettingsDropdownOpen ? "min-h-[850px]" : "",
         )}
         style={
           isSettingsDropdownOpen && windowWidth >= 1204
             ? {
-                paddingRight: containerSpacing,
+                paddingRight:containerSpacing
               }
             : {}
         }
@@ -247,7 +247,7 @@ export default function DataExplorerInner({
         leaveTo="opacity-0 translate-x-2"
       >
         <aside
-          className="shrink-0 w-[316px] rounded-bl-lg min-h-fit h-full overflow-hidden absolute right-0 bg-white  p-5 shadow-lg lg:border-l lg:shadow-none z-20 border-b "
+          className="shrink-0 w-[316px] absolute right-0 rounded-bl-lg min-h-fit h-full overflow-hidden bg-white  p-5 shadow-lg lg:border-l lg:shadow-none z-20 border-b "
           data-cy="data-explorer-settings-panel"
         >
           <div className="flex items-center gap-4 mb-[14px]">
