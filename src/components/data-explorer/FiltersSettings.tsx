@@ -234,7 +234,7 @@ export function FiltersSettings<TData extends object>({
       <span className="block font-medium">Filters</span>
 
       {fields.length > 0 && (
-        <div className=" max-h-[210px] overflow-auto divide-y divide-y-gray-200">
+        <div className="  overflow-auto divide-y divide-y-gray-200">
           {fields.map((row, index) => {
             const rows = watch("rows") ?? [];
             const currentColumnId = rows[index]?.columnId;

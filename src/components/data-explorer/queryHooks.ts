@@ -60,7 +60,7 @@ export interface DatastoreFieldSchema {
 export interface DatastoreField {
   id: string;
   type: string;
-  info: DatastoreFieldInfo;
+  info?: DatastoreFieldInfo;
   schema: DatastoreFieldSchema;
 }
 
@@ -198,6 +198,42 @@ function assertCkanSuccess<T>(
   }
 }
 
+function normalizeFieldType(type: string): string {
+  const t = String(type).toLowerCase();
+
+  if (
+    [
+      "int2",
+      "int4",
+      "int8",
+      "float4",
+      "float8",
+      "numeric",
+      "decimal",
+      "real",
+      "double precision",
+      "serial",
+      "bigserial",
+    ].includes(t)
+  ) {
+    return "numeric";
+  }
+
+  if (
+    [
+      "date",
+      "time",
+      "timestamp",
+      "timestamp without time zone",
+      "timestamp with time zone",
+    ].includes(t)
+  ) {
+    return "timestamp";
+  }
+
+  return type;
+}
+
 export function useFields(resourceId: string) {
   return useQuery<FieldsResponse>({
     queryKey: ["fields", resourceId],
@@ -221,7 +257,7 @@ export function useFields(resourceId: string) {
         columns: fields.result.fields.map((field) => ({
           key: field.id,
           name: field.info?.field_name ?? field.info?.label ?? field.id,
-          type: field.type,
+          type: normalizeFieldType(field.type),
           default: field.info?.default ?? field.info?.example_value ?? "",
         })),
       };

@@ -28,9 +28,11 @@ function SelectTrigger({
   className,
   size = "default",
   children,
+  showIcon=false,
   ...props
 }: React.ComponentProps<typeof SelectPrimitive.Trigger> & {
   size?: "sm" | "default"
+  showIcon?:boolean;
 }) {
   return (
     <SelectPrimitive.Trigger
@@ -44,7 +46,8 @@ function SelectTrigger({
     >
       {children}
       <SelectPrimitive.Icon asChild>
-        <ChevronDownIcon className="size-4 opacity-50" />
+        {showIcon && <ChevronDownIcon className="size-4 opacity-50" />}
+        
       </SelectPrimitive.Icon>
     </SelectPrimitive.Trigger>
   )

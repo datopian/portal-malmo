@@ -17,9 +17,13 @@ const GeoJsonMap = dynamic(
 
 export default function ResourcePreview({ resource }: { resource: Resource }) {
   const format = resource.format?.toLowerCase() || "--";
-  console.log(resource)
+
+  if(format === "geojson"){
+    return <GeoJsonMap data={resource.url ?? ""} />;
+  }
+
   if (resource.datastore_active) {
-    return <DataExplorer resource={resource} />;
+    return <div className="-mt-5"><DataExplorer resource={resource} /></div>;
   }
 
   switch (format) {
@@ -28,9 +32,6 @@ export default function ResourcePreview({ resource }: { resource: Resource }) {
 
     case "pdf":
       return <PdfViewerClient url={resource.url || ""} />;
-
-    case "geojson":
-      return <GeoJsonMap data={resource.url ?? ""} />;
 
     /*case "json":
       return <CodeViewer data={resource.url} label="JSON" />;*/

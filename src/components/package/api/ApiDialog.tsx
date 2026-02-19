@@ -106,10 +106,10 @@ export default function ApiDialog({
         </Button>
       </DialogTrigger>
 
-      <DialogContent className="w-[calc(100vw-2rem)] sm:max-w-2xl max-h-[90vh] flex flex-col overflow-auto">
+      <DialogContent className="w-[calc(100vw-2rem)] sm:max-w-2xl max-h-[90vh] flex flex-col overflow-auto z-[500]">
         <DialogHeader>
-          <DialogTitle>{t("Common.api")}</DialogTitle>
-          <DialogDescription className="text-foreground">
+          <DialogTitle className="text-left">{t("Common.api")}</DialogTitle>
+          <DialogDescription className="text-foreground text-left">
             {t.rich("API.description", {
               link: (chunks) => (
                 <Link

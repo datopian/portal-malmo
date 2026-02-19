@@ -1,5 +1,5 @@
 "use client";
-import { Fragment, useEffect, useMemo, useRef, useState } from "react";
+import { Fragment, useMemo, useRef, useState } from "react";
 import { Table } from "./Table";
 import {
   ColumnFiltersState,
@@ -14,15 +14,14 @@ import { useNumberOfRows, useTableData } from "./queryHooks";
 import { FilterObjType } from "./search.schema";
 
 import { Button } from "../ui/button";
-import { Download, Settings, X } from "lucide-react";
+import { Settings, X } from "lucide-react";
 import { Transition } from "@headlessui/react";
 import { ColumnsSettings } from "./ColumnsSettings";
 import { FiltersSettings } from "./FiltersSettings";
-import { useWindow, useWindowSize } from "./ui.utils";
+import { useWindowSize } from "./ui.utils";
 import { TablePagination } from "./TablePagination";
 import { TableActiveFilters } from "./TableActiveFilters";
 import PaginationSettings from "./PaginationSettings";
-import Link from "next/link";
 import { Resource } from "@/schemas/ckan";
 import { cn } from "@/lib/utils";
 
@@ -52,8 +51,7 @@ export default function DataExplorerInner({
 
   const [sorting, setSorting] = useState<ColumnSort[]>([]);
   const containerRef = useRef<HTMLDivElement>(null);
-  const window = useWindow();
-  const { width: windowWidth, height: windowHeight } = useWindowSize();
+  const { width: windowWidth,  } = useWindowSize();
   const [columnPinning, setColumnPinning] = useState({});
   const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({});
   const [columnFilters, setColumnFilters] = useState<
@@ -153,47 +151,20 @@ export default function DataExplorerInner({
 
   if (pageCount < pagination.pageIndex) resetPagination();
 
-  const containerWidth = containerRef.current?.clientWidth ?? 0;
-
-  const [containerSpacing, setContainerSpacing] =
-    useState<number>(containerWidth);
-
-  useEffect(() => {
-    if (window && containerRef?.current) {
-      const marginRight = parseFloat(
-        getComputedStyle(containerRef.current!).marginRight,
-      );
-      if (marginRight <= 316) {
-        setContainerSpacing(316 - marginRight + 32);
-      }
-    }
-  }, [window, windowWidth, windowHeight, containerWidth]);
-
   return (
     <div className="relative flex w-full gap-4 ">
       <div
         ref={containerRef}
         className={cn(
-          //"container max-w-6xl mx-auto px-4",
-          "w-full pt-4 transition-padding duration-200",
-          //isSettingsDropdownOpen ? "min-h-[850px]" : "",
+          "w-full",
+          isSettingsDropdownOpen && windowWidth >= 1200
+            ? "w-[calc(100%-320px)] pt-4 transition-padding duration-200"
+            : `w-full`,
         )}
-        style={
-          isSettingsDropdownOpen && windowWidth >= 1204
-            ? {
-                paddingRight:containerSpacing
-              }
-            : {}
-        }
+       
       >
         <div>
           <div className="flex justify-end gap-2 md:gap-4 w-full mb-4">
-            <Button variant={"outline"} asChild>
-              <Link href={resource.url ?? ""} target="_blank">
-                <Download />
-                <span className="hidden md:inline">Download</span>
-              </Link>
-            </Button>
             <Button
               variant={isSettingsDropdownOpen ? "secondary" : "outline"}
               className="cursor-pointer"
@@ -247,7 +218,7 @@ export default function DataExplorerInner({
         leaveTo="opacity-0 translate-x-2"
       >
         <aside
-          className="shrink-0 w-[316px] absolute right-0 rounded-bl-lg min-h-fit h-full overflow-hidden bg-white  p-5 shadow-lg lg:border-l lg:shadow-none z-20 border-b "
+          className="shrink-0 w-[320px] absolute -right-4 xl:relative xl:right-auto rounded-bl-lg min-h-fit h-full overflow-hidden bg-white py-4 px-5 shadow-lg  xl:shadow-none z-20 "
           data-cy="data-explorer-settings-panel"
         >
           <div className="flex items-center gap-4 mb-[14px]">

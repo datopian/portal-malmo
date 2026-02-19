@@ -26,43 +26,41 @@ export default function TableColumnHeader<TData extends object>({
 
       {match(h.column.getIsSorted())
         .with(false, () => (
-          <Tooltip content="Sort by this column">
-            <button
+          <button
               type="button"
               onClick={() => h.column.toggleSorting(false, true)}
               aria-label="Sort column"
+              title="Sort column"
             >
               <div className="flex flex-col items-center justify-center">
                 <ArrowUpDownIcon className="w-4 h-4" />
               </div>
             </button>
-          </Tooltip>
         ))
         .with("asc", () => (
-          <Tooltip content="Sorting asc">
-            <button
+          <button
               type="button"
               onClick={() => h.column.toggleSorting(true, true)}
-              aria-label="Sort descending"
+              aria-label="Sort desc"
+              title="Sort desc"
             >
               <div className="flex flex-col items-center justify-center">
                 <ArrowUpWideNarrow className="w-4 h-4 " />
               </div>
             </button>
-          </Tooltip>
+     
         ))
         .with("desc", () => (
-          <Tooltip content="Sorting desc">
-            <button
+          <button
               type="button"
               onClick={() => h.column.clearSorting()}
-              aria-label="Clear sorting"
+              aria-label="Sort asc"
+              title="Clear sorting"
             >
               <div className="flex flex-col items-center justify-center">
                 <ArrowDownWideNarrow className="w-4 h-4 " />
               </div>
             </button>
-          </Tooltip>
         ))
         .otherwise(() => null)}
 

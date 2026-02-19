@@ -23,7 +23,7 @@ export function TablePagination<TData extends object>({
   }); 
 
   return (
-    <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mt-4 px-4 sticky bottom-0">
+    <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mt-4 px-4 ">
       <span className="text-base font-regular leading-5 text-[#3E3E3E] flex items-center">
         {visibleColumns.length} columns, {currentRows} rows
       </span>
