@@ -213,7 +213,9 @@ const sample = await fetchFirstDatasetAndResource();
 let routes = staticRoutes;
 
 if (sample) {
-  const { orgName, datasetName, firstResourceId } = sample;
+  const { datasetName, firstResourceId } = sample;
+
+  const orgName="malmo";
 
   const datasetRoute = `/${DEFAULT_LOCALE}/@${orgName}/${datasetName}`;
   const extras = [datasetRoute];
