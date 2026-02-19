@@ -1,3 +1,4 @@
+"use client";
 import type { Table as TableType } from "@tanstack/react-table";
 import { useMemo, useState } from "react";
 import { CheckIcon, XIcon } from "lucide-react";

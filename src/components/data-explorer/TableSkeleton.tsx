@@ -3,36 +3,11 @@ import { cn } from "@/lib/utils";
 
 type TableSkeletonProps = {
   className?: string;
-
-  /**
-   * Number of columns to render.
-   */
   columns?: number;
-
-  /**
-   * Number of body rows to render.
-   */
   rows?: number;
-
-  /**
-   * Min width for each column (Tailwind class).
-   * Example: "min-w-[200px]"
-   */
   colMinWidthClass?: string;
-
-  /**
-   * Tailwind class for skeleton bar width/height.
-   */
   skeletonClassName?: string;
-
-  /**
-   * Show the header skeleton row.
-   */
   showHeader?: boolean;
-
-  /**
-   * Accessible label for screen readers.
-   */
   ariaLabel?: string;
 };
 

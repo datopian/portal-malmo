@@ -271,7 +271,7 @@ export function FiltersSettings<TData extends object>({
                             >
                               <SelectTrigger
                                 className="h-9 min-w-[55px] text-xs text-center"
-                                showIcon={false}
+                               
                               >
                                 <SelectValue placeholder="AND" />
                                 <SelectIcon className="hidden" />
@@ -390,7 +390,7 @@ export function FiltersSettings<TData extends object>({
                               >
                                 <SelectTrigger
                                   className="h-9 min-w-[55px] text-center"
-                                  showIcon={false}
+                                  
                                 >
                                   <SelectValue placeholder="Operation">
                                     <span className="truncate font-medium">
