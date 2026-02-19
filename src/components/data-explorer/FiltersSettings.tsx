@@ -503,21 +503,21 @@ export function FiltersSettings<TData extends object>({
                   </div>
 
                   {/* Remove */}
-                  <Tooltip content={t("DataExplorer.removeFilter")}>
-                    <Button
-                      type="button"
-                      variant="link"
-                      size="sm"
-                      className="p-0 cursor-pointer text-gray-600 hover:text-black"
-                      onClick={() => {
-                        remove(index);
-                        applyFilters();
-                      }}
-                      aria-label={t("DataExplorer.removeFilterRow")}
-                    >
-                      <Minus className="h-4 w-4" />
-                    </Button>
-                  </Tooltip>
+
+                  <Button
+                    type="button"
+                    variant="link"
+                    size="sm"
+                    className="p-0 cursor-pointer text-gray-600 hover:text-black"
+                    onClick={() => {
+                      remove(index);
+                      applyFilters();
+                    }}
+                    aria-label={t("DataExplorer.removeFilterRow")}
+                    title={t("DataExplorer.removeFilter")}
+                  >
+                    <Minus className="h-4 w-4" />
+                  </Button>
                 </div>
               </div>
             );
