@@ -9,6 +9,7 @@ import Spinner from "./Spinner";
 
 export function DataExplorer({ resource }: { resource: Resource }) {
   const { data: tableData } = useFields(resource.id);
+
   if (!tableData)
     return (
       <Container className="text-right relative">

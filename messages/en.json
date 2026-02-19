@@ -148,5 +148,9 @@
     "contactPoint" : "Contact point",
     "issued" : "Issued",
     "conformsTo" : "Conforms to"
+  },
+
+  "API" : {
+    "description" : "Access the resource’s data via a web API with powerful query support. Further information in the main CKAN Data API and DataStore documentation."
   }
 }

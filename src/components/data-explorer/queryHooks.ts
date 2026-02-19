@@ -208,7 +208,10 @@ export function useFields(resourceId: string) {
         body: JSON.stringify({ id: resourceId }),
       });
 
+      
+
       const fields: DatastoreInfoResponse = await fieldsRes.json();
+
       assertCkanSuccess(fields);
 
       return {
@@ -217,9 +220,9 @@ export function useFields(resourceId: string) {
         fields: fields.result.fields,
         columns: fields.result.fields.map((field) => ({
           key: field.id,
-          name: field.info.field_name ?? field.info.label ?? field.id,
+          name: field.info?.field_name ?? field.info?.label ?? field.id,
           type: field.type,
-          default: field.info.default ?? field.info.example_value ?? "",
+          default: field.info?.default ?? field.info?.example_value ?? "",
         })),
       };
     },

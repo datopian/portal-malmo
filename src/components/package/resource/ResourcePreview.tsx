@@ -17,7 +17,7 @@ const GeoJsonMap = dynamic(
 
 export default function ResourcePreview({ resource }: { resource: Resource }) {
   const format = resource.format?.toLowerCase() || "--";
-
+  console.log(resource)
   if (resource.datastore_active) {
     return <DataExplorer resource={resource} />;
   }

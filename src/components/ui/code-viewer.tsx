@@ -1,21 +1,16 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import hljs from "highlight.js";
+import "highlight.js/styles/github.css";
+
 import { Button } from "./button";
-import { useTranslations } from "next-intl";
 
 type CodeViewerProps = {
-  data: unknown;
+  data: string;      
   label?: string;
+  language?: string;
 };
-
-function isLikelyUrl(value: string): boolean {
-  return (
-    value.startsWith("http://") ||
-    value.startsWith("https://") ||
-    value.startsWith("/")
-  );
-}
 
 function prettyMaybeJson(text: string): string {
   try {
@@ -26,57 +21,30 @@ function prettyMaybeJson(text: string): string {
   }
 }
 
-export default function CodeViewer({ data, label = "" }: CodeViewerProps) {
-  const [content, setContent] = useState<string>("");
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
+export default function CodeViewer({ data, label, language }: CodeViewerProps) {
+  const [content, setContent] = useState("");
   const [copied, setCopied] = useState(false);
-  const preRef = useRef<HTMLPreElement | null>(null);
-  const t = useTranslations();
+
+  const codeRef = useRef<HTMLElement | null>(null);
+  const copiedTimeoutRef = useRef<number | null>(null);
 
   useEffect(() => {
-    let cancelled = false;
-
-    async function resolveContent() {
-      setError(null);
-
-      if (typeof data === "string" && isLikelyUrl(data)) {
-        setLoading(true);
-        try {
-          const res = await fetch(data);
-          if (!res.ok) {
-            throw new Error(`HTTP ${res.status}`);
-          }
-          const text = await res.text();
-          if (!cancelled) {
-            setContent(prettyMaybeJson(text));
-          }
-        } catch (err) {
-          if (!cancelled) {
-            setError(err instanceof Error ? err.message : "Failed to load");
-          }
-        } finally {
-          if (!cancelled) {
-            setLoading(false);
-          }
-        }
-        return;
-      }
-
-      if (typeof data === "string") {
-        setContent(data);
-        return;
-      }
-
-      setContent(JSON.stringify(data, null, 2));
-    }
-
-    resolveContent();
-
-    return () => {
-      cancelled = true;
-    };
+    setContent(prettyMaybeJson(data));
   }, [data]);
+
+  useEffect(() => {
+    if (!codeRef.current || !content) return;
+
+    codeRef.current.removeAttribute("data-highlighted");
+    hljs.highlightElement(codeRef.current);
+  }, [content, language]);
+
+  useEffect(() => {
+    return () => {
+      if (copiedTimeoutRef.current)
+        window.clearTimeout(copiedTimeoutRef.current);
+    };
+  }, []);
 
   const copyToClipboard = async () => {
     if (!content) return;
@@ -85,42 +53,49 @@ export default function CodeViewer({ data, label = "" }: CodeViewerProps) {
       await navigator.clipboard.writeText(content);
       setCopied(true);
 
-      if (preRef.current) {
+      if (codeRef.current) {
         const range = document.createRange();
-        range.selectNodeContents(preRef.current);
+        range.selectNodeContents(codeRef.current);
         const selection = window.getSelection();
-        if (selection) {
-          selection.removeAllRanges();
-          selection.addRange(range);
-        }
+        selection?.removeAllRanges();
+        selection?.addRange(range);
       }
 
-      setTimeout(() => setCopied(false), 1500);
+      if (copiedTimeoutRef.current)
+        window.clearTimeout(copiedTimeoutRef.current);
+
+      copiedTimeoutRef.current = window.setTimeout(
+        () => setCopied(false),
+        1500
+      );
     } catch (err) {
-      console.error("Failed to copy to clipboard", err);
+      console.error("Failed to copy", err);
     }
   };
 
   return (
-    <div className="bg-[#002e4d] text-white font-mono text-sm rounded-xl p-2 overflow-x-auto">
-      <div className="flex items-center justify-between px-3 pb-1.5 border-b border-gray-700 text-xs uppercase tracking-wide text-gray-400">
-        <span>{label}</span>
+    <div className="relative">
+      <div className="absolute right-2 top-2 z-10 flex items-center gap-2">
+        {label && (
+          <span className="text-[11px] px-2 py-0.5 rounded bg-black/40 text-white">
+            {label}
+          </span>
+        )}
         <Button
           type="button"
           size="sm"
           onClick={copyToClipboard}
-          className="text-[11px]"
+          className="text-[11px] cursor-pointer !py-1 h-fit"
+          disabled={!content}
+          variant="outline"
         >
-          {copied ? `${t("Common.copied")}!` : t("Common.copy")}
+          {copied ? "Copied!" : "Copy"}
         </Button>
       </div>
-      <pre
-        ref={preRef}
-        className="p-3 text-sm font-mono whitespace-pre overflow-auto max-h-[70vh]"
-      >
-        {loading && "Loading..."}
-        {error && `Error: ${error}`}
-        {!loading && !error && content}
+      <pre className="p-3 text-sm font-mono whitespace-pre overflow-auto max-h-[70vh] border bg-white">
+        <code ref={codeRef} className={`language-${language} block`}>
+          {content}
+        </code>
       </pre>
     </div>
   );

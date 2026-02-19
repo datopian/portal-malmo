@@ -148,5 +148,9 @@
     "contactPoint": "Kontaktpunkt",
     "issued": "Utfärdad",
     "conformsTo": "Överensstämmer med"
+  },
+
+  "API" : {
+    "description" : "Få tillgång till resursens data via ett webb-API med kraftfullt stöd för frågor. Mer information finns i den huvudsakliga dokumentationen för CKAN Data API och DataStore."
   }
 }
