@@ -1,3 +1,4 @@
+"use client";
 import { format } from "date-fns";
 import { CalendarIcon } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
@@ -5,6 +6,7 @@ import { useEffect, useRef, useState } from "react";
 import { Calendar } from "@/components/ui/calendar";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
+import { useTranslations } from "next-intl";
 
 function useOnClickOutside(
   refs: Array<React.RefObject<HTMLElement | null>>,
@@ -51,6 +53,7 @@ export function DatePicker({
   date?: string;
   setDate: (date: string) => void;
 }) {
+  const t = useTranslations();
   const [open, setOpen] = useState(false);
 
   const triggerRef = useRef<HTMLButtonElement | null>(null);
@@ -74,16 +77,16 @@ export function DatePicker({
           "justify-start text-left font-normal w-full px-4 h-9",
           !date && "text-muted-foreground"
         )}
-      >
+        >
         <CalendarIcon className="mr-0 h-3 w-3" />
-        {date ? format(new Date(date), "PPP") : <span>Select a date</span>}
+        {date ? format(new Date(date), "PPP") : <span>{t("DataExplorer.selectDate")}</span>}
       </Button>
 
       {open ? (
         <div
           ref={panelRef}
           role="dialog"
-          aria-label="Choose a date"
+          aria-label={t("DataExplorer.chooseDate")}
           className="absolute right-0 top-full z-50 mt-2 w-auto rounded-md border bg-background p-0 shadow-md animate-in fade-in zoom-in-95"
         >
           <Calendar

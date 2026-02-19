@@ -24,6 +24,7 @@ import { TableActiveFilters } from "./TableActiveFilters";
 import PaginationSettings from "./PaginationSettings";
 import { Resource } from "@/schemas/ckan";
 import { cn } from "@/lib/utils";
+import { useTranslations } from "next-intl";
 
 export interface DataExplorerInnerProps {
   resource: Resource;
@@ -39,6 +40,7 @@ export default function DataExplorerInner({
   resource,
   columns,
 }: DataExplorerInnerProps) {
+  const t = useTranslations();
   const resourceId = resource.id;
   const cols = useMemo(() => columns ?? [], [columns]);
   const [pagination, setPagination] = useState<PaginationState>({
@@ -172,7 +174,9 @@ export default function DataExplorerInner({
               onClick={() => setIsSettingsDropdownOpen(!isSettingsDropdownOpen)}
             >
               <Settings />
-              <span className="hidden md:inline">Filters &amp; Settings</span>
+              <span className="hidden md:inline">
+                {t("DataExplorer.filtersAndSettings")}
+              </span>
             </Button>
           </div>
           <div>
@@ -222,13 +226,13 @@ export default function DataExplorerInner({
           data-cy="data-explorer-settings-panel"
         >
           <div className="flex items-center gap-4 mb-[14px]">
-            <h2 className="text-xl font-medium ">Settings</h2>
+            <h2 className="text-xl font-medium ">{t("Common.settings")}</h2>
             <button
               onClick={() => setIsSettingsDropdownOpen(false)}
               className="ml-auto text-foreground-light hover:text-foreground transition-colors cursor-pointer"
             >
               <X size={24} className="" />
-              <span className="sr-only">Close settings</span>
+              <span className="sr-only">{t("DataExplorer.closeSettings")}</span>
             </button>
           </div>
           <div className="space-y-4">

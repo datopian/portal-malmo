@@ -1,9 +1,11 @@
+"use client";
 import type { Table as TableType } from "@tanstack/react-table";
 import {
   ChevronLeftIcon,
   ChevronRightIcon,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { useTranslations } from "next-intl";
 
 export function TablePagination<TData extends object>({
   table,
@@ -14,6 +16,7 @@ export function TablePagination<TData extends object>({
   numOfRows: number;
   currentRows: number;
 }) {
+  const t = useTranslations();
   const pageIndex = table.getState().pagination.pageIndex;
   const pageSize = table.getState().pagination.pageSize;
   const start = numOfRows === 0 ? 0 : pageIndex * pageSize + 1;
@@ -25,12 +28,15 @@ export function TablePagination<TData extends object>({
   return (
     <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mt-4 px-4 ">
       <span className="text-base font-regular leading-5 text-[#3E3E3E] flex items-center">
-        {visibleColumns.length} columns, {currentRows} rows
+        {t("DataExplorer.columnsRows", {
+          columns: visibleColumns.length,
+          rows: currentRows,
+        })}
       </span>
 
       <div className="flex items-center gap-x-3">
         <span className="flex text-sm">
-          {start} - {end} of {numOfRows}
+          {t("DataExplorer.range", { start, end, total: numOfRows })}
         </span>
 
         <button
@@ -41,7 +47,7 @@ export function TablePagination<TData extends object>({
           )}
           onClick={() => table.previousPage()}
           disabled={!table.getCanPreviousPage()}
-          aria-label="Previous page"
+          aria-label={t("Common.previous")}
         >
           <ChevronLeftIcon size={24}/>
         </button>
@@ -54,7 +60,7 @@ export function TablePagination<TData extends object>({
           )}
           onClick={() => table.nextPage()}
           disabled={!table.getCanNextPage()}
-          aria-label="Next page"
+          aria-label={t("Common.next")}
         >
           <ChevronRightIcon size={24}/>
         </button>

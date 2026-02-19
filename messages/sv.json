@@ -129,6 +129,52 @@
     "fitWidth": "Anpassa till sidbredd",
     "failedToLoad": "Misslyckades med att ladda data"
   },
+  "DataExplorer": {
+    "filtersAndSettings": "Filter och inställningar",
+    "closeSettings": "Stäng inställningar",
+    "filters": "Filter",
+    "filtersLabel": "Filter:",
+    "field": "Fält",
+    "operation": "Operator",
+    "value": "Värde",
+    "removeFilter": "Ta bort filter",
+    "removeFilterRow": "Ta bort filterrad",
+    "addFilter": "Lägg till filter",
+    "link": {
+      "and": "OCH",
+      "or": "ELLER"
+    },
+    "operations": {
+      "equals": "Är lika med",
+      "notEqual": "Är inte lika med",
+      "greaterThan": "Större än",
+      "greaterOrEqual": "Större än eller lika med",
+      "lessThan": "Mindre än",
+      "lessOrEqual": "Mindre än eller lika med",
+      "contains": "Innehåller",
+      "notContains": "Innehåller inte",
+      "startsWith": "Börjar med",
+      "endsWith": "Slutar med"
+    },
+    "columnVisibilityOptions": "Alternativ för kolumnvisning",
+    "searchColumnsAria": "Sök efter kolumner som matchar nyckelorden",
+    "clearColumnSearchInput": "Rensa kolumnsökning",
+    "noColumnResults": "0 resultat hittades för",
+    "columnsRows": "{columns} kolumner, {rows} rader",
+    "range": "{start} - {end} av {total}",
+    "sortColumn": "Sortera kolumn",
+    "sortDesc": "Sortera fallande",
+    "sortAsc": "Sortera stigande",
+    "clearSorting": "Rensa sortering",
+    "pinToLeft": "Fäst till vänster",
+    "pinColumnToLeft": "Fäst kolumn till vänster",
+    "unpin": "Lossa",
+    "unpinColumn": "Lossa kolumn",
+    "selectDate": "Välj datum",
+    "chooseDate": "Välj ett datum",
+    "showMoreLines": "Visa mer ({count} fler rader)",
+    "loadingTable": "Laddar tabell"
+  },
 
   "Footer": {
     "contactTitle": "Kontakt",

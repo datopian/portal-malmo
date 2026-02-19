@@ -1,4 +1,6 @@
+"use client";
 import { useState } from "react";
+import { useTranslations } from "next-intl";
 
 interface ExpandableCellProps {
   content: string | number | null | undefined;
@@ -6,6 +8,7 @@ interface ExpandableCellProps {
 }
 
 export function ExpandableCell({ content, maxLines = 100 }: ExpandableCellProps) {
+  const t = useTranslations();
   const [isExpanded, setIsExpanded] = useState(false);
   
   if (content === null || content === undefined) {
@@ -30,13 +33,17 @@ export function ExpandableCell({ content, maxLines = 100 }: ExpandableCellProps)
           <>
             ...
             <span className="text-blue-600 hover:text-blue-800 ml-2">
-              {isExpanded ? 'Show less' : `Show more (${lines.length - maxLines} more lines)`}
+              {isExpanded
+                ? t("Common.showLess")
+                : t("DataExplorer.showMoreLines", {
+                    count: lines.length - maxLines,
+                  })}
             </span>
           </>
         )}
         {isExpanded && (
           <span className="text-blue-600 hover:text-blue-800 ml-2">
-            Show less
+            {t("Common.showLess")}
           </span>
         )}
       </pre>

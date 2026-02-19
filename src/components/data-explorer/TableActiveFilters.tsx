@@ -1,6 +1,8 @@
+"use client";
 import React from "react";
 import type { DataExplorerColumnFilter } from "./DataExplorerInner";
 import { formatDateToDDMMYYYY } from "@/lib/utils";
+import { useTranslations } from "next-intl";
 
 interface Column {
   key: string;
@@ -17,6 +19,7 @@ export function TableActiveFilters({
   setFilters: (filters: DataExplorerColumnFilter[]) => void;
   columns: Column[];
 }) {
+  const t = useTranslations();
   const getColumn = (col: string) => {
     return columns?.find((c) => c.key === col);
   };
@@ -25,7 +28,7 @@ export function TableActiveFilters({
     filters.length > 0 && (
       <>
         <div className="flex flex-wrap gap-1 mb-4 items-center">
-          <span className=" text-xs mr-1">Filters:</span>
+          <span className=" text-xs mr-1">{t("DataExplorer.filtersLabel")}</span>
           {filters.map((f,i) => {
             return (
               <div

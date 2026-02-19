@@ -1,3 +1,6 @@
+"use client";
+import { useTranslations } from "next-intl";
+
 type PaginationSettingsProps = {
   pageSize: number;
   onPageSizeChange: (pageSize: number) => void;
@@ -9,16 +12,17 @@ export default function PaginationSettings({
   onPageSizeChange,
   options = [10, 20, 30, 40, 50, 100],
 }: PaginationSettingsProps) {
+  const t = useTranslations();
   return (
     <div className="">
       <div className="">
         <span className=" block font-medium ">
-          Pagination
+          {t("Common.pagination")}
         </span>
       </div>
 
       <div className="flex justify-between items-center pt-2">
-        <span className="text-sm">Rows per page</span>
+        <span className="text-sm">{t("Preview.rowsPerPage")}</span>
 
         <select
           className="p-1 shadow-sm rounded bg-white text-sm"

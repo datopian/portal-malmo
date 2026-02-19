@@ -129,6 +129,52 @@
     "fitWidth": "Fit width",
     "failedToLoad": "Failed to load data"
   },
+  "DataExplorer": {
+    "filtersAndSettings": "Filters & Settings",
+    "closeSettings": "Close settings",
+    "filters": "Filters",
+    "filtersLabel": "Filters:",
+    "field": "Field",
+    "operation": "Operation",
+    "value": "Value",
+    "removeFilter": "Remove filter",
+    "removeFilterRow": "Remove filter row",
+    "addFilter": "Add filter",
+    "link": {
+      "and": "AND",
+      "or": "OR"
+    },
+    "operations": {
+      "equals": "Equals",
+      "notEqual": "Not equal",
+      "greaterThan": "Greater than",
+      "greaterOrEqual": "Greater or equal",
+      "lessThan": "Less than",
+      "lessOrEqual": "Less or equal",
+      "contains": "Contains",
+      "notContains": "Does not contain",
+      "startsWith": "Starts with",
+      "endsWith": "Ends with"
+    },
+    "columnVisibilityOptions": "Column visibility options",
+    "searchColumnsAria": "Search for columns matching the keywords",
+    "clearColumnSearchInput": "Clear column search input",
+    "noColumnResults": "0 results found matching",
+    "columnsRows": "{columns} columns, {rows} rows",
+    "range": "{start} - {end} of {total}",
+    "sortColumn": "Sort column",
+    "sortDesc": "Sort desc",
+    "sortAsc": "Sort asc",
+    "clearSorting": "Clear sorting",
+    "pinToLeft": "Pin to left",
+    "pinColumnToLeft": "Pin column to left",
+    "unpin": "Unpin",
+    "unpinColumn": "Unpin column",
+    "selectDate": "Select a date",
+    "chooseDate": "Choose a date",
+    "showMoreLines": "Show more ({count} more lines)",
+    "loadingTable": "Loading table"
+  },
 
   "Footer": {
     "contactTitle": "Contact",

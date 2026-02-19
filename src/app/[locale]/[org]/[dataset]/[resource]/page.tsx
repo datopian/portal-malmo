@@ -104,7 +104,7 @@ export default async function ResourcePage({ params }: PageProps) {
       description={resource.description}
     >
       <Container className="py-12">
-        <div className="flex gap-6 sm:gap-12 border-b pb-8 mb-8">
+        <div className="flex flex-col md:flex-row gap-6 sm:gap-12 border-b pb-8 mb-8">
           <div className="flex flex-col sm:flex-row gap-6 sm:gap-12">
             <div>
               <span className="font-bold block">{t("Common.format")}</span>

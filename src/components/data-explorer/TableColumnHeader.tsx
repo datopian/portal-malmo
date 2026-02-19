@@ -1,3 +1,4 @@
+"use client";
 import type { Header } from "@tanstack/react-table";
 import { flexRender } from "@tanstack/react-table";
 import {
@@ -10,6 +11,7 @@ import {
 import React, {  } from "react";
 import { match } from "ts-pattern";
 import { Tooltip } from "./Tooltip";
+import { useTranslations } from "next-intl";
 
 
 
@@ -18,6 +20,7 @@ export default function TableColumnHeader<TData extends object>({
 }: {
   h: Header<TData, unknown>;
 }) {
+  const t = useTranslations();
   return (
     <div className="relative flex gap-x-2 items-center pr-4 text-[#6B7280]">
       <span className="uppercase text-sm font-semibold truncate">
@@ -29,8 +32,8 @@ export default function TableColumnHeader<TData extends object>({
           <button
               type="button"
               onClick={() => h.column.toggleSorting(false, true)}
-              aria-label="Sort column"
-              title="Sort column"
+              aria-label={t("DataExplorer.sortColumn")}
+              title={t("DataExplorer.sortColumn")}
             >
               <div className="flex flex-col items-center justify-center">
                 <ArrowUpDownIcon className="w-4 h-4" />
@@ -41,8 +44,8 @@ export default function TableColumnHeader<TData extends object>({
           <button
               type="button"
               onClick={() => h.column.toggleSorting(true, true)}
-              aria-label="Sort desc"
-              title="Sort desc"
+              aria-label={t("DataExplorer.sortDesc")}
+              title={t("DataExplorer.sortDesc")}
             >
               <div className="flex flex-col items-center justify-center">
                 <ArrowUpWideNarrow className="w-4 h-4 " />
@@ -54,8 +57,8 @@ export default function TableColumnHeader<TData extends object>({
           <button
               type="button"
               onClick={() => h.column.clearSorting()}
-              aria-label="Sort asc"
-              title="Clear sorting"
+              aria-label={t("DataExplorer.sortAsc")}
+              title={t("DataExplorer.clearSorting")}
             >
               <div className="flex flex-col items-center justify-center">
                 <ArrowDownWideNarrow className="w-4 h-4 " />
@@ -67,21 +70,21 @@ export default function TableColumnHeader<TData extends object>({
       {!h.isPlaceholder && h.column.getCanPin() && (
         <div className="flex gap-1 justify-center hidden">
           {h.column.getIsPinned() !== "left" ? (
-            <Tooltip content="Pin to left">
+            <Tooltip content={t("DataExplorer.pinToLeft")}>
               <button
                 type="button"
                 onClick={() => h.column.pin("left")}
-                aria-label="Pin column to left"
+                aria-label={t("DataExplorer.pinColumnToLeft")}
               >
                 <Pin className="w-4 h-4" />
               </button>
             </Tooltip>
           ) : (
-            <Tooltip content="Unpin">
+            <Tooltip content={t("DataExplorer.unpin")}>
               <button
                 type="button"
                 onClick={() => h.column.pin(false)}
-                aria-label="Unpin column"
+                aria-label={t("DataExplorer.unpinColumn")}
               >
                 <PinOff className="w-4 h-4" />
               </button>

@@ -1,5 +1,7 @@
+"use client";
 import * as React from "react";
 import { cn } from "@/lib/utils";
+import { useTranslations } from "next-intl";
 
 type TableSkeletonProps = {
   className?: string;
@@ -33,8 +35,9 @@ export function TableSkeleton({
   colMinWidthClass = "min-w-[200px]",
   skeletonClassName = "w-24 h-4 rounded-md bg-accent/10 animate-pulse",
   showHeader = true,
-  ariaLabel = "Loading table",
+  ariaLabel,
 }: TableSkeletonProps) {
+  const t = useTranslations();
   const colIndexes = React.useMemo(() => range(Math.max(1, columns)), [columns]);
   const rowIndexes = React.useMemo(() => range(Math.max(1, rows)), [rows]);
 
@@ -42,7 +45,7 @@ export function TableSkeleton({
     <div
       role="status"
       aria-live="polite"
-      aria-label={ariaLabel}
+      aria-label={ariaLabel || t("DataExplorer.loadingTable")}
       className={cn(
         "max-w-full grow flex mt-5 rounded-lg border overflow-hidden",
         className,
@@ -68,7 +71,7 @@ export function TableSkeleton({
                   >
                     <div className="min-h-[50px] flex items-center">
                       <span className={skeletonClassName} />
-                      <span className="sr-only">Loading</span>
+                      <span className="sr-only">{t("Common.loading")}</span>
                     </div>
                   </th>
                 );
@@ -84,7 +87,7 @@ export function TableSkeleton({
                 <td key={`sk-cell-${rowIndex}-${colIndex}`} className={bodyCellClass()}>
                   <div className="min-h-[50px] flex items-center">
                     <span className={skeletonClassName} />
-                    <span className="sr-only">Loading</span>
+                    <span className="sr-only">{t("Common.loading")}</span>
                   </div>
                 </td>
               ))}

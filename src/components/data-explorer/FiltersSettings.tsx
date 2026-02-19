@@ -23,6 +23,7 @@ import { DatePicker } from "./DatePicker";
 import { SelectIcon } from "@radix-ui/react-select";
 import { DataExplorerColumnFilter } from "./DataExplorerInner";
 import { Tooltip } from "./Tooltip";
+import { useTranslations } from "next-intl";
 
 declare module "@tanstack/react-table" {
   interface ColumnMeta<TData extends RowData, TValue> {
@@ -71,11 +72,6 @@ type Props<TData extends object> = {
   setFilters: (filters: DataExplorerColumnFilter[]) => void;
 };
 
-function defaultOpForType(type?: string): Op {
-  if (type === "timestamp") return { label: "Greater than", value: ">" };
-  return { label: "Equals", value: "=" };
-}
-
 function operationsForType(type?: string) {
   // Your meta uses "numeric" and "timestamp" already.
   if (type === "numeric") {
@@ -103,18 +99,54 @@ function operationsForType(type?: string) {
   );
 }
 
+function localizeOperationLabel(
+  t: ReturnType<typeof useTranslations>,
+  value: string,
+) {
+  switch (value) {
+    case "=":
+      return t("DataExplorer.operations.equals");
+    case "!=":
+      return t("DataExplorer.operations.notEqual");
+    case ">":
+      return t("DataExplorer.operations.greaterThan");
+    case ">=":
+      return t("DataExplorer.operations.greaterOrEqual");
+    case "<":
+      return t("DataExplorer.operations.lessThan");
+    case "<=":
+      return t("DataExplorer.operations.lessOrEqual");
+    case "contains":
+      return t("DataExplorer.operations.contains");
+    case "not_contains":
+      return t("DataExplorer.operations.notContains");
+    case "starts_with":
+      return t("DataExplorer.operations.startsWith");
+    case "ends_with":
+      return t("DataExplorer.operations.endsWith");
+    default:
+      return value;
+  }
+}
+
 function normalizeLink(link: unknown): LinkValue {
   return String(link).toUpperCase() === "OR" ? "OR" : "AND";
 }
 
-function filtersToRows(filters: DataExplorerColumnFilter[]): FormType["rows"] {
+function filtersToRows(
+  filters: DataExplorerColumnFilter[],
+  t: ReturnType<typeof useTranslations>,
+): FormType["rows"] {
   const rows: FormType["rows"] = [];
 
   for (const f of filters) {
     const clauses = Array.isArray(f.value) ? (f.value as FilterObjType[]) : [];
 
     for (const c of clauses) {
-      const op = c.operation ?? { label: "Equals", value: "=" };
+      const op = c.operation ?? {
+        label: localizeOperationLabel(t, "="),
+        value: "=",
+      };
 
       rows.push({
         columnId: f.id,
@@ -133,10 +165,34 @@ export function FiltersSettings<TData extends object>({
   filters,
   setFilters,
 }: Props<TData>) {
+  const t = useTranslations();
   const filterableColumns = useMemo(
     () => table.getAllLeafColumns().filter((c) => c.getCanFilter()),
     [table],
   );
+
+  const localizedOperations = useMemo(
+    () =>
+      OPERATIONS_LIST.map((operation) => ({
+        ...operation,
+        label: localizeOperationLabel(t, operation.value),
+      })),
+    [t],
+  );
+
+  const getDefaultOpForType = (type?: string): Op => {
+    const value = type === "timestamp" ? ">" : "=";
+    const operation = localizedOperations.find((o) => o.value === value);
+    return { label: operation?.label ?? value, value };
+  };
+
+  const getOperationsForType = (type?: string) =>
+    operationsForType(type).map((operation) => ({
+      ...operation,
+      label:
+        localizedOperations.find((o) => o.value === operation.value)?.label ??
+        operation.label,
+    }));
 
   const columnsById = useMemo(() => {
     const map = new Map<string, (typeof filterableColumns)[number]>();
@@ -162,9 +218,9 @@ export function FiltersSettings<TData extends object>({
    */
   useEffect(() => {
     if (formState.isDirty) return;
-    const nextRows = filtersToRows(filters ?? []);
+    const nextRows = filtersToRows(filters ?? [], t);
     reset({ rows: nextRows });
-  }, [filters, formState.isDirty, reset]);
+  }, [filters, formState.isDirty, reset, t]);
 
   const applyFilters = useCallback(() => {
     const data = getValues();
@@ -223,15 +279,14 @@ export function FiltersSettings<TData extends object>({
     append({
       link: fields.length === 0 ? null : "AND",
       columnId: nextColumnId,
-      operation: defaultOpForType(type),
+      operation: getDefaultOpForType(type),
       value: "",
     });
   };
-  
 
   return (
     <div className="space-y-3 ">
-      <span className="block font-medium">Filters</span>
+      <span className="block font-medium">{t("DataExplorer.filters")}</span>
 
       {fields.length > 0 && (
         <div className="  overflow-auto divide-y divide-y-gray-200">
@@ -269,17 +324,18 @@ export function FiltersSettings<TData extends object>({
                                 applyFilters();
                               }}
                             >
-                              <SelectTrigger
-                                className="h-9 min-w-[55px] text-xs text-center"
-                               
-                              >
-                                <SelectValue placeholder="AND" />
+                              <SelectTrigger className="h-9 min-w-[55px] text-xs text-center">
+                                <SelectValue
+                                  placeholder={t("DataExplorer.link.and")}
+                                />
                                 <SelectIcon className="hidden" />
                               </SelectTrigger>
                               <SelectContent>
                                 {LINK_OPTIONS.map((o) => (
                                   <SelectItem key={o.value} value={o.value}>
-                                    {o.label}
+                                    {t(
+                                      `DataExplorer.link.${o.value.toLowerCase()}`,
+                                    )}
                                   </SelectItem>
                                 ))}
                               </SelectContent>
@@ -318,7 +374,7 @@ export function FiltersSettings<TData extends object>({
 
                               setValue(
                                 `rows.${index}.operation`,
-                                defaultOpForType(type),
+                                getDefaultOpForType(type),
                                 { shouldDirty: true, shouldTouch: true },
                               );
 
@@ -333,7 +389,7 @@ export function FiltersSettings<TData extends object>({
                             <div className="w-full">
                               <SelectTrigger className="h-9 w-full">
                                 <SelectValue
-                                  placeholder="Field"
+                                  placeholder={t("DataExplorer.field")}
                                   className="truncate block"
                                 />
                               </SelectTrigger>
@@ -360,7 +416,7 @@ export function FiltersSettings<TData extends object>({
                         control={control}
                         name={`rows.${index}.operation.value`}
                         render={({ field }) => {
-                          const allowedOps = operationsForType(
+                          const allowedOps = getOperationsForType(
                             col?.columnDef.meta?.type as string | undefined,
                           );
 
@@ -381,24 +437,22 @@ export function FiltersSettings<TData extends object>({
                                 applyFilters();
                               }}
                             >
-                              <Tooltip
-                                content={
-                                  OPERATIONS_LIST.find(
+                              <SelectTrigger
+                                className="h-9 min-w-[55px] text-center"
+                                title={
+                                  localizedOperations.find(
                                     (o) => o.value === field.value,
                                   )?.label ?? field.value
                                 }
                               >
-                                <SelectTrigger
-                                  className="h-9 min-w-[55px] text-center"
-                                  
+                                <SelectValue
+                                  placeholder={t("DataExplorer.operation")}
                                 >
-                                  <SelectValue placeholder="Operation">
-                                    <span className="truncate font-medium">
-                                      {field.value || "Operation"}
-                                    </span>
-                                  </SelectValue>
-                                </SelectTrigger>
-                              </Tooltip>
+                                  <span className="truncate font-medium">
+                                    {field.value || t("DataExplorer.operation")}
+                                  </span>
+                                </SelectValue>
+                              </SelectTrigger>
 
                               <SelectContent>
                                 {allowedOps.map((o) => (
@@ -429,7 +483,7 @@ export function FiltersSettings<TData extends object>({
                           ) : (
                             <Input
                               className="h-9"
-                              placeholder="Value"
+                              placeholder={t("DataExplorer.value")}
                               value={field.value ?? ""}
                               type={valueInputType}
                               onChange={(e) => field.onChange(e.target.value)}
@@ -449,7 +503,7 @@ export function FiltersSettings<TData extends object>({
                   </div>
 
                   {/* Remove */}
-                  <Tooltip content="Remove filter">
+                  <Tooltip content={t("DataExplorer.removeFilter")}>
                     <Button
                       type="button"
                       variant="link"
@@ -459,7 +513,7 @@ export function FiltersSettings<TData extends object>({
                         remove(index);
                         applyFilters();
                       }}
-                      aria-label="Remove filter row"
+                      aria-label={t("DataExplorer.removeFilterRow")}
                     >
                       <Minus className="h-4 w-4" />
                     </Button>
@@ -478,7 +532,7 @@ export function FiltersSettings<TData extends object>({
         onClick={addRow}
         data-cy="filters-add-button"
       >
-        <PlusCircleIcon /> Add filter
+        <PlusCircleIcon /> {t("DataExplorer.addFilter")}
       </Button>
     </div>
   );
