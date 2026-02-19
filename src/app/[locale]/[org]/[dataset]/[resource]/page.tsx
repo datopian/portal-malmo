@@ -81,6 +81,7 @@ export default async function ResourcePage({ params }: PageProps) {
     return notFound();
   }
 
+  console.log(resource)
   return (
     <Page
       breadcrumb={{
