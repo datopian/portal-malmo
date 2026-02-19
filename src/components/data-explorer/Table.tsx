@@ -76,7 +76,7 @@ export function Table<TData extends object>({
                     <th
                       key={h.id}
                       className={clsx(
-                        "px-4 min-w-[200px] py-4 text-base font-semibold whitespace-nowrap max-w-[480px]",
+                        "px-4 min-w-[300px] py-4 text-base font-semibold whitespace-nowrap max-w-[480px]",
                         isFirst && !hasPinnedColumns && "rounded-tl-lg",
                         isLast && "rounded-tr-lg"
                       )}

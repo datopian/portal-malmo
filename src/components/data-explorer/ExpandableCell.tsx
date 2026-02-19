@@ -1,52 +1,51 @@
 "use client";
 import { useState } from "react";
 import { useTranslations } from "next-intl";
+import { useIsClamped } from "@/hooks/element";
 
 interface ExpandableCellProps {
   content: string | number | null | undefined;
   maxLines?: number;
 }
 
-export function ExpandableCell({ content, maxLines = 100 }: ExpandableCellProps) {
+export function ExpandableCell({
+  content,
+}: ExpandableCellProps) {
   const t = useTranslations();
-  const [isExpanded, setIsExpanded] = useState(false);
-  
+
+  const [expanded, setExpanded] = useState(false);
+  const { ref, isClamped } = useIsClamped([content, expanded]);
+
   if (content === null || content === undefined) {
     return <span>{content}</span>;
   }
-  
+
   const contentStr = String(content);
-  const lines = contentStr.split('\n');
-  const isLargeContent = lines.length > maxLines;
-  
-  if (!isLargeContent) {
-    return <span>{contentStr}</span>;
-  }
-  
-  const displayContent = isExpanded ? contentStr : lines.slice(0, maxLines).join('\n');
-  
+
   return (
-    <div className="cursor-pointer" onClick={() => setIsExpanded(!isExpanded)}>
-      <pre className="whitespace-pre-wrap font-mono text-sm">
-        {displayContent}
-        {!isExpanded && (
-          <>
-            ...
-            <span className="text-blue-600 hover:text-blue-800 ml-2">
-              {isExpanded
-                ? t("Common.showLess")
-                : t("DataExplorer.showMoreLines", {
-                    count: lines.length - maxLines,
-                  })}
-            </span>
-          </>
-        )}
-        {isExpanded && (
-          <span className="text-blue-600 hover:text-blue-800 ml-2">
-            {t("Common.showLess")}
-          </span>
-        )}
-      </pre>
+    <div>
+      <div ref={ref} className={`break-all ${!expanded ? "line-clamp-8" : ""}`}>
+        {contentStr}
+      </div>
+      {!expanded && isClamped && (
+        <span
+          className="text-foreground font-semibold hover:text-text-theme text-sm cursor-pointer hover:underline"
+          onClick={() => setExpanded(true)}
+        >
+          {t("Common.showMore")}
+        </span>
+      )}
+
+      {expanded&& (
+        <span
+          className="text-foreground font-semibold hover:text-text-theme text-sm cursor-pointer hover:underline"
+          onClick={() => setExpanded(false)}
+        >
+          {t("Common.showLess")}
+        </span>
+      )}
     </div>
   );
+
+
 }

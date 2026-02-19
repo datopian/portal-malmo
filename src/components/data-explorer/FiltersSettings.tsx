@@ -22,7 +22,6 @@ import { DatePicker } from "./DatePicker";
 
 import { SelectIcon } from "@radix-ui/react-select";
 import { DataExplorerColumnFilter } from "./DataExplorerInner";
-import { Tooltip } from "./Tooltip";
 import { useTranslations } from "next-intl";
 
 declare module "@tanstack/react-table" {
