@@ -1,101 +1,151 @@
+"use client";
+
+import * as React from "react";
 import { Button } from "@/components/ui/button";
-import CodeViewer from "@/components/ui/code-viewer";
 import {
   Dialog,
-  DialogClose,
   DialogContent,
   DialogDescription,
-  DialogFooter,
   DialogHeader,
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { getApiCode } from "@/lib/snippets";
-import { Code } from "lucide-react";
+import { ScrollArea } from "@/components/ui/scroll-area";
+import { cn } from "@/lib/utils";
+import { Code, Copy, Check } from "lucide-react";
 import { useTranslations } from "next-intl";
+import Link from "next/link";
 
-const tabs = [
-  { key: "curl", label: "cURL", language: "bash" },
-  { key: "python", label: "Python", language: "python" },
-  { key: "javascript", label: "JavaScript", language: "javascript" },
-  { key: "r", label: "R", language: "r" },
-] as const;
+const DMS = process.env.NEXT_PUBLIC_DMS ?? "";
 
-const DMS = process.env.NEXT_PUBLIC_DMS;
+function Snippet({
+  title,
+  value,
+  className,
+}: {
+  title: string;
+  value: string;
+  className?: string;
+}) {
+  const [copied, setCopied] = React.useState(false);
+
+  const onCopy = async () => {
+    try {
+      await navigator.clipboard.writeText(value);
+      setCopied(true);
+      window.setTimeout(() => setCopied(false), 1200);
+    } catch {
+      // Ignore (clipboard may be blocked)
+    }
+  };
+
+  return (
+    <div className={cn("space-y-2", className)}>
+      <div className="flex items-start justify-between gap-3">
+        <h4 className="text-sm font-medium leading-tight">{title}</h4>
+
+        <Button
+          type="button"
+          variant="ghost"
+          size="icon"
+          onClick={onCopy}
+          className="h-8 w-8 shrink-0"
+          aria-label="Copy snippet"
+        >
+          {copied ? <Check className="h-4 w-4" /> : <Copy className="h-4 w-4" />}
+        </Button>
+      </div>
+
+      <div className="rounded-md border bg-muted/40">
+        <pre className="max-w-full whitespace-pre-wrap break-all overflow-x-hidden p-3 text-xs leading-relaxed">
+          <code className="font-mono text-foreground break-all">{value}</code>
+        </pre>
+      </div>
+    </div>
+  );
+}
 
 export default function ApiDialog({
   id = "<id>",
-  type = "package",
   includeDatastore = false,
 }: {
   id?: string;
   type?: "package" | "resource";
   includeDatastore?: boolean;
 }) {
-    const t = useTranslations();
-  return (
-    <div>
-      <Dialog>
-        <DialogTrigger asChild>
-          <Button variant="outline"><Code/>{t("Common.api")}</Button>
-        </DialogTrigger>
-        <DialogContent className="sm:max-w-2xl w-[calc(100vw-2rem)] max-h-[90vh] flex flex-col overflow-hidden">
-          <DialogHeader>
-            <DialogTitle>{t("Common.api")}</DialogTitle>
-            <DialogDescription>
-              {t("API.description")}
-            </DialogDescription>
-          </DialogHeader>
-          <div className="min-h-0 flex-1 overflow-hidden">
-            <div className="space-y-4 max-w-full min-w-0 h-full" data-cy="api-tabs">
-              <Tabs defaultValue={tabs[0].key} className="max-w-full min-w-0 h-full flex flex-col">
-                <TabsList className="flex w-full flex-wrap justify-start bg-transparent" data-cy="api-tabs-list">
-                  {tabs.map((tab) => (
-                    <TabsTrigger asChild value={tab.key} key={tab.key}>
-                      <Button
-                        variant="outline"
-                        data-cy={`api-tab-${tab.key}`}
-                        className="data-[state=active]:bg-theme-green data-[state=active]:!border-theme-green data-[state=active]:!text-white cursor-pointer data-[state=active]:border-secondary hover:bg-muted border-r-0 last:border-r !rounded-none data-[state=active]:text-accent-foreground !text-foreground !shadow-none"
-                      >
-                        <span>{tab.label}</span>
-                      </Button>
-                    </TabsTrigger>
-                  ))}
-                </TabsList>
+  const t = useTranslations();
 
-                <div className="min-h-0 flex-1 overflow-hidden">
-                  {tabs.map((tab) => (
-                    <TabsContent
-                      key={tab.key}
-                      className="mt-4 min-w-0 h-full overflow-auto"
-                      value={tab.key}
-                      data-cy={`api-tab-content-${tab.key}`}
-                    >
-                      <CodeViewer
-                        data={getApiCode({
-                          url: DMS ?? "",
-                          language: tab.key,
-                          type: type,
-                          id: id,
-                          includeDatastore: includeDatastore,
-                        })}
-                        language={tab.key}
-                      />
-                    </TabsContent>
+  const snippets = React.useMemo(() => {
+    const base = DMS.replace(/\/$/, "");
+    const rid = encodeURIComponent(id);
+
+    return [
+      {
+        title: t("API.snippets.firstFiveResults"),
+        value: `${base}/api/3/action/datastore_search?resource_id=${rid}&limit=5`,
+      },
+      {
+        title: t("API.snippets.containsJones"),
+        value: `${base}/api/3/action/datastore_search?resource_id=${rid}&q=jones`,
+      },
+      {
+        title: t("API.snippets.viaSql"),
+        value: `${base}/api/3/action/datastore_search_sql?sql=${
+          `SELECT * FROM "${id}" WHERE title LIKE '%jones%'`
+        }`,
+      },
+    ];
+  }, [id, t]);
+
+  return (
+    <Dialog>
+      <DialogTrigger asChild>
+        <Button variant="outline" className="gap-2">
+          <Code className="h-4 w-4" />
+          {t("Common.api")}
+        </Button>
+      </DialogTrigger>
+
+      <DialogContent className="w-[calc(100vw-2rem)] sm:max-w-2xl max-h-[90vh] flex flex-col overflow-auto">
+        <DialogHeader>
+          <DialogTitle>{t("Common.api")}</DialogTitle>
+          <DialogDescription className="text-foreground">
+            {t.rich("API.description", {
+              link: (chunks) => (
+                <Link
+                  href="https://docs.ckan.org/en/latest/maintaining/datastore.html"
+                  target="_blank"
+                  className="underline text-theme-green font-medium"
+                >
+                  {chunks}
+                </Link>
+              ),
+            })}
+          </DialogDescription>
+        </DialogHeader>
+
+        <ScrollArea className="min-h-0 flex-1 pr-2">
+          <div className="space-y-2 pb-10" data-cy="api-tabs">
+            {includeDatastore && (
+              <div className="rounded-lg  " data-cy="api-query-examples">
+                <div className="mb-3 flex items-center justify-between gap-3">
+                  <h3 className="text-sm font-semibold">{t("API.snippets.title")}</h3>
+                  <span className="text-xs text-muted-foreground">
+                    {t("API.snippets.hint")}
+                  </span>
+                </div>
+
+                <div className="space-y-4">
+                  {snippets.map((s) => (
+                    <Snippet key={s.title} title={s.title} value={s.value} />
                   ))}
                 </div>
-              </Tabs>
-            </div>
+              </div>
+            )}
           </div>
-          <DialogFooter>
-            <DialogClose asChild>
-              <Button variant="outline">Cancel</Button>
-            </DialogClose>
-            <Button type="submit">Save changes</Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
-    </div>
+        </ScrollArea>
+
+      </DialogContent>
+    </Dialog>
   );
 }

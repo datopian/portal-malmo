@@ -92,7 +92,7 @@ export default function CodeViewer({ data, label, language }: CodeViewerProps) {
           {copied ? "Copied!" : "Copy"}
         </Button>
       </div>
-      <pre className="p-3 text-sm font-mono whitespace-pre overflow-auto max-h-[70vh] border bg-white">
+      <pre className="p-3 text-sm font-mono whitespace-pre overflow-auto max-h-[40vh] border bg-white">
         <code ref={codeRef} className={`language-${language} block`}>
           {content}
         </code>

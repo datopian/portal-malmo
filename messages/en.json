@@ -150,7 +150,14 @@
     "conformsTo" : "Conforms to"
   },
 
-  "API" : {
-    "description" : "Access the resource’s data via a web API with powerful query support. Further information in the main CKAN Data API and DataStore documentation."
+  "API": {
+    "description": "Access the resource data via the CKAN Data API with powerful query support. See the <link>DataStore documentation</link> for more details.",
+    "snippets": {
+      "title": "Query Examples",
+      "hint": "Click the icon to copy",
+      "firstFiveResults": "Fetch the first 5 records",
+      "containsJones": "Search records containing \"jones\"",
+      "viaSql": "Query data using SQL"
+    }
   }
 }

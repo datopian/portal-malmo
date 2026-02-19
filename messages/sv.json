@@ -150,7 +150,14 @@
     "conformsTo": "Överensstämmer med"
   },
 
-  "API" : {
-    "description" : "Få tillgång till resursens data via ett webb-API med kraftfullt stöd för frågor. Mer information finns i den huvudsakliga dokumentationen för CKAN Data API och DataStore."
+  "API": {
+    "description": "Få tillgång till resursens data via CKAN Data API med kraftfulla frågemöjligheter. Se <link>DataStore-dokumentationen</link> för mer information.",
+    "snippets": {
+      "title": "Frågeexempel",
+      "hint": "Klicka på ikonen för att kopiera",
+      "firstFiveResults": "Hämta de första 5 posterna",
+      "containsJones": "Sök poster som innehåller \"jones\"",
+      "viaSql": "Fråga data med SQL"
+    }
   }
 }
