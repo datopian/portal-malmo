@@ -154,7 +154,7 @@ res <- httr::POST(
 resource_data <- jsonlite::fromJSON(httr::content(res, as = "text"))
 print(resource_data)
 `
-    : "";
+    : ""; 
 
   const snippets: Record<SupportedLanguage, string> = {
     curl: `
