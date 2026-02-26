@@ -148,5 +148,32 @@
     "contactPoint": "Kontaktpunkt",
     "issued": "Utfärdad",
     "conformsTo": "Överensstämmer med"
+  },
+
+  "Map": {
+    "sldLegend": {
+      "title": "Legend",
+      "itemsCount": "{count, plural, one {# objekt} other {# objekt}}",
+      "layerBadge": "Lager {layer}",
+      "filterPlaceholder": "Filtrera legend...",
+      "clearFilter": "Rensa filter",
+      "untitled": "Utan titel",
+      "noMatches": "Inga legendobjekt matchar.",
+      "groups": {
+        "areas": "Omr\u00E5den",
+        "lines": "Linjer",
+        "points": "Punkter"
+      }
+    },
+    "sld": {
+      "errors": {
+        "emptyStyleUrl": "Tom SLD styleUrl.",
+        "invalidStyleUrl": "styleUrl \u00E4r varken XML eller en giltig URL.",
+        "invalidXmlResponse": "Svaret ser inte ut som SLD XML.",
+        "failedToLoad": "Kunde inte ladda SLD.",
+        "failedToLoadStyle": "Kunde inte ladda stil."
+      }
+    }
   }
+
 }

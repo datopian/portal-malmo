@@ -148,5 +148,31 @@
     "contactPoint" : "Contact point",
     "issued" : "Issued",
     "conformsTo" : "Conforms to"
+  },
+
+  "Map": {
+    "sldLegend": {
+      "title": "Legend",
+      "itemsCount": "{count, plural, one {# item} other {# items}}",
+      "layerBadge": "Layer {layer}",
+      "filterPlaceholder": "Filter legend...",
+      "clearFilter": "Clear filter",
+      "untitled": "Untitled",
+      "noMatches": "No legend items match.",
+      "groups": {
+        "areas": "Areas",
+        "lines": "Lines",
+        "points": "Points"
+      }
+    },
+    "sld": {
+      "errors": {
+        "emptyStyleUrl": "Empty SLD styleUrl.",
+        "invalidStyleUrl": "styleUrl is neither XML nor a valid URL.",
+        "invalidXmlResponse": "Response does not look like SLD XML.",
+        "failedToLoad": "Failed to load SLD.",
+        "failedToLoadStyle": "Failed to load style."
+      }
+    }
   }
 }

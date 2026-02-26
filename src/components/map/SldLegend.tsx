@@ -9,6 +9,7 @@ import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
 import { X } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { useTranslations } from "next-intl";
 
 function Swatch({ item }: { item: LegendItem }) {
   const stroke = item.color ?? "#232323";
@@ -79,7 +80,7 @@ function groupByKind(items: LegendItem[]) {
 }
 
 function looksLikeRange(label: string) {
-  return /\d/.test(label) && /-|–|to|>=|<=|>|</.test(label);
+  return /\d/.test(label) && /-|\u2013|to|>=|<=|>|</.test(label);
 }
 
 function GradientRamp({ items }: { items: LegendItem[] }) {
@@ -154,6 +155,7 @@ export default function SldLegend({
   layerNameOrIndex?: string | number;
   className?: string;
 }) {
+  const t = useTranslations();
   const styler = useSldStyler(sldXml);
 
   const ruleTitles = useMemo(() => extractRuleTitles(sldXml), [sldXml]);
@@ -168,9 +170,9 @@ export default function SldLegend({
 
     return base.map((it, idx) => ({
       ...it,
-      label: ruleTitles[idx] ?? it.label ?? "Untitled",
+      label: ruleTitles[idx] ?? it.label ?? t("Map.sldLegend.untitled"),
     }));
-  }, [styler, layerNameOrIndex, ruleTitles]);
+  }, [styler, layerNameOrIndex, ruleTitles, t]);
 
   const [q, setQ] = useState("");
 
@@ -187,12 +189,16 @@ export default function SldLegend({
   return (
     <Card className={cn("w-[320px]", className)}>
       <CardHeader className="space-y-2 pb-2">
-        <CardTitle className="text-base">Legend</CardTitle>
+        <CardTitle className="text-base">{t("Map.sldLegend.title")}</CardTitle>
 
         <div className="flex items-center gap-2">
-          <Badge variant="secondary">{rawItems.length} items</Badge>
+          <Badge variant="secondary">
+            {t("Map.sldLegend.itemsCount", { count: rawItems.length })}
+          </Badge>
           {layerNameOrIndex !== undefined && (
-            <Badge variant="outline">Layer {String(layerNameOrIndex)}</Badge>
+            <Badge variant="outline">
+              {t("Map.sldLegend.layerBadge", { layer: String(layerNameOrIndex) })}
+            </Badge>
           )}
         </div>
 
@@ -202,14 +208,14 @@ export default function SldLegend({
           <Input
             value={q}
             onChange={(e) => setQ(e.target.value)}
-            placeholder="Filter legend…"
+            placeholder={t("Map.sldLegend.filterPlaceholder")}
             className="h-9"
           />
           {q && (
             <button
               onClick={() => setQ("")}
               className="text-muted-foreground hover:text-foreground"
-              aria-label="Clear filter"
+              aria-label={t("Map.sldLegend.clearFilter")}
               type="button"
             >
               <X className="h-4 w-4" />
@@ -223,7 +229,11 @@ export default function SldLegend({
           {groups.map(([kind, groupItems]) => (
             <div key={kind} className="space-y-2">
               <div className="text-xs font-medium text-muted-foreground">
-                {kind === "polygon" ? "Areas" : kind === "line" ? "Lines" : "Points"}
+                {kind === "polygon"
+                  ? t("Map.sldLegend.groups.areas")
+                  : kind === "line"
+                    ? t("Map.sldLegend.groups.lines")
+                    : t("Map.sldLegend.groups.points")}
               </div>
 
               <div className="space-y-1.5">
@@ -235,7 +245,7 @@ export default function SldLegend({
                   >
                     <Swatch item={it} />
                     <div className="text-sm truncate flex-1">
-                      {it.label || "Untitled"}
+                      {it.label || t("Map.sldLegend.untitled")}
                     </div>
                   </div>
                 ))}
@@ -244,7 +254,9 @@ export default function SldLegend({
           ))}
 
           {items.length === 0 && (
-            <div className="text-sm text-muted-foreground">No legend items match.</div>
+            <div className="text-sm text-muted-foreground">
+              {t("Map.sldLegend.noMatches")}
+            </div>
           )}
         </div>
       </CardContent>

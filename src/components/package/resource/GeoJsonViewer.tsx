@@ -227,7 +227,7 @@ export default function GeoJsonMap({
       const trimmed = input.trim();
       if (!trimmed) {
         setSldState("error");
-        setSldError("Empty SLD styleUrl.");
+        setSldError(t("Map.sld.errors.emptyStyleUrl"));
         return;
       }
 
@@ -239,7 +239,7 @@ export default function GeoJsonMap({
 
       if (!isProbablyUrl(trimmed)) {
         setSldState("error");
-        setSldError("styleUrl is neither XML nor a valid URL.");
+        setSldError(t("Map.sld.errors.invalidStyleUrl"));
         return;
       }
 
@@ -256,7 +256,7 @@ export default function GeoJsonMap({
 
         const xmlText = await res.text();
         if (!isProbablyXml(xmlText)) {
-          throw new Error("Response does not look like SLD XML.");
+          throw new Error(t("Map.sld.errors.invalidXmlResponse"));
         }
 
         setSldXml(xmlText);
@@ -264,7 +264,9 @@ export default function GeoJsonMap({
       } catch (e) {
         if (controller.signal.aborted) return;
         setSldState("error");
-        setSldError(e instanceof Error ? e.message : "Failed to load SLD.");
+        setSldError(
+          e instanceof Error ? e.message : t("Map.sld.errors.failedToLoad"),
+        );
       }
     }
 
@@ -272,8 +274,6 @@ export default function GeoJsonMap({
 
     return () => controller.abort();
   }, [styleUrl]);
-
-  console.log(sldXml)
 
   const styler = useSldStyler(sldXml ?? "");
 
@@ -388,7 +388,7 @@ export default function GeoJsonMap({
 
       {showSldError && (
         <div className="mb-2 text-sm text-amber-700">
-          {sldError ?? "Failed to load style."}
+          {sldError ?? t("Map.sld.errors.failedToLoadStyle")}
         </div>
       )}
 
