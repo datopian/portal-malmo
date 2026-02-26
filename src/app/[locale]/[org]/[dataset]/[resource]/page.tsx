@@ -13,7 +13,6 @@ import { formatDate } from "date-fns";
 import { Button } from "@/components/ui/button";
 import { Link } from "@/i18n/navigation";
 import { DownloadIcon } from "lucide-react";
-import { Heading } from "@/components/ui/heading";
 import { formatFileSize } from "@/lib/utils";
 import ApiDialog from "@/components/package/api/ApiDialog";
 
@@ -44,19 +43,17 @@ export default async function ResourcePage({ params }: PageProps) {
     locale,
     resource: resourceId,
     dataset: datasetName,
-    org
+    org,
   } = await params;
 
-  if(decodeURIComponent(org) !== "@malmo"){
+  if (decodeURIComponent(org) !== "@malmo") {
     return notFound();
   }
 
   const t = await getTranslations({ locale });
 
   try {
-
     dataset = await ckan().getDatasetDetails(datasetName);
-    
 
     if (!dataset) {
       return notFound();
@@ -75,7 +72,6 @@ export default async function ResourcePage({ params }: PageProps) {
     if (resource.package_id !== dataset.id) {
       return notFound();
     }
-
   } catch (e) {
     console.log(e);
     return notFound();
@@ -132,7 +128,7 @@ export default async function ResourcePage({ params }: PageProps) {
               <span>
                 {formatDate(
                   resource.metadata_modified ?? "",
-                  "dd/MM/yyyy, HH:mm"
+                  "dd/MM/yyyy, HH:mm",
                 )}
               </span>
             </div>
@@ -161,10 +157,7 @@ export default async function ResourcePage({ params }: PageProps) {
         </div>
         {resource.format && supportsPreview(resource) && (
           <>
-            <Heading level={3} className="text-theme-green font-bold mb-5">
-              {t("Common.preview")}
-            </Heading>
-            <ResourcePreview resource={resource} />
+            <ResourcePreview resource={resource} dataset={dataset} />
           </>
         )}
       </Container>

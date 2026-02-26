@@ -35,7 +35,7 @@
     "code": "Kod",
     "created": "Skapad",
     "updated": "Uppdaterad",
-    "lastModified" : "Senast ändrad",
+    "lastModified": "Senast ändrad",
     "version": "Version",
     "license": "Licens",
     "size": "Storlek",
@@ -127,8 +127,10 @@
     "pagination": "Sida {page} av {total}",
     "errorLoadingGeoJSON": "Fel vid inläsning av GeoJSON-data",
     "fitWidth": "Anpassa till sidbredd",
-    "failedToLoad": "Misslyckades med att ladda data"
+    "failedToLoad": "Misslyckades med att ladda data",
+    "notSupported": "Förhandsvisning stöds inte"
   },
+
   "DataExplorer": {
     "filtersAndSettings": "Filter och inställningar",
     "closeSettings": "Stäng inställningar",
@@ -201,10 +203,48 @@
     "snippets": {
       "title": "Frågeexempel",
       "hint": "Klicka på ikonen för att kopiera",
-      "resourceMetadata": "H\u00E4mta resursmetadata",
+      "copySnippet": "Kopiera kodexempel",
+      "resourceMetadata": "Hämta resursmetadata",
       "firstFiveResults": "Hämta de första 5 posterna",
-      "containsJones": "S\u00F6k poster som inneh\u00E5ller \"{query}\"",
+      "containsJones": "Sök poster som innehåller \"{query}\"",
       "viaSql": "Fråga data med SQL"
+    }
+  },
+
+  "Map": {
+    "sldLegend": {
+      "title": "Legend",
+      "itemsCount": "{count, plural, one {# objekt} other {# objekt}}",
+      "layerBadge": "Lager {layer}",
+      "filterPlaceholder": "Filtrera legend...",
+      "clearFilter": "Rensa filter",
+      "showButton": "Visa legend",
+      "hideButton": "Dölj legend",
+      "untitled": "Utan titel",
+      "noMatches": "Inga legendobjekt matchar.",
+      "groups": {
+        "areas": "Områden",
+        "lines": "Linjer",
+        "points": "Punkter"
+      }
+    },
+    "sld": {
+      "errors": {
+        "emptyStyleUrl": "Tom SLD styleUrl.",
+        "invalidStyleUrl": "styleUrl är varken XML eller en giltig URL.",
+        "failedToFetch": "Kunde inte hämta SLD ({status} {statusText})",
+        "invalidXmlResponse": "Svaret ser inte ut som SLD XML.",
+        "failedToLoad": "Kunde inte ladda SLD.",
+        "failedToLoadStyle": "Kunde inte ladda stil."
+      }
+    },
+    "geoJson": {
+      "noAttributes": "Inga attribut",
+      "errors": {
+        "failedToFetch": "Kunde inte hämta GeoJSON ({status} {statusText})",
+        "invalidResponse": "Svaret är inte giltig GeoJSON.",
+        "failedToLoad": "Kunde inte ladda GeoJSON."
+      }
     }
   }
 }

@@ -9,27 +9,38 @@ import {
   useMap,
 } from "react-leaflet";
 import type { GeoJsonObject } from "geojson";
+import type { Feature, GeoJsonProperties, Geometry } from "geojson";
 import type { GeoJSON as LeafletGeoJSON } from "leaflet";
+import type { PathOptions } from "leaflet";
 import "leaflet/dist/leaflet.css";
 import { useTranslations } from "next-intl";
 import { escapeHtml } from "@/lib/utils";
+import { useSldStyler } from "@/hooks/sld";
+import LeafletSldLoader from "@/components/map/LeafletSldLoader";
+import SldLegend from "@/components/map/SldLegend";
+
+type RLFeature = Feature<Geometry, GeoJsonProperties>;
+type RLStyleFn = (feature?: RLFeature) => PathOptions;
+
 
 const DefaultIcon = L.Icon.Default as unknown as {
   prototype: { _getIconUrl?: unknown };
 };
 delete DefaultIcon.prototype._getIconUrl;
 
+type Props = {
+  data: GeoJsonObject | string;
+  padding?: [number, number];
+  maxZoom?: number;
+  styleUrl?: string;
+  showLegendOnMobile?: boolean;
+};
+
 L.Icon.Default.mergeOptions({
   iconRetinaUrl: "/leaflet/marker-icon-2x.png",
   iconUrl: "/leaflet/marker-icon.png",
   shadowUrl: "/leaflet/marker-shadow.png",
 });
-
-type Props = {
-  data: GeoJsonObject | string;
-  padding?: [number, number];
-  maxZoom?: number;
-};
 
 function FitToGeoJson({
   layerRef,
@@ -59,6 +70,15 @@ function isProbablyUrl(value: string) {
   return /^(https?:\/\/|\/|\.\/|\.\.\/)/.test(value.trim());
 }
 
+function isProbablyXml(input: string) {
+  const s = input.trim();
+  return (
+    s.startsWith("<?xml") ||
+    s.startsWith("<StyledLayerDescriptor") ||
+    s.startsWith("<sld:StyledLayerDescriptor")
+  );
+}
+
 function safeParseGeoJson(value: string): GeoJsonObject | null {
   try {
     const parsed = JSON.parse(value) as unknown;
@@ -77,8 +97,13 @@ function safeParseGeoJson(value: string): GeoJsonObject | null {
 
 type LoadState = "idle" | "loading" | "ready" | "error";
 
-function formatProperties(props: Record<string, unknown> | null | undefined) {
-  if (!props || typeof props !== "object") return "<em>No attributes</em>";
+function formatProperties(
+  props: Record<string, unknown> | null | undefined,
+  noAttributesLabel: string,
+) {
+  if (!props || typeof props !== "object") {
+    return `<em>${escapeHtml(noAttributesLabel)}</em>`;
+  }
 
   return `
     <div class="text-sm space-y-1">
@@ -169,8 +194,10 @@ function isLeafletReadyGeoJson(value: GeoJsonObject): boolean {
 
 export default function GeoJsonMap({
   data,
+  styleUrl,
   padding = [24, 24],
   maxZoom = 14,
+  showLegendOnMobile = true,
 }: Props) {
   const t = useTranslations();
   const layerRef = useRef<LeafletGeoJSON | null>(null);
@@ -182,6 +209,93 @@ export default function GeoJsonMap({
     typeof data === "string" ? "loading" : "ready",
   );
   const [error, setError] = useState<string | null>(null);
+
+  const [sldXml, setSldXml] = useState<string | null>(null);
+  const [sldState, setSldState] = useState<LoadState>(
+    styleUrl ? "loading" : "ready",
+  );
+  const [sldError, setSldError] = useState<string | null>(null);
+
+  useEffect(() => {
+    if (!styleUrl) {
+      setSldXml(null);
+      setSldState("ready");
+      setSldError(null);
+      return;
+    }
+
+    const controller = new AbortController();
+
+    async function loadSld(input: string) {
+      setSldState("loading");
+      setSldError(null);
+      setSldXml(null);
+
+      const trimmed = input.trim();
+      if (!trimmed) {
+        setSldState("error");
+        setSldError(t("Map.sld.errors.emptyStyleUrl"));
+        return;
+      }
+
+      if (isProbablyXml(trimmed)) {
+        setSldXml(trimmed);
+        setSldState("ready");
+        return;
+      }
+
+      if (!isProbablyUrl(trimmed)) {
+        setSldState("error");
+        setSldError(t("Map.sld.errors.invalidStyleUrl"));
+        return;
+      }
+
+      try {
+        const res = await fetch(trimmed, {
+          signal: controller.signal,
+        });
+
+        if (!res.ok) {
+          throw new Error(
+            t("Map.sld.errors.failedToFetch", {
+              status: res.status,
+              statusText: res.statusText,
+            }),
+          );
+        }
+
+        const xmlText = await res.text();
+        if (!isProbablyXml(xmlText)) {
+          throw new Error(t("Map.sld.errors.invalidXmlResponse"));
+        }
+
+        setSldXml(xmlText);
+        setSldState("ready");
+      } catch (e) {
+        if (controller.signal.aborted) return;
+        setSldState("error");
+        setSldError(
+          e instanceof Error ? e.message : t("Map.sld.errors.failedToLoad"),
+        );
+      }
+    }
+
+    loadSld(styleUrl);
+
+    return () => controller.abort();
+  }, [styleUrl]);
+
+  const styler = useSldStyler(sldXml ?? "");
+
+  const styleFn: RLStyleFn | undefined = useMemo(() => {
+    const fn = styler?.getStyleFunction();
+    if (!fn) return undefined;
+
+    return (feature?: RLFeature) => {
+      if (!feature) return {};
+      return fn(feature);
+    };
+  }, [styler]);
 
   useEffect(() => {
     if (typeof data !== "string") {
@@ -222,20 +336,25 @@ export default function GeoJsonMap({
         const res = await fetch(trimmed, { signal: controller.signal });
         if (!res.ok) {
           throw new Error(
-            `Failed to fetch GeoJSON (${res.status} ${res.statusText})`,
+            t("Map.geoJson.errors.failedToFetch", {
+              status: res.status,
+              statusText: res.statusText,
+            }),
           );
         }
 
         const json = (await res.json()) as unknown;
         if (!isGeoJsonObject(json)) {
-          throw new Error("Response is not valid GeoJSON.");
+          throw new Error(t("Map.geoJson.errors.invalidResponse"));
         }
 
         setGeoJson(json);
         setState("ready");
       } catch (e) {
         if (controller.signal.aborted) return;
-        setError(e instanceof Error ? e.message : "Failed to load GeoJSON.");
+        setError(
+          e instanceof Error ? e.message : t("Map.geoJson.errors.failedToLoad"),
+        );
         setState("error");
       }
     }
@@ -251,11 +370,12 @@ export default function GeoJsonMap({
     layerRef.current = layer;
   }, []);
 
-
-  const isSimple = useMemo(() => {
-    if (!memoGeoJson) return false; // TS guard
+  const hasBasemap = useMemo(() => {
+    if (!memoGeoJson) return false;
     return !isLeafletReadyGeoJson(memoGeoJson);
   }, [memoGeoJson]);
+
+  const showSldError = sldState === "error";
 
   if (state === "loading") {
     return <div className="text-sm">{t("Common.loading")}</div>;
@@ -278,51 +398,89 @@ export default function GeoJsonMap({
   }
 
   return (
-    <>
-    <div className="h-[550px] pr-4 md:pr-0 md:h-[600px] lg:h-[800px] w-full overflow-hidden rounded-xl">
-      <MapContainer
-        center={[0, 0]}
-        zoom={2}
-        scrollWheelZoom
-        {...(isSimple
-          ? {
-              crs: L.CRS.Simple,
-              minZoom: -10,
-              maxZoom: 10,
-              zoomSnap: 0.1,
-              zoomDelta: 0.5,
-            }
-          : {})}
-        style={{
-          height: "100%",
-          width: "100%",
-        }}
-      >
-        {!isSimple && (
-          <TileLayer
-            attribution="&copy; OpenStreetMap contributors"
-            url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+    <div className="relative z-1">
+      <LeafletSldLoader />
+
+      {showSldError && (
+        <div className="mb-2 text-sm text-amber-700">
+          {sldError ?? t("Map.sld.errors.failedToLoadStyle")}
+        </div>
+      )}
+
+      {sldXml && (
+        <div
+          className={
+            showLegendOnMobile
+              ? "mb-3 w-full md:mb-0 md:absolute md:right-4 md:top-4 md:z-[1000] md:w-auto pr-4"
+              : "hidden md:block md:absolute md:right-4 md:top-4 md:z-[1000] md:w-auto"
+          }
+        >
+          <SldLegend
+            sldXml={sldXml}
+            className=" md:shadow-lg"
           />
-        )}
+        </div>
+      )}
 
-        <RLGeoJSON
-          data={memoGeoJson}
-          ref={setLayerRef}
-          pointToLayer={(_, latlng) => L.marker(latlng)}
-          onEachFeature={(feature, layer) => {
-            if (feature.properties) {
-              layer.bindPopup(formatProperties(feature.properties));
-            }
+      <div className="h-[550px] pr-4 md:pr-0 md:h-[600px] lg:h-[800px] w-full overflow-hidden rounded-xl">
+        <MapContainer
+          center={[0, 0]}
+          zoom={2}
+          scrollWheelZoom
+          {...(hasBasemap
+            ? {
+                crs: L.CRS.Simple,
+                minZoom: -10,
+                maxZoom: 10,
+                zoomSnap: 0.1,
+                zoomDelta: 0.5,
+              }
+            : {})}
+          style={{ height: "100%", width: "100%" }}
+        >
+          {!hasBasemap && (
+            <TileLayer
+              attribution="&copy; OpenStreetMap contributors"
+              url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+            />
+          )}
 
-            layer.on("click", () => {
-              layer.openPopup();
-            });
-          }}
-        />
+          <RLGeoJSON
+            data={memoGeoJson}
+            style={styleFn}
+            ref={setLayerRef}
+            pointToLayer={(feature, latlng) => {
+              // react-leaflet's pointToLayer gives a *real* Feature here (not undefined)
+              const s = (styleFn?.(feature) ?? {}) as PathOptions & {
+                radius?: number;
+              };
 
-        <FitToGeoJson layerRef={layerRef} padding={padding} maxZoom={maxZoom} />
-      </MapContainer>
+              const radius = typeof s.radius === "number" ? s.radius : 5;
+
+              return L.circleMarker(latlng, {
+                ...(s as L.CircleMarkerOptions),
+                radius,
+              });
+            }}
+            onEachFeature={(feature, layer) => {
+              if (feature.properties)
+                layer.bindPopup(
+                  formatProperties(
+                    feature.properties,
+                    t("Map.geoJson.noAttributes"),
+                  ),
+                );
+              layer.on("click", () => layer.openPopup());
+            }}
+          />
+
+          <FitToGeoJson
+            layerRef={layerRef}
+            padding={padding}
+            maxZoom={maxZoom}
+          />
+        </MapContainer>
+      </div>
     </div>
-    </>
   );
 }

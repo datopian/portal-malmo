@@ -35,7 +35,7 @@
     "code": "Code",
     "created": "Created",
     "updated": "Last updated",
-    "lastModified":"Last modified",
+    "lastModified": "Last modified",
     "version": "Version",
     "license": "License",
     "size": "Size",
@@ -53,16 +53,16 @@
     "previous": "Previous",
     "next": "Next",
     "search": "Search",
-    "more" : "more",
+    "more": "more",
     "email": "E-mail",
     "address": "Address",
     "phone": "Phone",
     "readMore": "Read more",
     "readLess": "Read less",
-    "error" : "Something went wrong.",
+    "error": "Something went wrong.",
     "skipToContent": "Skip to main content",
     "reset": "Reset",
-    "visit" : "Visit"
+    "visit": "Visit"
   },
 
   "Dataset": {
@@ -125,9 +125,10 @@
     "noColumns": "No columns found",
     "rowsPerPage": "Rows per page",
     "pagination": "Page {page} of {total}",
-    "errorLoadingGeoJSON" : "Error loading GeoJSON data",
+    "errorLoadingGeoJSON": "Error loading GeoJSON data",
     "fitWidth": "Fit width",
-    "failedToLoad": "Failed to load data"
+    "failedToLoad": "Failed to load data",
+    "notSupported": "Preview not supported"
   },
   "DataExplorer": {
     "filtersAndSettings": "Filters & Settings",
@@ -184,16 +185,16 @@
     "exportCatalog": "Export DCAT catalog in <rdf>RDF</rdf> or <jsonld>JSON-LD</jsonld>"
   },
 
-  "Metadata" : {
-    "author" : "Author",
-    "updateFrequency" : "Update frequency",
-    "documentation" : "Documentation",
+  "Metadata": {
+    "author": "Author",
+    "updateFrequency": "Update frequency",
+    "documentation": "Documentation",
     "temporalCoverageStart": "Temporal coverage start",
     "temporalCoverageEnd": "Temporal coverage end",
-    "landingPage" : "Landing page",
-    "contactPoint" : "Contact point",
-    "issued" : "Issued",
-    "conformsTo" : "Conforms to"
+    "landingPage": "Landing page",
+    "contactPoint": "Contact point",
+    "issued": "Issued",
+    "conformsTo": "Conforms to"
   },
 
   "API": {
@@ -201,10 +202,48 @@
     "snippets": {
       "title": "Query Examples",
       "hint": "Click the icon to copy",
+      "copySnippet": "Copy snippet",
       "resourceMetadata": "Fetch resource metadata",
       "firstFiveResults": "Fetch the first 5 records",
       "containsJones": "Search records containing \"{query}\"",
       "viaSql": "Query data using SQL"
+    }
+  },
+
+  "Map": {
+    "sldLegend": {
+      "title": "Legend",
+      "itemsCount": "{count, plural, one {# item} other {# items}}",
+      "layerBadge": "Layer {layer}",
+      "filterPlaceholder": "Filter legend...",
+      "clearFilter": "Clear filter",
+      "showButton": "Show legend",
+      "hideButton": "Hide legend",
+      "untitled": "Untitled",
+      "noMatches": "No legend items match.",
+      "groups": {
+        "areas": "Areas",
+        "lines": "Lines",
+        "points": "Points"
+      }
+    },
+    "sld": {
+      "errors": {
+        "emptyStyleUrl": "Empty SLD styleUrl.",
+        "invalidStyleUrl": "styleUrl is neither XML nor a valid URL.",
+        "failedToFetch": "Failed to fetch SLD ({status} {statusText})",
+        "invalidXmlResponse": "Response does not look like SLD XML.",
+        "failedToLoad": "Failed to load SLD.",
+        "failedToLoadStyle": "Failed to load style."
+      }
+    },
+    "geoJson": {
+      "noAttributes": "No attributes",
+      "errors": {
+        "failedToFetch": "Failed to fetch GeoJSON ({status} {statusText})",
+        "invalidResponse": "Response is not valid GeoJSON.",
+        "failedToLoad": "Failed to load GeoJSON."
+      }
     }
   }
 }
