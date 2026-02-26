@@ -9,6 +9,7 @@ import { Link } from "@/i18n/navigation";
 import { ckan } from "@/lib/ckan";
 import { searchDatasets } from "@/lib/ckan/dataset";
 import { GROUP_CARD_COLORS } from "@/lib/groups";
+import { Dataset, Group } from "@/schemas/ckan";
 import { Metadata } from "next";
 import { getTranslations } from "next-intl/server";
 
@@ -29,15 +30,25 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 
 export default async function Home() {
   const t = await getTranslations();
+  let datasets: Dataset[] = [];
+  let groups: Group[] = [];
 
-  const { datasets } = await searchDatasets({
-    options: {
-      limit: 3,
-      sort: "metadata_modified desc",
-    },
-  });
+  try {
+    datasets = (
+      await searchDatasets({
+        options: {
+          limit: 3,
+          sort: "metadata_modified desc",
+        },
+      })
+    ).datasets;
+  } catch {}
 
-  const groups = await ckan().getGroupsWithDetails();
+  try {
+    groups = await ckan().getGroupsWithDetails();
+  } catch {}
+
+  
 
   return (
     <>
@@ -95,7 +106,12 @@ export default async function Home() {
               ))}
             </div>
             <div className="flex justify-center">
-              <Button asChild variant="outline" size="lg" className="w-fit border-2">
+              <Button
+                asChild
+                variant="outline"
+                size="lg"
+                className="w-fit border-2"
+              >
                 <Link href={"/data"}>{t("Dataset.exploreAll")}</Link>
               </Button>
             </div>

@@ -144,7 +144,7 @@ export default async function ResourcePage({ params }: PageProps) {
             </div>
           </div>
           <div className="ml-auto flex items-center gap-2">
-            <ApiDialog type="resource" includeDatastore id={resource.id}/>
+            <ApiDialog type="resource" includeDatastore={resource.datastore_active } id={resource.id}/>
             <Button
               type="button"
               asChild

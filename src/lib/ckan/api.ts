@@ -359,7 +359,7 @@ export default class CKAN {
     return tableMetadata.filter((item) => item.alias_of);
   }
 
-  async datastoreSearch(resourceId: string) {
+  async datastoreSearch(resourceId: string, limit:number = 32000) {
     const response = await fetchRetry(
       `${this.DMS}/api/3/action/datastore_search`,
       2,
@@ -371,7 +371,7 @@ export default class CKAN {
         },
         body: JSON.stringify({
           id: resourceId,
-          limit: "32000",
+          limit: limit,
         }),
       }
     );

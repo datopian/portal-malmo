@@ -201,8 +201,9 @@
     "snippets": {
       "title": "Query Examples",
       "hint": "Click the icon to copy",
+      "resourceMetadata": "Fetch resource metadata",
       "firstFiveResults": "Fetch the first 5 records",
-      "containsJones": "Search records containing \"jones\"",
+      "containsJones": "Search records containing \"{query}\"",
       "viaSql": "Query data using SQL"
     }
   }
