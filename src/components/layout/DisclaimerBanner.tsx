@@ -39,7 +39,7 @@ export default function DisclaimerBanner({
                 onClick={handleDismiss}
               >
                 <span className="sr-only">Dismiss</span>
-                <X />
+                <X size={18}/>
               </button>
             </div>
           </div>
