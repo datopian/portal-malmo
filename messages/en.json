@@ -215,6 +215,8 @@
       "layerBadge": "Layer {layer}",
       "filterPlaceholder": "Filter legend...",
       "clearFilter": "Clear filter",
+      "showButton": "Show legend",
+      "hideButton": "Hide legend",
       "untitled": "Untitled",
       "noMatches": "No legend items match.",
       "groups": {

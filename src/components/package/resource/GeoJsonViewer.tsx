@@ -33,6 +33,7 @@ type Props = {
   padding?: [number, number];
   maxZoom?: number;
   styleUrl?: string;
+  showLegendOnMobile?: boolean;
 };
 
 L.Icon.Default.mergeOptions({
@@ -191,6 +192,7 @@ export default function GeoJsonMap({
   styleUrl,
   padding = [24, 24],
   maxZoom = 14,
+  showLegendOnMobile = true,
 }: Props) {
   const t = useTranslations();
   const layerRef = useRef<LeafletGeoJSON | null>(null);
@@ -393,8 +395,17 @@ export default function GeoJsonMap({
       )}
 
       {sldXml && (
-        <div className="absolute top-4 right-4 z-[1000]">
-          <SldLegend sldXml={sldXml} />
+        <div
+          className={
+            showLegendOnMobile
+              ? "mb-3 w-full md:mb-0 md:absolute md:right-4 md:top-4 md:z-[1000] md:w-auto"
+              : "hidden md:block md:absolute md:right-4 md:top-4 md:z-[1000] md:w-auto"
+          }
+        >
+          <SldLegend
+            sldXml={sldXml}
+            className="shadow-sm md:shadow-lg"
+          />
         </div>
       )}
 

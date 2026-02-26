@@ -4,8 +4,12 @@ import CSVExplorerWrapper from "@/components/csv-explorer";
 import { DataExplorer } from "@/components/data-explorer/DataExplorer";
 //import CodeViewer from "@/components/ui/code-viewer";
 import IframeWrapper from "@/components/ui/iframe";
+import { Button } from "@/components/ui/button";
+import { Heading } from "@/components/ui/heading";
 import { Dataset, Resource } from "@/schemas/ckan";
 import dynamic from "next/dynamic";
+import { useTranslations } from "next-intl";
+import * as React from "react";
 
 const PdfViewerClient = dynamic(() => import("./SimplePdfViewer"), {
   ssr: false,
@@ -22,49 +26,72 @@ export default function ResourcePreview({
   resource: Resource;
   dataset: Dataset;
 }) {
+  const t = useTranslations();
+  const [showMobileLegend, setShowMobileLegend] = React.useState(false);
   const format = resource.format?.toLowerCase() || "--";
+  const hasSld =
+    format === "geojson" &&
+    !!dataset.resources?.find((r) => r.format?.toLocaleLowerCase() === "sld")?.url;
 
-  if(format === "geojson"){
-    return <GeoJsonMap data={resource.url ?? ""} />;
-  }
+  const previewContent = (() => {
+    switch (format) {
+      case "csv":
+        return <CSVExplorerWrapper dataUrl={resource.url || ""} />;
 
-  if (resource.datastore_active) {
-    return <div className="-mt-5"><DataExplorer resource={resource} /></div>;
-  }
+      case "pdf":
+        return <PdfViewerClient url={resource.url || ""} />;
 
-  switch (format) {
-    case "csv":
-      return <CSVExplorerWrapper dataUrl={resource.url || ""} />;
-
-    case "pdf":
-      return <PdfViewerClient url={resource.url || ""} />;
-
-    case "geojson":
-      return (
-        <GeoJsonMap
-          data={resource.url ?? ""}
-          styleUrl={
-            dataset.resources?.find(
-              (r) => r.format?.toLocaleLowerCase() === "sld",
-            )?.url
-          }
-        />
-      );
-
-    /*case "json":
-      return <CodeViewer data={resource.url} label="JSON" />;*/
-
-    default:
-      if (resource.iframe) {
+      case "geojson":
         return (
-          <IframeWrapper
-            src={resource.url || ""}
-            title={resource.name}
-            height={800}
+          <GeoJsonMap
+            data={resource.url ?? ""}
+            styleUrl={
+              dataset.resources?.find(
+                (r) => r.format?.toLocaleLowerCase() === "sld",
+              )?.url
+            }
+            showLegendOnMobile={showMobileLegend}
           />
         );
-      } else {
+
+      default:
+        if (resource.iframe) {
+          return (
+            <IframeWrapper
+              src={resource.url || ""}
+              title={resource.name}
+              height={800}
+            />
+          );
+        }
+
         return "Preview not supported";
-      }
-  }
+    }
+  })();
+
+  return (
+    <div>
+      <div className="mb-5 flex items-center justify-between gap-3">
+        <Heading level={3} className="text-theme-green font-bold mb-0">
+          {t("Common.preview")}
+        </Heading>
+        {hasSld && (
+          <Button
+            type="button"
+            variant="outline"
+            size="sm"
+            className="md:hidden"
+            onClick={() => setShowMobileLegend((prev) => !prev)}
+            aria-pressed={showMobileLegend}
+          >
+            {showMobileLegend
+              ? t("Map.sldLegend.hideButton")
+              : t("Map.sldLegend.showButton")}
+          </Button>
+        )}
+      </div>
+
+      {previewContent}
+    </div>
+  );
 }

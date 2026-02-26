@@ -187,7 +187,7 @@ export default function SldLegend({
   if (rawItems.length === 0) return null;
 
   return (
-    <Card className={cn("w-[320px]", className)}>
+    <Card className={cn("w-full max-w-full sm:w-[320px]", className)}>
       <CardHeader className="space-y-2 pb-2">
         <CardTitle className="text-base">{t("Map.sldLegend.title")}</CardTitle>
 
@@ -225,7 +225,7 @@ export default function SldLegend({
       </CardHeader>
 
       <CardContent className="pt-2">
-        <div className="space-y-4 max-h-[260px] overflow-y-auto pr-1">
+        <div className="max-h-[40vh] space-y-4 overflow-y-auto pr-1 sm:max-h-[260px]">
           {groups.map(([kind, groupItems]) => (
             <div key={kind} className="space-y-2">
               <div className="text-xs font-medium text-muted-foreground">
