@@ -1,6 +1,7 @@
 "use client";
 
 import CSVExplorerWrapper from "@/components/csv-explorer";
+import { DataExplorer } from "@/components/data-explorer/DataExplorer";
 //import CodeViewer from "@/components/ui/code-viewer";
 import IframeWrapper from "@/components/ui/iframe";
 import { Dataset, Resource } from "@/schemas/ckan";
@@ -22,6 +23,14 @@ export default function ResourcePreview({
   dataset: Dataset;
 }) {
   const format = resource.format?.toLowerCase() || "--";
+
+  if(format === "geojson"){
+    return <GeoJsonMap data={resource.url ?? ""} />;
+  }
+
+  if (resource.datastore_active) {
+    return <div className="-mt-5"><DataExplorer resource={resource} /></div>;
+  }
 
   switch (format) {
     case "csv":

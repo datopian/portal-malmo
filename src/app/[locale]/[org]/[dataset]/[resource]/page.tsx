@@ -3,7 +3,6 @@ import { ckan } from "@/lib/ckan";
 import Page from "@/components/layout/Page";
 import { Badge } from "@/components/ui/badge";
 import { notFound } from "next/navigation";
-import React from "react";
 import { RESOURCE_COLORS, supportsPreview } from "@/lib/resource";
 import ResourcePreview from "@/components/package/resource/ResourcePreview";
 import { getTranslations } from "next-intl/server";
@@ -16,6 +15,7 @@ import { Link } from "@/i18n/navigation";
 import { DownloadIcon } from "lucide-react";
 import { Heading } from "@/components/ui/heading";
 import { formatFileSize } from "@/lib/utils";
+import ApiDialog from "@/components/package/api/ApiDialog";
 
 export const revalidate = 300;
 
@@ -101,7 +101,7 @@ export default async function ResourcePage({ params }: PageProps) {
       description={resource.description}
     >
       <Container className="py-12">
-        <div className="flex gap-6 sm:gap-12 border-b pb-8 mb-8">
+        <div className="flex flex-col md:flex-row gap-6 sm:gap-12 border-b pb-8 mb-8">
           <div className="flex flex-col sm:flex-row gap-6 sm:gap-12">
             <div>
               <span className="font-bold block">{t("Common.format")}</span>
@@ -140,13 +140,14 @@ export default async function ResourcePage({ params }: PageProps) {
               </span>
             </div>
           </div>
-          <div className="ml-auto">
+          <div className="ml-auto flex items-center gap-2">
+            <ApiDialog type="resource" includeDatastore={resource.datastore_active } id={resource.id}/>
             <Button
               type="button"
               asChild
               aria-label={`Download resource ${resource.name}`}
               variant={"theme"}
-              className="bg-[#666666] px-3 font-medium border-[#666666] border-1 text-white hover:bg-[#666666]/90"
+      
             >
               <Link href={resource.url ?? ""} target="_blank" download={true}>
                 <DownloadIcon size={5} />

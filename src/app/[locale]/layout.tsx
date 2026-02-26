@@ -15,6 +15,7 @@ import MatomoTracker from "@/components/analytics/matomo";
 import SkipToContent from "@/components/layout/SkipToContent";
 import DisclaimerBanner from "@/components/layout/DisclaimerBanner";
 import { getMarkdownContent } from "@/lib/markdown";
+import { TooltipProvider } from "@/components/ui/tooltip";
 
 
 const mainFont = Open_Sans({
@@ -61,14 +62,16 @@ export default async function RootLayout({
           <NextIntlClientProvider locale={locale} messages={messages}>
             <MatomoTracker />
             <SkipToContent />
-            <DisclaimerBanner content={bannerContent} />
-            <Header />
-            <QueryProvider>
-              <main className="flex-grow" id="main-content">
-                {children}
-              </main>
-            </QueryProvider>
-            <Footer />
+            <TooltipProvider>
+              <DisclaimerBanner content={bannerContent} />
+              <Header />
+              <QueryProvider>
+                <main className="flex-grow" id="main-content">
+                  {children}
+                </main>
+              </QueryProvider>
+              <Footer />
+            </TooltipProvider>
           </NextIntlClientProvider>
         </Suspense>
       </body>

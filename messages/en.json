@@ -35,7 +35,7 @@
     "code": "Code",
     "created": "Created",
     "updated": "Last updated",
-    "lastModified":"Last modified",
+    "lastModified": "Last modified",
     "version": "Version",
     "license": "License",
     "size": "Size",
@@ -53,16 +53,16 @@
     "previous": "Previous",
     "next": "Next",
     "search": "Search",
-    "more" : "more",
+    "more": "more",
     "email": "E-mail",
     "address": "Address",
     "phone": "Phone",
     "readMore": "Read more",
     "readLess": "Read less",
-    "error" : "Something went wrong.",
+    "error": "Something went wrong.",
     "skipToContent": "Skip to main content",
     "reset": "Reset",
-    "visit" : "Visit"
+    "visit": "Visit"
   },
 
   "Dataset": {
@@ -125,9 +125,55 @@
     "noColumns": "No columns found",
     "rowsPerPage": "Rows per page",
     "pagination": "Page {page} of {total}",
-    "errorLoadingGeoJSON" : "Error loading GeoJSON data",
+    "errorLoadingGeoJSON": "Error loading GeoJSON data",
     "fitWidth": "Fit width",
     "failedToLoad": "Failed to load data"
+  },
+  "DataExplorer": {
+    "filtersAndSettings": "Filters & Settings",
+    "closeSettings": "Close settings",
+    "filters": "Filters",
+    "filtersLabel": "Filters:",
+    "field": "Field",
+    "operation": "Operation",
+    "value": "Value",
+    "removeFilter": "Remove filter",
+    "removeFilterRow": "Remove filter row",
+    "addFilter": "Add filter",
+    "link": {
+      "and": "AND",
+      "or": "OR"
+    },
+    "operations": {
+      "equals": "Equals",
+      "notEqual": "Not equal",
+      "greaterThan": "Greater than",
+      "greaterOrEqual": "Greater or equal",
+      "lessThan": "Less than",
+      "lessOrEqual": "Less or equal",
+      "contains": "Contains",
+      "notContains": "Does not contain",
+      "startsWith": "Starts with",
+      "endsWith": "Ends with"
+    },
+    "columnVisibilityOptions": "Column visibility options",
+    "searchColumnsAria": "Search for columns matching the keywords",
+    "clearColumnSearchInput": "Clear column search input",
+    "noColumnResults": "0 results found matching",
+    "columnsRows": "{columns} columns, {rows} rows",
+    "range": "{start} - {end} of {total}",
+    "sortColumn": "Sort column",
+    "sortDesc": "Sort desc",
+    "sortAsc": "Sort asc",
+    "clearSorting": "Clear sorting",
+    "pinToLeft": "Pin to left",
+    "pinColumnToLeft": "Pin column to left",
+    "unpin": "Unpin",
+    "unpinColumn": "Unpin column",
+    "selectDate": "Select a date",
+    "chooseDate": "Choose a date",
+    "showMoreLines": "Show more ({count} more lines)",
+    "loadingTable": "Loading table"
   },
 
   "Footer": {
@@ -138,16 +184,28 @@
     "exportCatalog": "Export DCAT catalog in <rdf>RDF</rdf> or <jsonld>JSON-LD</jsonld>"
   },
 
-  "Metadata" : {
-    "author" : "Author",
-    "updateFrequency" : "Update frequency",
-    "documentation" : "Documentation",
+  "Metadata": {
+    "author": "Author",
+    "updateFrequency": "Update frequency",
+    "documentation": "Documentation",
     "temporalCoverageStart": "Temporal coverage start",
     "temporalCoverageEnd": "Temporal coverage end",
-    "landingPage" : "Landing page",
-    "contactPoint" : "Contact point",
-    "issued" : "Issued",
-    "conformsTo" : "Conforms to"
+    "landingPage": "Landing page",
+    "contactPoint": "Contact point",
+    "issued": "Issued",
+    "conformsTo": "Conforms to"
+  },
+
+  "API": {
+    "description": "Access the resource data via the CKAN Data API with powerful query support. See the <link>DataStore documentation</link> for more details.",
+    "snippets": {
+      "title": "Query Examples",
+      "hint": "Click the icon to copy",
+      "resourceMetadata": "Fetch resource metadata",
+      "firstFiveResults": "Fetch the first 5 records",
+      "containsJones": "Search records containing \"{query}\"",
+      "viaSql": "Query data using SQL"
+    }
   },
 
   "Map": {

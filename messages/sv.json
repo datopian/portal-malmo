@@ -148,7 +148,8 @@
     "contactPoint": "Kontaktpunkt",
     "issued": "Utfärdad",
     "conformsTo": "Överensstämmer med"
-  },
+  }
+,
 
   "Map": {
     "sldLegend": {
