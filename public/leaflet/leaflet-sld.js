@@ -3,11 +3,11 @@
 // default Path style applied if nothing matches
 var defaultStyle = {
    stroke: true,
-   color: "#03f",
-   weight: 5,
+   color: "#acbcaf",
+   weight: 1,
    opacity: 1,
    fillOpacity: 1,
-   fillColor: '#03f',
+   fillColor: '#acbcaf',
    strokeOpacity: 1,
    strokeWidth: 1,
    strokeDashstyle: "solid",
@@ -147,7 +147,7 @@ L.SLDStyler = L.Class.extend({
       })
       // Verify if Stroke is not empty, otherwise disable it
       var stroke = getTagNameArray(symbolizer, 'se:Stroke')[0];
-      if (!stroke.children.length) {
+      if (!stroke?.children.length) {
          cssParams.stroke = false;
       }
 
