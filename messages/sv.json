@@ -35,7 +35,7 @@
     "code": "Kod",
     "created": "Skapad",
     "updated": "Uppdaterad",
-    "lastModified" : "Senast ändrad",
+    "lastModified": "Senast ändrad",
     "version": "Version",
     "license": "Licens",
     "size": "Storlek",
@@ -128,7 +128,54 @@
     "errorLoadingGeoJSON": "Fel vid inläsning av GeoJSON-data",
     "fitWidth": "Anpassa till sidbredd",
     "failedToLoad": "Misslyckades med att ladda data",
-    "notSupported": "F\u00F6rhandsvisning st\u00F6ds inte"
+    "notSupported": "Förhandsvisning stöds inte"
+  },
+
+  "DataExplorer": {
+    "filtersAndSettings": "Filter och inställningar",
+    "closeSettings": "Stäng inställningar",
+    "filters": "Filter",
+    "filtersLabel": "Filter:",
+    "field": "Fält",
+    "operation": "Operator",
+    "value": "Värde",
+    "removeFilter": "Ta bort filter",
+    "removeFilterRow": "Ta bort filterrad",
+    "addFilter": "Lägg till filter",
+    "link": {
+      "and": "OCH",
+      "or": "ELLER"
+    },
+    "operations": {
+      "equals": "Är lika med",
+      "notEqual": "Är inte lika med",
+      "greaterThan": "Större än",
+      "greaterOrEqual": "Större än eller lika med",
+      "lessThan": "Mindre än",
+      "lessOrEqual": "Mindre än eller lika med",
+      "contains": "Innehåller",
+      "notContains": "Innehåller inte",
+      "startsWith": "Börjar med",
+      "endsWith": "Slutar med"
+    },
+    "columnVisibilityOptions": "Alternativ för kolumnvisning",
+    "searchColumnsAria": "Sök efter kolumner som matchar nyckelorden",
+    "clearColumnSearchInput": "Rensa kolumnsökning",
+    "noColumnResults": "0 resultat hittades för",
+    "columnsRows": "{columns} kolumner, {rows} rader",
+    "range": "{start} - {end} av {total}",
+    "sortColumn": "Sortera kolumn",
+    "sortDesc": "Sortera fallande",
+    "sortAsc": "Sortera stigande",
+    "clearSorting": "Rensa sortering",
+    "pinToLeft": "Fäst till vänster",
+    "pinColumnToLeft": "Fäst kolumn till vänster",
+    "unpin": "Lossa",
+    "unpinColumn": "Lossa kolumn",
+    "selectDate": "Välj datum",
+    "chooseDate": "Välj ett datum",
+    "showMoreLines": "Visa mer ({count} fler rader)",
+    "loadingTable": "Laddar tabell"
   },
 
   "Footer": {
@@ -149,19 +196,18 @@
     "contactPoint": "Kontaktpunkt",
     "issued": "Utfärdad",
     "conformsTo": "Överensstämmer med"
-  }
-,
+  },
 
   "API": {
-    "description": "F\u00E5 tillg\u00E5ng till resursens data via CKAN Data API med kraftfulla fr\u00E5gem\u00F6jligheter. Se <link>DataStore-dokumentationen</link> f\u00F6r mer information.",
+    "description": "Få tillgång till resursens data via CKAN Data API med kraftfulla frågemöjligheter. Se <link>DataStore-dokumentationen</link> för mer information.",
     "snippets": {
-      "title": "Fr\u00E5geexempel",
-      "hint": "Klicka p\u00E5 ikonen f\u00F6r att kopiera",
+      "title": "Frågeexempel",
+      "hint": "Klicka på ikonen för att kopiera",
       "copySnippet": "Kopiera kodexempel",
-      "resourceMetadata": "H\u00E4mta resursmetadata",
-      "firstFiveResults": "H\u00E4mta de f\u00F6rsta 5 posterna",
-      "containsJones": "S\u00F6k poster som inneh\u00E5ller \"{query}\"",
-      "viaSql": "Fr\u00E5ga data med SQL"
+      "resourceMetadata": "Hämta resursmetadata",
+      "firstFiveResults": "Hämta de första 5 posterna",
+      "containsJones": "Sök poster som innehåller \"{query}\"",
+      "viaSql": "Fråga data med SQL"
     }
   },
 
@@ -173,11 +219,11 @@
       "filterPlaceholder": "Filtrera legend...",
       "clearFilter": "Rensa filter",
       "showButton": "Visa legend",
-      "hideButton": "D\u00F6lj legend",
+      "hideButton": "Dölj legend",
       "untitled": "Utan titel",
       "noMatches": "Inga legendobjekt matchar.",
       "groups": {
-        "areas": "Omr\u00E5den",
+        "areas": "Områden",
         "lines": "Linjer",
         "points": "Punkter"
       }
@@ -185,8 +231,8 @@
     "sld": {
       "errors": {
         "emptyStyleUrl": "Tom SLD styleUrl.",
-        "invalidStyleUrl": "styleUrl \u00E4r varken XML eller en giltig URL.",
-        "failedToFetch": "Kunde inte h\u00E4mta SLD ({status} {statusText})",
+        "invalidStyleUrl": "styleUrl är varken XML eller en giltig URL.",
+        "failedToFetch": "Kunde inte hämta SLD ({status} {statusText})",
         "invalidXmlResponse": "Svaret ser inte ut som SLD XML.",
         "failedToLoad": "Kunde inte ladda SLD.",
         "failedToLoadStyle": "Kunde inte ladda stil."
@@ -195,11 +241,10 @@
     "geoJson": {
       "noAttributes": "Inga attribut",
       "errors": {
-        "failedToFetch": "Kunde inte h\u00E4mta GeoJSON ({status} {statusText})",
-        "invalidResponse": "Svaret \u00E4r inte giltig GeoJSON.",
+        "failedToFetch": "Kunde inte hämta GeoJSON ({status} {statusText})",
+        "invalidResponse": "Svaret är inte giltig GeoJSON.",
         "failedToLoad": "Kunde inte ladda GeoJSON."
       }
     }
   }
-
 }
