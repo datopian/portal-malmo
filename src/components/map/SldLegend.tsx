@@ -187,7 +187,7 @@ export default function SldLegend({
   if (rawItems.length === 0) return null;
 
   return (
-    <Card className={cn("w-full max-w-full sm:w-[320px]", className)}>
+    <Card className={cn("w-full max-w-full md:w-[320px]", className)}>
       <CardHeader className="space-y-2 pb-2">
         <CardTitle className="text-base">{t("Map.sldLegend.title")}</CardTitle>
 

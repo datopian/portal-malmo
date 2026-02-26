@@ -97,8 +97,13 @@ function safeParseGeoJson(value: string): GeoJsonObject | null {
 
 type LoadState = "idle" | "loading" | "ready" | "error";
 
-function formatProperties(props: Record<string, unknown> | null | undefined) {
-  if (!props || typeof props !== "object") return "<em>No attributes</em>";
+function formatProperties(
+  props: Record<string, unknown> | null | undefined,
+  noAttributesLabel: string,
+) {
+  if (!props || typeof props !== "object") {
+    return `<em>${escapeHtml(noAttributesLabel)}</em>`;
+  }
 
   return `
     <div class="text-sm space-y-1">
@@ -252,7 +257,10 @@ export default function GeoJsonMap({
 
         if (!res.ok) {
           throw new Error(
-            `Failed to fetch SLD (${res.status} ${res.statusText})`,
+            t("Map.sld.errors.failedToFetch", {
+              status: res.status,
+              statusText: res.statusText,
+            }),
           );
         }
 
@@ -328,20 +336,25 @@ export default function GeoJsonMap({
         const res = await fetch(trimmed, { signal: controller.signal });
         if (!res.ok) {
           throw new Error(
-            `Failed to fetch GeoJSON (${res.status} ${res.statusText})`,
+            t("Map.geoJson.errors.failedToFetch", {
+              status: res.status,
+              statusText: res.statusText,
+            }),
           );
         }
 
         const json = (await res.json()) as unknown;
         if (!isGeoJsonObject(json)) {
-          throw new Error("Response is not valid GeoJSON.");
+          throw new Error(t("Map.geoJson.errors.invalidResponse"));
         }
 
         setGeoJson(json);
         setState("ready");
       } catch (e) {
         if (controller.signal.aborted) return;
-        setError(e instanceof Error ? e.message : "Failed to load GeoJSON.");
+        setError(
+          e instanceof Error ? e.message : t("Map.geoJson.errors.failedToLoad"),
+        );
         setState("error");
       }
     }
@@ -385,7 +398,7 @@ export default function GeoJsonMap({
   }
 
   return (
-    <div className="relative">
+    <div className="relative z-1">
       <LeafletSldLoader />
 
       {showSldError && (
@@ -398,13 +411,13 @@ export default function GeoJsonMap({
         <div
           className={
             showLegendOnMobile
-              ? "mb-3 w-full md:mb-0 md:absolute md:right-4 md:top-4 md:z-[1000] md:w-auto"
+              ? "mb-3 w-full md:mb-0 md:absolute md:right-4 md:top-4 md:z-[1000] md:w-auto pr-4"
               : "hidden md:block md:absolute md:right-4 md:top-4 md:z-[1000] md:w-auto"
           }
         >
           <SldLegend
             sldXml={sldXml}
-            className="shadow-sm md:shadow-lg"
+            className=" md:shadow-lg"
           />
         </div>
       )}
@@ -451,7 +464,12 @@ export default function GeoJsonMap({
             }}
             onEachFeature={(feature, layer) => {
               if (feature.properties)
-                layer.bindPopup(formatProperties(feature.properties));
+                layer.bindPopup(
+                  formatProperties(
+                    feature.properties,
+                    t("Map.geoJson.noAttributes"),
+                  ),
+                );
               layer.on("click", () => layer.openPopup());
             }}
           />

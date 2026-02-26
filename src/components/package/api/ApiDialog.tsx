@@ -22,10 +22,12 @@ const DMS = process.env.NEXT_PUBLIC_DMS ?? "";
 function Snippet({
   title,
   value,
+  copyLabel,
   className,
 }: {
   title: string;
   value: string;
+  copyLabel: string;
   className?: string;
 }) {
   const [copied, setCopied] = React.useState(false);
@@ -51,7 +53,7 @@ function Snippet({
           size="icon"
           onClick={onCopy}
           className="h-8 w-8 shrink-0"
-          aria-label="Copy snippet"
+          aria-label={copyLabel}
         >
           {copied ? (
             <Check className="h-4 w-4" />
@@ -153,7 +155,7 @@ export default function ApiDialog({
     const base = DMS.replace(/\/$/, "");
     const rid = encodeURIComponent(id);
     return {
-      title: "Fetch resource metadata",
+      title: t("API.snippets.resourceMetadata"),
       value: `${base}/api/3/action/resource_show?id=${rid}`,
     };
   }, [id, searchExampleData, t, searchExampleData]);
@@ -171,7 +173,7 @@ React.useEffect( ()=>{
         </Button>
       </DialogTrigger>
 
-      <DialogContent className="w-[calc(100vw-2rem)] sm:max-w-2xl max-h-[90vh] flex flex-col overflow-auto z-[500]">
+      <DialogContent className="w-[calc(100vw-2rem)] sm:max-w-2xl max-h-[90vh] flex flex-col overflow-auto z-[500] z-[500]">
         <DialogHeader>
           <DialogTitle className="text-left">{t("Common.api")}</DialogTitle>
           <DialogDescription className="text-foreground text-left">
@@ -204,10 +206,16 @@ React.useEffect( ()=>{
                   <Snippet
                     title={resourceMetadataSnippet.title}
                     value={resourceMetadataSnippet.value}
+                    copyLabel={t("API.snippets.copySnippet")}
                   />
                  
                   {includeDatastore && snippets.map((s) => (
-                    <Snippet key={s.title} title={s.title} value={s.value} />
+                    <Snippet
+                      key={s.title}
+                      title={s.title}
+                      value={s.value}
+                      copyLabel={t("API.snippets.copySnippet")}
+                    />
                   ))}
                   
                 </div>

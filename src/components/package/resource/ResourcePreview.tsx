@@ -31,28 +31,38 @@ export default function ResourcePreview({
   const format = resource.format?.toLowerCase() || "--";
   const hasSld =
     format === "geojson" &&
-    !!dataset.resources?.find((r) => r.format?.toLocaleLowerCase() === "sld")?.url;
+    !!dataset.resources?.find((r) => r.format?.toLocaleLowerCase() === "sld")
+      ?.url;
 
   const previewContent = (() => {
+    if (format === "geojson") {
+      return (
+        <GeoJsonMap
+          data={resource.url ?? ""}
+          styleUrl={
+            dataset.resources?.find(
+              (r) => r.format?.toLocaleLowerCase() === "sld",
+            )?.url
+          }
+          showLegendOnMobile={showMobileLegend}
+        />
+      );
+    }
+
+    if (resource.datastore_active) {
+      return (
+        <div className="-mt-5">
+          <DataExplorer resource={resource} />
+        </div>
+      );
+    }
+
     switch (format) {
       case "csv":
         return <CSVExplorerWrapper dataUrl={resource.url || ""} />;
 
       case "pdf":
         return <PdfViewerClient url={resource.url || ""} />;
-
-      case "geojson":
-        return (
-          <GeoJsonMap
-            data={resource.url ?? ""}
-            styleUrl={
-              dataset.resources?.find(
-                (r) => r.format?.toLocaleLowerCase() === "sld",
-              )?.url
-            }
-            showLegendOnMobile={showMobileLegend}
-          />
-        );
 
       default:
         if (resource.iframe) {
@@ -65,7 +75,7 @@ export default function ResourcePreview({
           );
         }
 
-        return "Preview not supported";
+        return t("Preview.notSupported");
     }
   })();
 

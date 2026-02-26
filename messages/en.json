@@ -127,7 +127,8 @@
     "pagination": "Page {page} of {total}",
     "errorLoadingGeoJSON": "Error loading GeoJSON data",
     "fitWidth": "Fit width",
-    "failedToLoad": "Failed to load data"
+    "failedToLoad": "Failed to load data",
+    "notSupported": "Preview not supported"
   },
   "DataExplorer": {
     "filtersAndSettings": "Filters & Settings",
@@ -201,6 +202,7 @@
     "snippets": {
       "title": "Query Examples",
       "hint": "Click the icon to copy",
+      "copySnippet": "Copy snippet",
       "resourceMetadata": "Fetch resource metadata",
       "firstFiveResults": "Fetch the first 5 records",
       "containsJones": "Search records containing \"{query}\"",
@@ -229,9 +231,18 @@
       "errors": {
         "emptyStyleUrl": "Empty SLD styleUrl.",
         "invalidStyleUrl": "styleUrl is neither XML nor a valid URL.",
+        "failedToFetch": "Failed to fetch SLD ({status} {statusText})",
         "invalidXmlResponse": "Response does not look like SLD XML.",
         "failedToLoad": "Failed to load SLD.",
         "failedToLoadStyle": "Failed to load style."
+      }
+    },
+    "geoJson": {
+      "noAttributes": "No attributes",
+      "errors": {
+        "failedToFetch": "Failed to fetch GeoJSON ({status} {statusText})",
+        "invalidResponse": "Response is not valid GeoJSON.",
+        "failedToLoad": "Failed to load GeoJSON."
       }
     }
   }

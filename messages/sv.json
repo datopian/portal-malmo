@@ -127,7 +127,8 @@
     "pagination": "Sida {page} av {total}",
     "errorLoadingGeoJSON": "Fel vid inläsning av GeoJSON-data",
     "fitWidth": "Anpassa till sidbredd",
-    "failedToLoad": "Misslyckades med att ladda data"
+    "failedToLoad": "Misslyckades med att ladda data",
+    "notSupported": "F\u00F6rhandsvisning st\u00F6ds inte"
   },
 
   "Footer": {
@@ -151,6 +152,19 @@
   }
 ,
 
+  "API": {
+    "description": "F\u00E5 tillg\u00E5ng till resursens data via CKAN Data API med kraftfulla fr\u00E5gem\u00F6jligheter. Se <link>DataStore-dokumentationen</link> f\u00F6r mer information.",
+    "snippets": {
+      "title": "Fr\u00E5geexempel",
+      "hint": "Klicka p\u00E5 ikonen f\u00F6r att kopiera",
+      "copySnippet": "Kopiera kodexempel",
+      "resourceMetadata": "H\u00E4mta resursmetadata",
+      "firstFiveResults": "H\u00E4mta de f\u00F6rsta 5 posterna",
+      "containsJones": "S\u00F6k poster som inneh\u00E5ller \"{query}\"",
+      "viaSql": "Fr\u00E5ga data med SQL"
+    }
+  },
+
   "Map": {
     "sldLegend": {
       "title": "Legend",
@@ -158,6 +172,8 @@
       "layerBadge": "Lager {layer}",
       "filterPlaceholder": "Filtrera legend...",
       "clearFilter": "Rensa filter",
+      "showButton": "Visa legend",
+      "hideButton": "D\u00F6lj legend",
       "untitled": "Utan titel",
       "noMatches": "Inga legendobjekt matchar.",
       "groups": {
@@ -170,9 +186,18 @@
       "errors": {
         "emptyStyleUrl": "Tom SLD styleUrl.",
         "invalidStyleUrl": "styleUrl \u00E4r varken XML eller en giltig URL.",
+        "failedToFetch": "Kunde inte h\u00E4mta SLD ({status} {statusText})",
         "invalidXmlResponse": "Svaret ser inte ut som SLD XML.",
         "failedToLoad": "Kunde inte ladda SLD.",
         "failedToLoadStyle": "Kunde inte ladda stil."
+      }
+    },
+    "geoJson": {
+      "noAttributes": "Inga attribut",
+      "errors": {
+        "failedToFetch": "Kunde inte h\u00E4mta GeoJSON ({status} {statusText})",
+        "invalidResponse": "Svaret \u00E4r inte giltig GeoJSON.",
+        "failedToLoad": "Kunde inte ladda GeoJSON."
       }
     }
   }
