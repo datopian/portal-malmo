@@ -101,7 +101,7 @@ export default async function DatasetPage({ params }: DatasetPageProps) {
             />
           </div>
 
-          <div className="w-full lg:max-w-[350px] space-y-6 lg:ml-auto lg:sticky top-10 h-fit">
+          <div className="w-full lg:max-w-[370px] space-y-6 lg:ml-auto lg:sticky top-10 h-fit">
             <div className="p-6 bg-[#F3F3F3]">
               <Heading
                 level={3}

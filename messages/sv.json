@@ -245,6 +245,36 @@
         "invalidResponse": "Svaret är inte giltig GeoJSON.",
         "failedToLoad": "Kunde inte ladda GeoJSON."
       }
+    },
+    "ogc": {
+      "loading": "Laddar kartlager...",
+      "serviceInfo": {
+        "title": "Tjänstinformation",
+        "serviceUrlLabel": "Tjänst-URL",
+        "capabilitiesLabel": "GetCapabilities-URL",
+        "openInNewTab": "Öppna {label} i en ny flik"
+      },
+      "popup": {
+        "noAttributes": "Inga attribut tillgängliga för detta objekt.",
+        "featureInfoUnavailable": "Objektinformation är inte tillgänglig för detta lager."
+      },
+      "debug": {
+        "status": "Status"
+      },
+      "errors": {
+        "invalidUrlTitle": "Ogiltig tjänst-URL",
+        "invalidUrl": "Resursens URL saknas eller är ogiltig.",
+        "missingLayerTitle": "Lagernamn saknas",
+        "missingWmsLayer": "WMS-förhandsvisning kräver parametern `layers` i resursens URL.",
+        "missingWfsLayer": "WFS-förhandsvisning kräver parametern `typeName` eller `typeNames` i resursens URL.",
+        "corsOrNetwork": "Det gick inte att nå karttjänsten. Tjänsten kan blockera CORS-förfrågningar från den här webbplatsen.",
+        "serviceFailedTitle": "Fel i karttjänsten",
+        "serviceFailed": "Begäran till karttjänsten misslyckades ({status}).",
+        "invalidServiceOrLayer": "Karttjänstens URL eller lagernamn är inte giltigt.",
+        "invalidResponseTitle": "Ogiltigt kartsvar",
+        "invalidGeoJson": "WFS-tjänsten returnerade inte giltig GeoJSON.",
+        "loadFailedTitle": "Kunde inte ladda kartförhandsvisningen"
+      }
     }
   }
 }

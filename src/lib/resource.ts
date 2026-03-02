@@ -8,6 +8,9 @@ export const supportedPreviewFormats = [
   //"xls",
   //"kml",
   "geojson",
+  "wms",
+  "wfs",
+  "json"
   //"shp",
 ];
 
@@ -22,56 +25,56 @@ export const supportsPreview = (res: Resource) => {
 
 
 export const RESOURCE_COLORS: Record<string, string> = {
-  // Documents (reds)
-  pdf:  "#B53D25",
-  doc:  "#A73721",
-  docx: "#98311D",
+  // Documents
+  pdf: "#8A1C1C",
+  doc: "#6E1329",
+  docx: "#4F1639",
 
-  // Tabular (greens)
-  csv:  "#3F6035",
-  tsv:  "#38562F",
-  xls:  "#2E5227",
-  xlsx: "#284722",
+  // Tabular
+  csv: "#0F5A31",
+  tsv: "#0E4E3F",
+  xls: "#16522E",
+  xlsx: "#0E4530",
 
-  // Structured data (amber/yellow family, darkened)
-  json:   "#9F6B1B",
-  ndjson: "#A56917",
-  xml:    "#857638",
-  rdf:    "#7A6A2B",
-  ttl:    "#887528",
+  // Structured data
+  json: "#7C3E00",
+  ndjson: "#6B2F00",
+  xml: "#5C4200",
+  rdf: "#4C3B00",
+  ttl: "#3F3D00",
 
-  // Geo / spatial (navy / teal family)
-  geojson: "#012C43",
-  kml:     "#01364F",
-  kmz:     "#01415E",
-  shp:     "#014D6A",
-  gpkg:    "#015A76",
+  // Geo / spatial
+  geojson: "#003A70",
+  kml: "#0A2E8A",
+  kmz: "#20307D",
+  shp: "#0A3C8A",
+  gpkg: "#2C2E96",
 
-  // Raster / imagery (purples)
-  tif:     "#72256C",
-  tiff:    "#64205F",
-  geotiff: "#551B52",
+  // Raster / imagery
+  tif: "#5D1A7A",
+  tiff: "#4C1668",
+  geotiff: "#3F1459",
 
-  // Web / text (sky + neutrals, but dark enough)
-  html: "#2F4F73",
-  txt:  "#7F7268",
-  md:   "#7E7165",
+  // Web / text
+  html: "#0F4D63",
+  txt: "#4A4850",
+  md: "#3E4155",
 
-  // Archives (indigos)
-  zip: "#454D9B",
-  "7z": "#3C448B",
-  rar: "#333B7B",
+  // Archives
+  zip: "#303A8A",
+  "7z": "#223170",
+  rar: "#172A63",
 
-  // Images (violet variants)
-  png:  "#7A2D8A",
-  jpg:  "#6E297D",
-  jpeg: "#612570",
-  svg:  "#552164",
+  // Images
+  png: "#7A1D5C",
+  jpg: "#651B6D",
+  jpeg: "#4F1D76",
+  svg: "#3D1F6E",
 
-  // Services / APIs (sage family, darkened)
-  api: "#4F6B5D",
-  wms: "#60796C",
-  wfs: "#5E7B6C",
+  // Services / APIs
+  api: "#2E4F2E",
+  wms: "#7A1F4A",
+  wfs: "#124C61",
 
-  default: "#6E7470",
+  default: "#3F4652",
 };
