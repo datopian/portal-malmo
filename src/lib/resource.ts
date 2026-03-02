@@ -8,6 +8,9 @@ export const supportedPreviewFormats = [
   //"xls",
   //"kml",
   "geojson",
+  "wms",
+  "wfs",
+  "json"
   //"shp",
 ];
 

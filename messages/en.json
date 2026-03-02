@@ -244,6 +244,36 @@
         "invalidResponse": "Response is not valid GeoJSON.",
         "failedToLoad": "Failed to load GeoJSON."
       }
+    },
+    "ogc": {
+      "loading": "Loading map layer...",
+      "serviceInfo": {
+        "title": "Service details",
+        "serviceUrlLabel": "Service URL",
+        "capabilitiesLabel": "GetCapabilities URL",
+        "openInNewTab": "Open {label} in a new tab"
+      },
+      "popup": {
+        "noAttributes": "No attributes available for this feature.",
+        "featureInfoUnavailable": "Feature info is unavailable for this layer."
+      },
+      "debug": {
+        "status": "Status"
+      },
+      "errors": {
+        "invalidUrlTitle": "Invalid service URL",
+        "invalidUrl": "The resource URL is missing or invalid.",
+        "missingLayerTitle": "Missing layer name",
+        "missingWmsLayer": "WMS preview requires a `layers` parameter in the resource URL.",
+        "missingWfsLayer": "WFS preview requires a `typeName` or `typeNames` parameter in the resource URL.",
+        "corsOrNetwork": "Could not reach the map service. The service may block CORS requests from this site.",
+        "serviceFailedTitle": "Map service error",
+        "serviceFailed": "Map service request failed ({status}).",
+        "invalidServiceOrLayer": "The map service URL or layer name is not valid.",
+        "invalidResponseTitle": "Invalid map response",
+        "invalidGeoJson": "The WFS service did not return valid GeoJSON.",
+        "loadFailedTitle": "Could not load map preview"
+      }
     }
   }
 }

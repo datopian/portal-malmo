@@ -10,12 +10,17 @@ import { Dataset, Resource } from "@/schemas/ckan";
 import dynamic from "next/dynamic";
 import { useTranslations } from "next-intl";
 import * as React from "react";
+import JsonUrlViewer from "./JSONViewer";
 
 const PdfViewerClient = dynamic(() => import("./SimplePdfViewer"), {
   ssr: false,
 });
 const GeoJsonMap = dynamic(
   () => import("@/components/package/resource/GeoJsonViewer"),
+  { ssr: false },
+);
+const OgcServiceMapPreview = dynamic(
+  () => import("@/components/package/resource/OgcServiceMapPreview"),
   { ssr: false },
 );
 
@@ -35,6 +40,10 @@ export default function ResourcePreview({
       ?.url;
 
   const previewContent = (() => {
+    if ((format === "wms" || format === "wfs") && resource.url) {
+      return <OgcServiceMapPreview type={format} resourceUrl={resource.url} />;
+    }
+
     if (format === "geojson") {
       return (
         <GeoJsonMap
@@ -47,6 +56,10 @@ export default function ResourcePreview({
           showLegendOnMobile={showMobileLegend}
         />
       );
+    }
+
+    if (format === "json") {
+      return <JsonUrlViewer url={resource.url ?? ""} />;
     }
 
     if (resource.datastore_active) {

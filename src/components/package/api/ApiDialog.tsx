@@ -160,9 +160,9 @@ export default function ApiDialog({
     };
   }, [id, searchExampleData, t, searchExampleData]);
 
-React.useEffect( ()=>{
-  getExample();
-},[] )
+  React.useEffect(() => {
+    if (includeDatastore) getExample();
+  }, []);
 
   return (
     <Dialog>
@@ -173,7 +173,7 @@ React.useEffect( ()=>{
         </Button>
       </DialogTrigger>
 
-      <DialogContent className="w-[calc(100vw-2rem)] sm:max-w-2xl max-h-[90vh] flex flex-col overflow-auto z-[500] z-[500]">
+      <DialogContent className="w-[calc(100vw-2rem)] sm:max-w-2xl max-h-[90vh] flex flex-col overflow-auto z-[1002]">
         <DialogHeader>
           <DialogTitle className="text-left">{t("Common.api")}</DialogTitle>
           <DialogDescription className="text-foreground text-left">
@@ -182,6 +182,7 @@ React.useEffect( ()=>{
                 <Link
                   href="https://docs.ckan.org/en/latest/maintaining/datastore.html"
                   target="_blank"
+                  rel="noopener noreferrer"
                   className="underline text-theme-green font-medium"
                 >
                   {chunks}
@@ -201,15 +202,16 @@ React.useEffect( ()=>{
                 </span>
               </div>
               <div></div>
-              
-                <div className="space-y-4">
-                  <Snippet
-                    title={resourceMetadataSnippet.title}
-                    value={resourceMetadataSnippet.value}
-                    copyLabel={t("API.snippets.copySnippet")}
-                  />
-                 
-                  {includeDatastore && snippets.map((s) => (
+
+              <div className="space-y-4">
+                <Snippet
+                  title={resourceMetadataSnippet.title}
+                  value={resourceMetadataSnippet.value}
+                  copyLabel={t("API.snippets.copySnippet")}
+                />
+
+                {includeDatastore &&
+                  snippets.map((s) => (
                     <Snippet
                       key={s.title}
                       title={s.title}
@@ -217,9 +219,7 @@ React.useEffect( ()=>{
                       copyLabel={t("API.snippets.copySnippet")}
                     />
                   ))}
-                  
-                </div>
-             
+              </div>
             </div>
           </div>
         </ScrollArea>
