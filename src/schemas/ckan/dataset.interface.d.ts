@@ -16,12 +16,14 @@ export interface Dataset {
   metadata_modified?: string;
   name: string;
   notes?: string;
+  notes_translated?: Record<string, string>;
   num_resources: number;
   num_tags: number;
   owner_org?: string;
   private?: boolean;
   state?: "active" | "inactive" | "deleted";
   title?: string;
+  title_translated?: Record<string, string>;
   type?: "dataset";
   url?: string;
   version?: string;
@@ -87,6 +89,7 @@ export interface Resource {
   created?: string;
   datastore_active?: boolean;
   description?: string;
+  description_translated?: Record<string, string>;
   format?: string;
   hash?: string;
   id: string;
@@ -95,6 +98,7 @@ export interface Resource {
   mimetype?: string;
   mimetype_inner?: string;
   name?: string;
+  name_translated?: Record<string, string>;
   package_id?: string;
   position?: number;
   resource_type?: null;

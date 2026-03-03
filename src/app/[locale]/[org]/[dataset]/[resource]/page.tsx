@@ -15,6 +15,7 @@ import { Link } from "@/i18n/navigation";
 import { DownloadIcon } from "lucide-react";
 import { formatFileSize } from "@/lib/utils";
 import ApiDialog from "@/components/package/api/ApiDialog";
+import { getLocalizedText } from "@/lib/ckan-translations";
 
 export const revalidate = 300;
 
@@ -86,18 +87,34 @@ export default async function ResourcePage({ params }: PageProps) {
             href: "/data",
           },
           {
-            title: dataset?.title ?? t("Common.dataset"),
+            title: dataset
+              ? getLocalizedText(
+                  dataset.title_translated,
+                  locale,
+                  dataset.title ?? dataset.name
+                )
+              : t("Common.dataset"),
             href: `/@malmo/${dataset?.name ?? ""}`,
           },
           {
-            title: resource?.name ?? t("Common.resource"),
+            title: resource
+              ? getLocalizedText(
+                  resource.name_translated,
+                  locale,
+                  resource.name
+                )
+              : t("Common.resource"),
             href: `/@malmo/${dataset?.name ?? ""}/${resource.id}`,
             current: true,
           },
         ],
       }}
-      title={resource.name ?? ""}
-      description={resource.description}
+      title={getLocalizedText(resource.name_translated, locale, resource.name)}
+      description={getLocalizedText(
+        resource.description_translated,
+        locale,
+        resource.description
+      )}
     >
       <Container className="py-12">
         <div className="flex flex-col md:flex-row gap-6 sm:gap-12 border-b pb-8 mb-8">
@@ -144,7 +161,11 @@ export default async function ResourcePage({ params }: PageProps) {
             <Button
               type="button"
               asChild
-              aria-label={`Download resource ${resource.name}`}
+              aria-label={`Download resource ${getLocalizedText(
+                resource.name_translated,
+                locale,
+                resource.name
+              )}`}
               variant={"theme"}
       
             >
@@ -170,8 +191,16 @@ export async function generateMetadata({
 }: PageProps): Promise<Metadata> {
   const { locale, org, dataset, resource } = await params;
   const resData = await ckan().getResourceMetadata(resource);
-  const resourceName = resData?.name ?? decodeURIComponent(resource);
-  const description = resData?.description ?? "";
+  const resourceName = resData
+    ? getLocalizedText(resData.name_translated, locale, resData.name)
+    : decodeURIComponent(resource);
+  const description = resData
+    ? getLocalizedText(
+        resData.description_translated,
+        locale,
+        resData.description
+      )
+    : "";
 
   return buildLocalizedMetadata({
     locale,

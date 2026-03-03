@@ -7,9 +7,17 @@ import MarkdownRender from "@/components/ui/markdown";
 import { useLocale } from "next-intl";
 import { ArrowRight } from "lucide-react";
 import { Link } from "@/i18n/navigation";
+import { getLocalizedText } from "@/lib/ckan-translations";
 
 const DatasetSimpleCard = ({ dataset }: { dataset: Dataset }) => {
   const locale = useLocale();
+  const datasetTitle = getLocalizedText(
+    dataset.title_translated,
+    locale,
+    dataset.title ?? dataset.name
+  );
+  const datasetNotes = getLocalizedText(dataset.notes_translated, locale, dataset.notes);
+
   return (
     <Link href={`/@malmo/${dataset.name}`}>
       <Card
@@ -18,13 +26,13 @@ const DatasetSimpleCard = ({ dataset }: { dataset: Dataset }) => {
       >
         <CardHeader className="pb-1 px-0 py-0">
           <span className="line-clamp-3 text-xl lg:text-2xl font-bold overflow-hidden text-theme-green">
-            {dataset.title}
+            {datasetTitle}
           </span>
         </CardHeader>
 
         <CardContent className="text-gray-600 px-0 py-3">
           <div className="line-clamp-3 overflow-hidden mb-4">
-            <MarkdownRender content={dataset.notes} textOnly />
+            <MarkdownRender content={datasetNotes} textOnly />
           </div>
           <div className="text-sm flex items-center text-gray-500 w-full">
             {formatPrettyDate(dataset.metadata_modified ?? "", locale)}

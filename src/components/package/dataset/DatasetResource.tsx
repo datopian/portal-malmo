@@ -10,7 +10,8 @@ import { RESOURCE_COLORS, supportsPreview } from "@/lib/resource";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { EyeIcon } from "lucide-react";
-import { useTranslations } from "next-intl";
+import { useLocale, useTranslations } from "next-intl";
+import { getLocalizedText } from "@/lib/ckan-translations";
 
 export default function DatasetResources({
   resources,
@@ -22,6 +23,7 @@ export default function DatasetResources({
   organization: string;
 }) {
   const t = useTranslations();
+  const locale = useLocale();
 
   return (
     <div className="space-y-5">
@@ -30,6 +32,16 @@ export default function DatasetResources({
           <p className="text-gray-600 py-3">{t("Dataset.noResources")}</p>
         )}
         {resources?.map((resource) => {
+          const resourceName = getLocalizedText(
+            resource.name_translated,
+            locale,
+            resource.name
+          );
+          const resourceDescription = getLocalizedText(
+            resource.description_translated,
+            locale,
+            resource.description
+          );
           const formatKey = (format?: string | null) =>
             (format ?? "").trim().toLowerCase();
 
@@ -43,7 +55,7 @@ export default function DatasetResources({
               <div className="flex flex-col  w-full space-y-2">
                 <h4 className="group block ">
                   <span className="block text-xl font-semibold text-theme-green flex items-center gap-2">
-                    {resource.name}
+                    {resourceName}
                   </span>
                 </h4>
                 <div className="text-gray-600 flex gap-4 text-sm">
@@ -62,11 +74,11 @@ export default function DatasetResources({
                     </span>
                   )}
                 </div>
-                {resource.description && (
+                {resourceDescription && (
                   <div className="line-clamp-2 text-[#4A5565]">
                     <MarkdownRender
                       textOnly={true}
-                      content={resource.description}
+                      content={resourceDescription}
                     />
                   </div>
                 )}
@@ -76,7 +88,7 @@ export default function DatasetResources({
                 <Button
                   type="button"
                   asChild
-                  aria-label={`Download resource ${resource.name}`}
+                  aria-label={`Download resource ${resourceName}`}
                  
                   variant={"theme"}
                   className="bg-[#666666] px-3 font-medium border-[#666666] border-1 text-white hover:bg-[#666666]/90"
@@ -93,7 +105,7 @@ export default function DatasetResources({
                   <Button
                     type="button"
                     asChild
-                    aria-label={`Resource Details: ${resource.name}`}
+                    aria-label={`Resource Details: ${resourceName}`}
                    
                     variant={"outline"}
                     className="border-[#666666] px-3 font-medium text-[#666666] hover:bg-[#666666]"

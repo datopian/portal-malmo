@@ -1,6 +1,10 @@
+"use client";
+
 import { Link } from "@/i18n/navigation";
 import { Group } from "@/schemas/ckan";
 import Image from "next/image";
+import { useLocale } from "next-intl";
+import { getLocalizedText } from "@/lib/ckan-translations";
 
 type Props = {
   group: Group;
@@ -8,6 +12,13 @@ type Props = {
 };
 
 const GroupCard = ({ group, colorClass = "bg-gray-600" }: Props) => {
+  const locale = useLocale();
+  const groupLabel = getLocalizedText(
+    group.display_name_translated ?? group.title_translated,
+    locale,
+    group.display_name || group.title || group.name
+  );
+
   return (
     <Link
       href={`/data/?groups=${group.name}`}
@@ -18,7 +29,7 @@ const GroupCard = ({ group, colorClass = "bg-gray-600" }: Props) => {
           width={32}
           height={32}
           src={group.image_display_url || "/graphics/group-default-group.svg"}
-          alt={group.display_name}
+          alt={groupLabel}
           className="invert"
         />
       </div>
@@ -27,7 +38,7 @@ const GroupCard = ({ group, colorClass = "bg-gray-600" }: Props) => {
           {group.package_count ?? 0}
         </span>
         <p className="mt-3 font-semibold leading-snug line-clamp-2 text-[14px] min-h-[38px]">
-          {group.display_name}
+          {groupLabel}
         </p>
       </div>
     </Link>

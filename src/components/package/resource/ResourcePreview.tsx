@@ -8,9 +8,10 @@ import { Button } from "@/components/ui/button";
 import { Heading } from "@/components/ui/heading";
 import { Dataset, Resource } from "@/schemas/ckan";
 import dynamic from "next/dynamic";
-import { useTranslations } from "next-intl";
+import { useLocale, useTranslations } from "next-intl";
 import * as React from "react";
 import JsonUrlViewer from "./JSONViewer";
+import { getLocalizedText } from "@/lib/ckan-translations";
 
 const PdfViewerClient = dynamic(() => import("./SimplePdfViewer"), {
   ssr: false,
@@ -32,7 +33,9 @@ export default function ResourcePreview({
   dataset: Dataset;
 }) {
   const t = useTranslations();
+  const locale = useLocale();
   const [showMobileLegend, setShowMobileLegend] = React.useState(false);
+  const resourceName = getLocalizedText(resource.name_translated, locale, resource.name);
   const format = resource.format?.toLowerCase() || "--";
   const hasSld =
     format === "geojson" &&
@@ -82,7 +85,7 @@ export default function ResourcePreview({
           return (
             <IframeWrapper
               src={resource.url || ""}
-              title={resource.name}
+              title={resourceName}
               height={800}
             />
           );

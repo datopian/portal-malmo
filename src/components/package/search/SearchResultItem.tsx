@@ -1,12 +1,13 @@
 import { Dataset } from "@/schemas/ckan";
 import { Skeleton } from "@/components/ui/skeleton";
 import { formatDateToDDMMYYYY } from "@/lib/utils";
-import { useTranslations } from "next-intl";
+import { useLocale, useTranslations } from "next-intl";
 import MarkdownRender from "@/components/ui/markdown";
 import { Calendar, Database, RefreshCcw } from "lucide-react";
 import React from "react";
 import { RESOURCE_COLORS } from "@/lib/resource";
 import { Link } from "@/i18n/navigation";
+import { getLocalizedText } from "@/lib/ckan-translations";
 
 export default function SearchResultItem({
   dataset,
@@ -15,6 +16,13 @@ export default function SearchResultItem({
   query?: string;
 }) {
   const t = useTranslations();
+  const locale = useLocale();
+  const datasetTitle = getLocalizedText(
+    dataset.title_translated,
+    locale,
+    dataset.title ?? dataset.name
+  );
+  const datasetNotes = getLocalizedText(dataset.notes_translated, locale, dataset.notes);
   const uniqueFormats = [
     ...new Set(
       dataset.resources
@@ -35,10 +43,10 @@ export default function SearchResultItem({
               
               className="group text-theme-green font-bold text-xl"
             >
-              <span className="group-hover:underline">
-                {dataset.title || dataset.name}
+                <span className="group-hover:underline">
+                {datasetTitle}
+                </span>
               </span>
-            </span>
             {dataset.groups?.[0] && (
               <span className="flex space-x-3 sm:inline sm:ml-3">
                 {dataset.groups?.slice(0, 1)?.map((group) => (
@@ -46,7 +54,11 @@ export default function SearchResultItem({
                     key={group.id}
                     className="min-w-0 inline-block max-w-[120px] relative -bottom-1 truncate px-2 bg-[#D1E0D7] text-theme-green text-xs py-1 font-medium"
                   >
-                    {group.display_name || group.name}
+                    {getLocalizedText(
+                      group.display_name_translated ?? group.title_translated,
+                      locale,
+                      group.display_name || group.title || group.name
+                    )}
                   </span>
                 ))}
                 {dataset.groups.length > 1 && (
@@ -59,10 +71,10 @@ export default function SearchResultItem({
           </h3>
         </div>
 
-        {dataset.notes && (
+        {datasetNotes && (
           <div className="text-gray-600 font-normal line-clamp-3 overflow-y-hidden mt-2">
             <MarkdownRender
-              content={dataset.notes?.replace(/<\/?[^>]+(>|$)/g, "") || ""}
+              content={datasetNotes.replace(/<\/?[^>]+(>|$)/g, "")}
               textOnly
             />
           </div>
