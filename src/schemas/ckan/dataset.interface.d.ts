@@ -61,6 +61,7 @@ export interface PackageSearchOptions {
 export interface PackageFacetOptions {
   name: string;
   display_name: string;
+  title_translated?: Record<string, string>;
   count: number;
 }
 

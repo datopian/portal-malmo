@@ -48,8 +48,6 @@ export default async function Home() {
     groups = await ckan().getGroupsWithDetails();
   } catch {}
 
-  
-
   return (
     <>
       <Hero
