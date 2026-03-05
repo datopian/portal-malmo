@@ -1,7 +1,11 @@
+"use client";
+
 import { Dataset } from "@/schemas/ckan";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { cn, formatDateToHumanReadable } from "@/lib/utils";
 import { Link } from "@/i18n/navigation";
+import { useLocale } from "next-intl";
+import { getLocalizedText } from "@/lib/ckan-translations";
 
 export default function DatasetCard({
   dataset,
@@ -12,6 +16,18 @@ export default function DatasetCard({
   linkClassName?: string;
   cardClassName?: string;
 }) {
+  const locale = useLocale();
+  const datasetTitle = getLocalizedText(
+    dataset.title_translated,
+    locale,
+    dataset.title ?? dataset.name
+  );
+  const organizationTitle = getLocalizedText(
+    dataset.organization?.title_translated,
+    locale,
+    dataset.organization?.title ?? dataset.organization?.name
+  );
+
   return (
     <Link
       href={`/@malmo/${dataset.name}`}
@@ -19,18 +35,18 @@ export default function DatasetCard({
     >
       <Card key={dataset.id} className={cn("flex flex-col", cardClassName)}>
         <CardHeader className="font-medium">
-          <span className="line-clamp-2 overflow-hidden">{dataset.title}</span>
+          <span className="line-clamp-2 overflow-hidden">{datasetTitle}</span>
         </CardHeader>
         <CardContent className="mt-auto text-gray-600">
           <div className="text-sm">
             <div className="flex gap-1">
-              <span className="">🏛️</span>{" "}
+              <span className="">Ã°Å¸Ââ€ºÃ¯Â¸Â</span>{" "}
               <span className="line-clamp-1 overflow-hidden">
-                {dataset.organization?.title}
+                {organizationTitle}
               </span>
             </div>
             <div className="flex gap-1">
-              <span className="font-medium">🕒</span>{" "}
+              <span className="font-medium">Ã°Å¸â€¢â€™</span>{" "}
               <span className="line-clamp-1 overflow-hidden">
                 {formatDateToHumanReadable(dataset.metadata_modified ?? "")}
               </span>

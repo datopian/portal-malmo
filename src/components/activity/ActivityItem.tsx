@@ -4,30 +4,37 @@ import { Activity } from "@/schemas/ckan";
 import { CalendarClock, User as UserIcon } from "lucide-react";
 import { formatDateToHumanReadable } from "@/lib/utils";
 import { Skeleton } from "../ui/skeleton";
+import { useLocale } from "next-intl";
+import { getLocalizedText } from "@/lib/ckan-translations";
 
 type ActivityItemProps = {
   activity: Activity;
 };
 
 export default function ActivityItem({ activity }: ActivityItemProps) {
+  const locale = useLocale();
   const { timestamp, activity_type, user_data, data } = activity;
 
   const userDisplay = user_data
     ? user_data.fullname || user_data.name
     : "Unknown User";
 
-  const datasetTitle = data?.package?.title;
+  const datasetTitle = getLocalizedText(
+    data?.package?.title_translated,
+    locale,
+    data?.package?.title
+  );
 
   const activityLabels = {
-    "new package": "✨ Created dataset",
-    "changed package": "🔄 Updated dataset",
-    "deleted package": "❌ Deleted dataset",
-    "new organization": "✨ Created organization",
-    "changed organization": "🔄 Updated organization",
+    "new package": "Ã¢Å“Â¨ Created dataset",
+    "changed package": "Ã°Å¸â€â€ž Updated dataset",
+    "deleted package": "Ã¢ÂÅ’ Deleted dataset",
+    "new organization": "Ã¢Å“Â¨ Created organization",
+    "changed organization": "Ã°Å¸â€â€ž Updated organization",
   };
 
   const getActivityLabel = (type: string | undefined) => {
-    if (!type) return "🔍 Unknown activity";
+    if (!type) return "Ã°Å¸â€Â Unknown activity";
     return (
       activityLabels[type as keyof typeof activityLabels] ||
       `${type.replace(/_/g, " ")}`

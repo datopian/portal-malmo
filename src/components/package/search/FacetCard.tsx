@@ -7,8 +7,9 @@ import {
   DisclosurePanel,
 } from "@headlessui/react";
 import FacetOptions from "./FacetOptions";
-import { useTranslations } from "next-intl";
+import { useLocale, useTranslations } from "next-intl";
 import { Button } from "@/components/ui/button";
+import { getLocalizedText } from "@/lib/ckan-translations";
 
 export default function FacetCard({
   name,
@@ -28,6 +29,7 @@ export default function FacetCard({
   const [seeMore, setSeeMore] = useState(false);
   const maxPerView = 10;
   const t = useTranslations();
+  const locale = useLocale();
 
   return (
     <Disclosure as="div" className="border-b border-gray-200  py-6">
@@ -51,14 +53,18 @@ export default function FacetCard({
       <DisclosurePanel className="pt-3">
         <div className="space-y-3 mx-4 lg:mx-0 max-h-[500px] overflow-y-auto overflow-x-hidden">
           {items
-            ?.slice() 
+            ?.slice()
             .sort((a, b) => (b.count ?? 0) - (a.count ?? 0))
             .slice(0, seeMore ? items.length : maxPerView)
             .map((item) => (
               <FacetOptions
                 name={name}
                 value={item.name}
-                label={item.display_name || item.name}
+                label={getLocalizedText(
+                  item.title_translated,
+                  locale,
+                  item.display_name || item.name,
+                )}
                 count={item.count}
                 key={item.name}
                 options={options || []}
