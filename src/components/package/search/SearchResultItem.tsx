@@ -55,7 +55,7 @@ export default function SearchResultItem({
                     className="min-w-0 inline-block max-w-[120px] relative -bottom-1 truncate px-2 bg-[#D1E0D7] text-theme-green text-xs py-1 font-medium"
                   >
                     {getLocalizedText(
-                      group.display_name_translated ?? group.title_translated,
+                      group.title_translated,
                       locale,
                       group.display_name || group.title || group.name
                     )}

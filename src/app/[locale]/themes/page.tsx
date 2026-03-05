@@ -42,7 +42,7 @@ export default async function GroupsPage({ searchParams, params }: Props) {
 
   const filtered = groups.filter((group) =>
     getLocalizedText(
-      group.display_name_translated ?? group.title_translated,
+      group.title_translated,
       locale,
       group.display_name || group.title || group.name
     )

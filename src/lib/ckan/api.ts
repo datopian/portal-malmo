@@ -214,7 +214,7 @@ export default class CKAN {
 
   async getGroupsWithDetails() {
     const response = await fetchRetry(
-      `${this.DMS}/api/3/action/group_list?all_fields=True&limit=1000`,
+      `${this.DMS}/api/3/action/group_list?all_fields=True&limit=1000&include_extras=True`,
       3,
     );
     const responseData = await response.json();

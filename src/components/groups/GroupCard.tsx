@@ -14,11 +14,11 @@ type Props = {
 const GroupCard = ({ group, colorClass = "bg-gray-600" }: Props) => {
   const locale = useLocale();
   const groupLabel = getLocalizedText(
-    group.display_name_translated ?? group.title_translated,
+    group.title_translated,
     locale,
     group.display_name || group.title || group.name
   );
-
+  console.log(group)
   return (
     <Link
       href={`/data/?groups=${group.name}`}
