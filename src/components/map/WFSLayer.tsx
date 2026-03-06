@@ -140,8 +140,14 @@ export function WfsBboxLayer({
 
   if (!data) return null
 
+  const dataKey = React.useMemo(
+    () => data ? JSON.stringify(data.features?.length) + Date.now() : '',
+    [data]
+  )
+
   return (
     <GeoJSON
+      key={dataKey}
       data={data}
       style={() => ({
         weight: 1,

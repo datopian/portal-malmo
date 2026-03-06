@@ -174,7 +174,7 @@ function formatPropertiesPopup(
     })
     .join("");
 
-  return `<div class="space-y-1 text-sm">${rows}</div>`;
+  return `<div class="space-y-1 text-sm max-h-[300px] overflow-auto">${rows}</div>`;
 }
 
 function buildWmsGetFeatureInfoUrl(params: {
