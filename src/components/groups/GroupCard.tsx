@@ -18,7 +18,7 @@ const GroupCard = ({ group, colorClass = "bg-gray-600" }: Props) => {
     locale,
     group.display_name || group.title || group.name
   );
-  console.log(group)
+
   return (
     <Link
       href={`/data/?groups=${group.name}`}
