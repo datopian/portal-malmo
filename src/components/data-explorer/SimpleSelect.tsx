@@ -1,3 +1,4 @@
+"use client";
 import { Fragment } from "react";
 import { Listbox, ListboxButton, ListboxOption, ListboxOptions, Transition } from "@headlessui/react";
 import { ChevronDownIcon } from "lucide-react";
