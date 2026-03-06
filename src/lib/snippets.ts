@@ -1,5 +1,5 @@
 type SupportedLanguage = "python" | "javascript" | "curl" | "r";
-type SupportedLocale = "en" | "sv";
+type SupportedLocale = "en" | "sv" | "da";
 type SnippetTranslator = (
   key: string,
   values?: Record<string, string | number>,
@@ -44,6 +44,14 @@ const SNIPPET_I18N: Record<SupportedLocale, SnippetI18n> = {
     firstFiveResults: "Exempelfraga (forsta fem resultaten):",
     containsJones: 'Exempelfraga (resultat som innehaller "jones"):',
     viaSql: "Exempelfraga (via SQL-sats):",
+  },
+  da: {
+    metadataTitle: "Metadata",
+    resourceDataTitle: "Resursdata",
+    queriesTitle: "Forespørgsler",
+    firstFiveResults: "Eksempel på forespørgsel (de første fem resultater):",
+    containsJones: 'Eksempel på forespørgsel (resultater som indeholder "jones"):',
+    viaSql: "Eksempel på forespørgsel (via SQL-sætning):",
   },
 };
 

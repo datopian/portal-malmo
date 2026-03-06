@@ -1,0 +1,280 @@
+{
+  "Site": {
+    "title": "Malmø stads åbne dataportal",
+    "description": "Find åbne data fra Malmø stad.",
+    "homeTitle": "Hjem"
+  },
+
+  "Common": {
+    "organization": "Organisation",
+    "organizations": "Organisationer",
+    "groups": "Temaer",
+    "group": "tema",
+    "data": "Data",
+    "aboutUs": "Om os",
+    "dataset": "Datasæt",
+    "datasets": "Datasæt",
+    "resource": "Ressource",
+    "resources": "Ressourcer",
+    "format": "Format",
+    "formats": "Formater",
+    "tag": "Tag",
+    "tags": "Tags",
+    "noData": "Ingen data fundet",
+    "noResults": "Ingen resultater fundet",
+    "viewAll": "Udforsk alle",
+    "metadata": "Metadata",
+    "copy": "Kopiér",
+    "copied": "Kopieret",
+    "exploreAll": "Udforsk alle",
+    "export": "Eksporter",
+    "preview": "Forhåndsvisning",
+    "download": "Download",
+    "api": "API",
+    "activityStream": "Aktivitetsstrøm",
+    "code": "Kode",
+    "created": "Oprettet",
+    "updated": "Opdateret",
+    "lastModified": "Sidst ændret",
+    "version": "Version",
+    "license": "Licens",
+    "size": "Størrelse",
+    "close": "Luk",
+    "searchPlaceholder": "Søg...",
+    "showMore": "Vis mere",
+    "showLess": "Vis mindre",
+    "clearAll": "Ryd alle",
+    "loading": "Indlæser...",
+    "loadingData": "Indlæser data...",
+    "settings": "Indstillinger",
+    "pagination": "Sideinddeling",
+    "checkAll": "Marker alle",
+    "page": "Side",
+    "previous": "Forrige",
+    "next": "Næste",
+    "search": "Søg",
+    "more": "mere",
+    "email": "E-mail",
+    "address": "Adresse",
+    "phone": "Telefon",
+    "readMore": "Læs mere",
+    "readLess": "Læs mindre",
+    "error": "Der gik noget galt.",
+    "skipToContent": "Hop til hovedindhold",
+    "reset": "Nulstil",
+    "visit": "Besøg"
+  },
+
+  "Dataset": {
+    "searchLabel": "Søg i datasæt",
+    "latest": "Seneste datasæt",
+    "datasetsCount": "{count, plural, one {# datasæt} other {# datasæt}}",
+    "resourcesCount": "{count, plural, one {# fil} other {# filer}}",
+    "total": "Totalt antal datasæt",
+    "resourcesTitle": "Data og ressourcer ({count})",
+    "noResources": "Ingen ressourcer tilgængelige for dette datasæt.",
+    "exploreAll": "Udforsk alle datasæt"
+  },
+
+  "Activity": {
+    "error:": " Fejl ved indlæsning af aktivitetsstrøm for {type}: {message}",
+    "notFound": "Ingen aktiviteter fundet."
+  },
+
+  "Home": {
+    "title": "Åbne data for",
+    "titleStrong": "Malmø",
+    "tagline": "Find åbne data fra Malmø stad.",
+    "recentUpdates": "Seneste opdateringer"
+  },
+
+  "OrganizationsPage": {
+    "description": "Udforsk den fulde liste over organisationer, der deler data på vores portal.",
+    "searchPlaceholder": "Søg efter organisationer...",
+    "noOrganizations": "Ingen organisationer fundet"
+  },
+
+  "GroupsPage": {
+    "description": "Udforsk alle grupper, der organiserer og kuraterer datasæt efter emner og temaer.",
+    "searchPlaceholder": "Søg efter temaer...",
+    "noGroups": "Ingen temaer fundet",
+    "discoverGroups": "Opdag efter tema"
+  },
+
+  "Search": {
+    "title": "Søg i datasæt",
+    "subtitle": "Find datasæt til at udforske, analysere og downloade.",
+    "filters": "Filtre",
+    "headerWithQuery": "Søgeresultater for \"{query}\"",
+    "headerCount": "{count, plural, one {# datasæt} other {# datasæt}}",
+    "headerNoResults": "",
+    "headerShowing": "Viser {count} resultater",
+    "sortLabel": "Sorter efter:",
+    "sortRelevance": "Relevans",
+    "sortLastModified": "Sidst ændret",
+    "sortNameAsc": "Navn (A-Å)",
+    "sortNameDesc": "Navn (Å-A)",
+    "searchPlaceholder": "Begynd at skrive dit søgeord...",
+    "datasetsFound": "{count, plural, =0 {Ingen datasæt fundet} one {# datasæt fundet} other {# datasæt fundet}}"
+  },
+
+  "Preview": {
+    "columns": "Kolonner",
+    "searchColumnsPlaceholder": "Søg i kolonner...",
+    "checkAllColumns": "Marker alle kolonner",
+    "noColumns": "Ingen kolonner fundet",
+    "rowsPerPage": "Rækker pr. side",
+    "pagination": "Side {page} af {total}",
+    "errorLoadingGeoJSON": "Fejl ved indlæsning af GeoJSON-data",
+    "fitWidth": "Tilpas til sidebredde",
+    "failedToLoad": "Kunne ikke indlæse data",
+    "notSupported": "Forhåndsvisning understøttes ikke"
+  },
+
+  "DataExplorer": {
+    "filtersAndSettings": "Filtre og indstillinger",
+    "closeSettings": "Luk indstillinger",
+    "filters": "Filtre",
+    "filtersLabel": "Filter:",
+    "field": "Felt",
+    "operation": "Operator",
+    "value": "Værdi",
+    "removeFilter": "Fjern filter",
+    "removeFilterRow": "Fjern filterrække",
+    "addFilter": "Tilføj filter",
+    "link": {
+      "and": "OG",
+      "or": "ELLER"
+    },
+    "operations": {
+      "equals": "Er lig med",
+      "notEqual": "Er ikke lig med",
+      "greaterThan": "Større end",
+      "greaterOrEqual": "Større end eller lig med",
+      "lessThan": "Mindre end",
+      "lessOrEqual": "Mindre end eller lig med",
+      "contains": "Indeholder",
+      "notContains": "Indeholder ikke",
+      "startsWith": "Starter med",
+      "endsWith": "Slutter med"
+    },
+    "columnVisibilityOptions": "Indstillinger for kolonnevisning",
+    "searchColumnsAria": "Søg efter kolonner, der matcher søgeordene",
+    "clearColumnSearchInput": "Ryd kolonnesøgning",
+    "noColumnResults": "0 resultater fundet for",
+    "columnsRows": "{columns} kolonner, {rows} rækker",
+    "range": "{start} - {end} af {total}",
+    "sortColumn": "Sorter kolonne",
+    "sortDesc": "Sorter faldende",
+    "sortAsc": "Sorter stigende",
+    "clearSorting": "Ryd sortering",
+    "pinToLeft": "Fastgør til venstre",
+    "pinColumnToLeft": "Fastgør kolonne til venstre",
+    "unpin": "Frigør",
+    "unpinColumn": "Frigør kolonne",
+    "selectDate": "Vælg dato",
+    "chooseDate": "Vælg en dato",
+    "showMoreLines": "Vis mere ({count} flere rækker)",
+    "loadingTable": "Indlæser tabel"
+  },
+
+  "Footer": {
+    "contactTitle": "Kontakt",
+    "note": "Alle – både privatpersoner samt private og offentlige organisationer – kan frit bruge de åbne data, der findes på denne portal.\nData er frie til at blive genbrugt, modificeret og delt.",
+    "builtWith": "Bygget med",
+    "onCKAN": "med CKAN-backend",
+    "exportCatalog": "Eksporter DCAT-katalog i <rdf>RDF</rdf> eller <jsonld>JSON-LD</jsonld>"
+  },
+
+  "Metadata": {
+    "author": "Ansvarlig",
+    "updateFrequency": "Opdateringsfrekvens",
+    "documentation": "Dokumentation",
+    "temporalCoverageStart": "Tidsperiode – start",
+    "temporalCoverageEnd": "Tidsperiode – slut",
+    "landingPage": "Landingsside",
+    "contactPoint": "Kontaktpunkt",
+    "issued": "Udstedt",
+    "conformsTo": "Overensstemmer med"
+  },
+
+  "API": {
+    "description": "Få adgang til ressourcens data via CKAN Data API med kraftfulde forespørgselsmuligheder. Se <link>DataStore-dokumentationen</link> for mere information.",
+    "snippets": {
+      "title": "Eksempler på forespørgsler",
+      "hint": "Klik på ikonen for at kopiere",
+      "copySnippet": "Kopiér kodeeksempel",
+      "resourceMetadata": "Hent ressourcemetadata",
+      "firstFiveResults": "Hent de første 5 poster",
+      "containsJones": "Søg efter poster, der indeholder \"{query}\"",
+      "viaSql": "Forespørg data med SQL"
+    }
+  },
+
+  "Map": {
+    "sldLegend": {
+      "title": "Signaturforklaring",
+      "itemsCount": "{count, plural, one {# objekt} other {# objekter}}",
+      "layerBadge": "Lag {layer}",
+      "filterPlaceholder": "Filtrer signaturforklaring...",
+      "clearFilter": "Ryd filter",
+      "showButton": "Vis signaturforklaring",
+      "hideButton": "Skjul signaturforklaring",
+      "untitled": "Uden titel",
+      "noMatches": "Ingen elementer matcher.",
+      "groups": {
+        "areas": "Områder",
+        "lines": "Linjer",
+        "points": "Punkter"
+      }
+    },
+    "sld": {
+      "errors": {
+        "emptyStyleUrl": "Tom SLD styleUrl.",
+        "invalidStyleUrl": "styleUrl er hverken XML eller en gyldig URL.",
+        "failedToFetch": "Kunne ikke hente SLD ({status} {statusText})",
+        "invalidXmlResponse": "Svaret ligner ikke SLD XML.",
+        "failedToLoad": "Kunne ikke indlæse SLD.",
+        "failedToLoadStyle": "Kunne ikke indlæse stil."
+      }
+    },
+    "geoJson": {
+      "noAttributes": "Ingen attributter",
+      "errors": {
+        "failedToFetch": "Kunne ikke hente GeoJSON ({status} {statusText})",
+        "invalidResponse": "Svaret er ikke gyldig GeoJSON.",
+        "failedToLoad": "Kunne ikke indlæse GeoJSON."
+      }
+    },
+    "ogc": {
+      "loading": "Indlæser kortlag...",
+      "serviceInfo": {
+        "title": "Serviceinformation",
+        "serviceUrlLabel": "Service-URL",
+        "capabilitiesLabel": "GetCapabilities-URL",
+        "openInNewTab": "Åbn {label} i en ny fane"
+      },
+      "popup": {
+        "noAttributes": "Ingen attributter tilgængelige for dette objekt.",
+        "featureInfoUnavailable": "Objektinformation er ikke tilgængelig for dette lag."
+      },
+      "debug": {
+        "status": "Status"
+      },
+      "errors": {
+        "invalidUrlTitle": "Ugyldig service-URL",
+        "invalidUrl": "Ressourcens URL mangler eller er ugyldig.",
+        "missingLayerTitle": "Lagnavn mangler",
+        "missingWmsLayer": "WMS-forhåndsvisning kræver parameteren `layers` i resursens URL.",
+        "missingWfsLayer": "WFS-forhåndsvisning kræver parameteren `typeName` eller `typeNames` i resursens URL.",
+        "corsOrNetwork": "Kunne ikke få forbindelse til korttjenesten. Tjenesten blokerer muligvis CORS-anmodninger fra dette websted.",
+        "serviceFailedTitle": "Fejl i korttjenesten",
+        "serviceFailed": "Anmodning til korttjenesten mislykkedes ({status}).",
+        "invalidServiceOrLayer": "Korttjenestens URL eller lagnavn er ikke gyldigt.",
+        "invalidResponseTitle": "Ugyldigt kortsvar",
+        "invalidGeoJson": "WFS-tjenesten returnerede ikke gyldig GeoJSON.",
+        "loadFailedTitle": "Kunne ikke indlæse kortvisningen"
+      }
+    }
+  }
+}
