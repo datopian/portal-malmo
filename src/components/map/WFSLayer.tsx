@@ -1,9 +1,9 @@
-// WfsBboxLayer.tsx
 import React from "react"
 import { GeoJSON, useMapEvents } from "react-leaflet"
 import type { Map as LeafletMap } from "leaflet"
+import type { FeatureCollection } from "geojson"
 
-type GeoJson = GeoJSON.FeatureCollection
+type GeoJson = FeatureCollection
 
 type Props = {
   wfsBaseUrl: string
