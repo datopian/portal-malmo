@@ -191,6 +191,16 @@ function buildWmsGetFeatureInfoUrl(params: {
   const mapSize = map.getSize();
   const point = map.latLngToContainerPoint(latlng);
   const version = (query.get("version") ?? "1.3.0").toLowerCase();
+  const crsCode = map.options.crs?.code ?? "EPSG:3857";
+  const bounds = map.getBounds();
+  const west = bounds.getWest();
+  const south = bounds.getSouth();
+  const east = bounds.getEast();
+  const north = bounds.getNorth();
+  const bbox =
+    version.startsWith("1.3") && crsCode.toUpperCase() === "EPSG:4326"
+      ? `${south},${west},${north},${east}`
+      : `${west},${south},${east},${north}`;
 
   query.set("service", "WMS");
   query.set("request", "GetFeatureInfo");
@@ -200,14 +210,14 @@ function buildWmsGetFeatureInfoUrl(params: {
   query.set("feature_count", "1");
   query.set("width", String(mapSize.x));
   query.set("height", String(mapSize.y));
-  query.set("bbox", map.getBounds().toBBoxString());
+  query.set("bbox", bbox);
 
   if (version.startsWith("1.3")) {
-    query.set("crs", "EPSG:4326");
+    query.set("crs", crsCode);
     query.set("i", String(Math.round(point.x)));
     query.set("j", String(Math.round(point.y)));
   } else {
-    query.set("srs", "EPSG:4326");
+    query.set("srs", crsCode);
     query.set("x", String(Math.round(point.x)));
     query.set("y", String(Math.round(point.y)));
   }
@@ -240,7 +250,9 @@ function buildGetCapabilitiesUrl(parsed: ParsedOgcUrl, type: OgcType): string {
     "j",
     "srs",
     "crs",
-  ].forEach((param) => query.delete(param));
+  ].forEach((param) => {
+    query.delete(param);
+  });
 
   return `${parsed.baseUrl}?${query.toString()}`;
 }
@@ -347,6 +359,7 @@ export default function OgcServiceMapPreview({
         >["features"] = [];
         let startIndex = 0;
         let supportsPagination = true;
+        let stopAfterFallbackPage = false;
 
         while (features.length < MAX_WFS_FEATURES) {
           const remaining = MAX_WFS_FEATURES - features.length;
@@ -375,6 +388,7 @@ export default function OgcServiceMapPreview({
               supportsPagination = false;
               startIndex = 0;
               features.length = 0;
+              stopAfterFallbackPage = true;
               continue;
             }
 
@@ -414,6 +428,9 @@ export default function OgcServiceMapPreview({
           };
 
           features.push(...page.features);
+          if (!supportsPagination && stopAfterFallbackPage) {
+            break;
+          }
 
           const rawMatched = page.numberMatched;
           const numberMatched =
