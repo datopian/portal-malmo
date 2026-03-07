@@ -138,12 +138,12 @@ export function WfsBboxLayer({
     console.warn(error)
   }
 
-  if (!data) return null
-
   const dataKey = React.useMemo(
     () => data ? JSON.stringify(data.features?.length) + Date.now() : '',
     [data]
   )
+
+  if (!data) return null
 
   return (
     <GeoJSON

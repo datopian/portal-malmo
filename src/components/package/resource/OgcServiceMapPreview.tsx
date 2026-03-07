@@ -59,14 +59,18 @@ function parseOgcResourceUrl(resourceUrl: string): ParsedOgcUrl | null {
   const url = parseUrl(resourceUrl);
   if (!url) return null;
 
+  const query = new URLSearchParams();
+  for (const [key, value] of url.searchParams.entries()) {
+    query.append(key.toLowerCase(), value);
+  }
+
   const layerName =
-    url.searchParams.get("layers") ??
-    url.searchParams.get("typeNames") ??
-    url.searchParams.get("typeName") ??
+    query.get("layers") ??
+    query.get("typenames") ??
+    query.get("typename") ??
     undefined;
 
   const baseUrl = `${url.origin}${url.pathname}`;
-  const query = new URLSearchParams(url.search);
 
   return {
     baseUrl,
