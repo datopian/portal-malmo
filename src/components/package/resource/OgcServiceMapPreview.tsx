@@ -257,6 +257,105 @@ function buildGetCapabilitiesUrl(parsed: ParsedOgcUrl, type: OgcType): string {
   return `${parsed.baseUrl}?${query.toString()}`;
 }
 
+type WmsLayerProps = {
+  parsed: ParsedOgcUrl | null;
+  type: OgcType;
+  t: ReturnType<typeof useTranslations>;
+  wmsLayerRef: React.MutableRefObject<L.TileLayer.WMS | null>;
+  setError: React.Dispatch<React.SetStateAction<PreviewError | null>>;
+  buildWmsGetFeatureInfoUrl: typeof buildWmsGetFeatureInfoUrl;
+  formatPropertiesPopup: typeof formatPropertiesPopup;
+};
+
+function WmsLayer({
+  parsed,
+  type,
+  t,
+  wmsLayerRef,
+  setError,
+  buildWmsGetFeatureInfoUrl,
+  formatPropertiesPopup,
+}: WmsLayerProps) {
+  const map = useMap();
+
+  useEffect(() => {
+    if (!parsed?.layerName || type !== "wms") return;
+
+    const params = Object.fromEntries(parsed.query.entries());
+    const layer = L.tileLayer.wms(parsed.baseUrl, {
+      ...params,
+      layers: parsed.layerName,
+      format: "image/png",
+      transparent: true,
+    });
+
+    wmsLayerRef.current = layer;
+    layer.addTo(map);
+
+    const onTileError = () => {
+      setError({
+        title: t("Map.ogc.errors.serviceFailedTitle"),
+        message: t("Map.ogc.errors.invalidServiceOrLayer"),
+      });
+    };
+    let pendingInfoRequest: AbortController | null = null;
+
+    const onMapClick = async (event: L.LeafletMouseEvent) => {
+      pendingInfoRequest?.abort();
+      pendingInfoRequest = new AbortController();
+
+      const infoUrl = buildWmsGetFeatureInfoUrl({
+        parsed,
+        map,
+        latlng: event.latlng,
+      });
+
+      try {
+        const response = await fetch(infoUrl, {
+          signal: pendingInfoRequest.signal,
+        });
+        if (!response.ok) return;
+
+        const contentType = response.headers.get("content-type") ?? "";
+        if (!contentType.includes("json")) return;
+
+        const payload = (await response.json()) as {
+          features?: Array<{ properties?: Record<string, unknown> }>;
+        };
+        const props = payload.features?.[0]?.properties;
+        const html = formatPropertiesPopup(props);
+        if (!html) return;
+
+        L.popup().setLatLng(event.latlng).setContent(html).openOn(map);
+      } catch (err) {
+        if (pendingInfoRequest.signal.aborted) return;
+      }
+    };
+
+    layer.on("tileerror", onTileError);
+    map.on("click", onMapClick);
+
+    return () => {
+      pendingInfoRequest?.abort();
+      layer.off("tileerror", onTileError);
+      map.off("click", onMapClick);
+      map.removeLayer(layer);
+      wmsLayerRef.current = null;
+    };
+  }, [
+    map,
+    parsed,
+    t,
+    type,
+    wmsLayerRef,
+    setError,
+    buildWmsGetFeatureInfoUrl,
+    formatPropertiesPopup,
+  ]);
+
+  return null;
+}
+
 export default function OgcServiceMapPreview({
   type,
   resourceUrl,
@@ -276,6 +375,10 @@ export default function OgcServiceMapPreview({
   const [loading, setLoading] = useState(type === "wfs");
   const [error, setError] = useState<PreviewError | null>(null);
   const wmsLayerRef = useRef<L.TileLayer.WMS | null>(null);
+  const wfsDataKey = useMemo(
+    () => (wfsData ? JSON.stringify(wfsData) : "wfs-empty"),
+    [wfsData],
+  );
 
   const serviceInfoPanel = (
     <section
@@ -474,78 +577,6 @@ export default function OgcServiceMapPreview({
     return () => controller.abort();
   }, [parsed, resourceUrl, t, type]);
 
-  function WmsLayer() {
-    const map = useMap();
-
-    useEffect(() => {
-      if (!parsed?.layerName || type !== "wms") return;
-
-      const params = Object.fromEntries(parsed.query.entries());
-      const layer = L.tileLayer.wms(parsed.baseUrl, {
-        ...params,
-        layers: parsed.layerName,
-        format: "image/png",
-        transparent: true,
-      });
-
-      wmsLayerRef.current = layer;
-      layer.addTo(map);
-
-      const onTileError = () => {
-        setError({
-          title: t("Map.ogc.errors.serviceFailedTitle"),
-          message: t("Map.ogc.errors.invalidServiceOrLayer"),
-        });
-      };
-      let pendingInfoRequest: AbortController | null = null;
-
-      const onMapClick = async (event: L.LeafletMouseEvent) => {
-        pendingInfoRequest?.abort();
-        pendingInfoRequest = new AbortController();
-
-        const infoUrl = buildWmsGetFeatureInfoUrl({
-          parsed,
-          map,
-          latlng: event.latlng,
-        });
-
-        try {
-          const response = await fetch(infoUrl, {
-            signal: pendingInfoRequest.signal,
-          });
-          if (!response.ok) return;
-
-          const contentType = response.headers.get("content-type") ?? "";
-          if (!contentType.includes("json")) return;
-
-          const payload = (await response.json()) as {
-            features?: Array<{ properties?: Record<string, unknown> }>;
-          };
-          const props = payload.features?.[0]?.properties;
-          const html = formatPropertiesPopup(props);
-          if (!html) return;
-
-          L.popup().setLatLng(event.latlng).setContent(html).openOn(map);
-        } catch (err) {
-          if (pendingInfoRequest.signal.aborted) return;
-        }
-      };
-
-      layer.on("tileerror", onTileError);
-      map.on("click", onMapClick);
-
-      return () => {
-        pendingInfoRequest?.abort();
-        layer.off("tileerror", onTileError);
-        map.off("click", onMapClick);
-        map.removeLayer(layer);
-        wmsLayerRef.current = null;
-      };
-    }, [map, parsed, t, type]);
-
-    return null;
-  }
-
   if (loading) {
     return (
       <>
@@ -594,10 +625,21 @@ export default function OgcServiceMapPreview({
             attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
           />
 
-          {type === "wms" && <WmsLayer />}
+          {type === "wms" && (
+            <WmsLayer
+              parsed={parsed}
+              type={type}
+              t={t}
+              wmsLayerRef={wmsLayerRef}
+              setError={setError}
+              buildWmsGetFeatureInfoUrl={buildWmsGetFeatureInfoUrl}
+              formatPropertiesPopup={formatPropertiesPopup}
+            />
+          )}
           {type === "wfs" && wfsData && (
             <>
               <GeoJSON
+                key={wfsDataKey}
                 data={wfsData}
                 style={{ color: "#136f63", weight: 2, fillOpacity: 0.2 }}
                 pointToLayer={(_, latlng) =>
