@@ -60,6 +60,7 @@ https://example.com/geoserver/ows?service=WFS&typeNames=workspace:layer
 - It paginates requests (`count=1000`, up to 5000 features total).
 - The service must return valid GeoJSON `FeatureCollection`.
 
+
 ## Practical checklist before publishing
 
 - Confirm **Format** is exactly `WMS` or `WFS`.
@@ -68,6 +69,8 @@ https://example.com/geoserver/ows?service=WFS&typeNames=workspace:layer
 - Confirm the layer name is correct (`workspace:layer` when required by server).
 - Prefer HTTPS URLs.
 - Verify CORS allows browser requests from this portal (otherwise preview cannot load).
+
+![ckan backend](backend.png)
 
 ## Notes
 
