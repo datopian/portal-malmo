@@ -1,9 +1,9 @@
-// WfsBboxLayer.tsx
 import React from "react"
-import { GeoJSON, useMapEvents } from "react-leaflet"
+import { GeoJSON, useMap, useMapEvents } from "react-leaflet"
 import type { Map as LeafletMap } from "leaflet"
+import type { FeatureCollection } from "geojson"
 
-type GeoJson = GeoJSON.FeatureCollection
+type GeoJson = FeatureCollection
 
 type Props = {
   wfsBaseUrl: string
@@ -53,6 +53,7 @@ export function WfsBboxLayer({
   debounceMs = 250,
   minZoom = 6,
 }: Props) {
+  const map = useMap()
   const abortRef = React.useRef<AbortController | null>(null)
   const timerRef = React.useRef<number | null>(null)
 
@@ -110,10 +111,6 @@ export function WfsBboxLayer({
   )
 
   useMapEvents({
-    load(e) {
-      // initial fetch
-      fetchForCurrentView(e.target)
-    },
     moveend(e) {
       // debounce on pan/zoom end
       if (timerRef.current) window.clearTimeout(timerRef.current)
@@ -124,6 +121,10 @@ export function WfsBboxLayer({
       timerRef.current = window.setTimeout(() => fetchForCurrentView(e.target), debounceMs)
     },
   })
+
+  React.useEffect(() => {
+    fetchForCurrentView(map)
+  }, [fetchForCurrentView, map])
 
   React.useEffect(() => {
     // cleanup on unmount
@@ -138,10 +139,16 @@ export function WfsBboxLayer({
     console.warn(error)
   }
 
+  const dataKey = React.useMemo(
+    () => data ? JSON.stringify(data.features?.length) + Date.now() : '',
+    [data]
+  )
+
   if (!data) return null
 
   return (
     <GeoJSON
+      key={dataKey}
       data={data}
       style={() => ({
         weight: 1,

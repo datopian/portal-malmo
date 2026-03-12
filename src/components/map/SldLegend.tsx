@@ -103,10 +103,7 @@ function GradientRamp({ items }: { items: LegendItem[] }) {
           borderColor: "rgba(0,0,0,0.10)",
         }}
       />
-      <div className="flex justify-between text-[11px] text-muted-foreground">
-        <span>{candidates[0].label}</span>
-        <span>{candidates[candidates.length - 1].label}</span>
-      </div>
+
     </div>
   );
 }
@@ -244,7 +241,7 @@ export default function SldLegend({
                     style={{ borderColor: "rgba(0,0,0,0.08)" }}
                   >
                     <Swatch item={it} />
-                    <div className="text-sm truncate flex-1">
+                    <div className="text-sm flex-1">
                       {it.label || t("Map.sldLegend.untitled")}
                     </div>
                   </div>

@@ -59,14 +59,18 @@ function parseOgcResourceUrl(resourceUrl: string): ParsedOgcUrl | null {
   const url = parseUrl(resourceUrl);
   if (!url) return null;
 
+  const query = new URLSearchParams();
+  for (const [key, value] of url.searchParams.entries()) {
+    query.append(key.toLowerCase(), value);
+  }
+
   const layerName =
-    url.searchParams.get("layers") ??
-    url.searchParams.get("typeNames") ??
-    url.searchParams.get("typeName") ??
+    query.get("layers") ??
+    query.get("typenames") ??
+    query.get("typename") ??
     undefined;
 
   const baseUrl = `${url.origin}${url.pathname}`;
-  const query = new URLSearchParams(url.search);
 
   return {
     baseUrl,
@@ -174,7 +178,7 @@ function formatPropertiesPopup(
     })
     .join("");
 
-  return `<div class="space-y-1 text-sm">${rows}</div>`;
+  return `<div class="space-y-1 text-sm max-h-[300px] overflow-auto">${rows}</div>`;
 }
 
 function buildWmsGetFeatureInfoUrl(params: {
@@ -187,6 +191,16 @@ function buildWmsGetFeatureInfoUrl(params: {
   const mapSize = map.getSize();
   const point = map.latLngToContainerPoint(latlng);
   const version = (query.get("version") ?? "1.3.0").toLowerCase();
+  const crsCode = map.options.crs?.code ?? "EPSG:3857";
+  const bounds = map.getBounds();
+  const west = bounds.getWest();
+  const south = bounds.getSouth();
+  const east = bounds.getEast();
+  const north = bounds.getNorth();
+  const bbox =
+    version.startsWith("1.3") && crsCode.toUpperCase() === "EPSG:4326"
+      ? `${south},${west},${north},${east}`
+      : `${west},${south},${east},${north}`;
 
   query.set("service", "WMS");
   query.set("request", "GetFeatureInfo");
@@ -196,14 +210,14 @@ function buildWmsGetFeatureInfoUrl(params: {
   query.set("feature_count", "1");
   query.set("width", String(mapSize.x));
   query.set("height", String(mapSize.y));
-  query.set("bbox", map.getBounds().toBBoxString());
+  query.set("bbox", bbox);
 
   if (version.startsWith("1.3")) {
-    query.set("crs", "EPSG:4326");
+    query.set("crs", crsCode);
     query.set("i", String(Math.round(point.x)));
     query.set("j", String(Math.round(point.y)));
   } else {
-    query.set("srs", "EPSG:4326");
+    query.set("srs", crsCode);
     query.set("x", String(Math.round(point.x)));
     query.set("y", String(Math.round(point.y)));
   }
@@ -236,9 +250,110 @@ function buildGetCapabilitiesUrl(parsed: ParsedOgcUrl, type: OgcType): string {
     "j",
     "srs",
     "crs",
-  ].forEach((param) => query.delete(param));
+  ].forEach((param) => {
+    query.delete(param);
+  });
 
   return `${parsed.baseUrl}?${query.toString()}`;
+}
+
+type WmsLayerProps = {
+  parsed: ParsedOgcUrl | null;
+  type: OgcType;
+  t: ReturnType<typeof useTranslations>;
+  wmsLayerRef: React.MutableRefObject<L.TileLayer.WMS | null>;
+  setError: React.Dispatch<React.SetStateAction<PreviewError | null>>;
+  buildWmsGetFeatureInfoUrl: typeof buildWmsGetFeatureInfoUrl;
+  formatPropertiesPopup: typeof formatPropertiesPopup;
+};
+
+function WmsLayer({
+  parsed,
+  type,
+  t,
+  wmsLayerRef,
+  setError,
+  buildWmsGetFeatureInfoUrl,
+  formatPropertiesPopup,
+}: WmsLayerProps) {
+  const map = useMap();
+
+  useEffect(() => {
+    if (!parsed?.layerName || type !== "wms") return;
+
+    const params = Object.fromEntries(parsed.query.entries());
+    const layer = L.tileLayer.wms(parsed.baseUrl, {
+      ...params,
+      layers: parsed.layerName,
+      format: "image/png",
+      transparent: true,
+    });
+
+    wmsLayerRef.current = layer;
+    layer.addTo(map);
+
+    const onTileError = () => {
+      setError({
+        title: t("Map.ogc.errors.serviceFailedTitle"),
+        message: t("Map.ogc.errors.invalidServiceOrLayer"),
+      });
+    };
+    let pendingInfoRequest: AbortController | null = null;
+
+    const onMapClick = async (event: L.LeafletMouseEvent) => {
+      pendingInfoRequest?.abort();
+      pendingInfoRequest = new AbortController();
+
+      const infoUrl = buildWmsGetFeatureInfoUrl({
+        parsed,
+        map,
+        latlng: event.latlng,
+      });
+
+      try {
+        const response = await fetch(infoUrl, {
+          signal: pendingInfoRequest.signal,
+        });
+        if (!response.ok) return;
+
+        const contentType = response.headers.get("content-type") ?? "";
+        if (!contentType.includes("json")) return;
+
+        const payload = (await response.json()) as {
+          features?: Array<{ properties?: Record<string, unknown> }>;
+        };
+        const props = payload.features?.[0]?.properties;
+        const html = formatPropertiesPopup(props);
+        if (!html) return;
+
+        L.popup().setLatLng(event.latlng).setContent(html).openOn(map);
+      } catch (err) {
+        if (pendingInfoRequest.signal.aborted) return;
+      }
+    };
+
+    layer.on("tileerror", onTileError);
+    map.on("click", onMapClick);
+
+    return () => {
+      pendingInfoRequest?.abort();
+      layer.off("tileerror", onTileError);
+      map.off("click", onMapClick);
+      map.removeLayer(layer);
+      wmsLayerRef.current = null;
+    };
+  }, [
+    map,
+    parsed,
+    t,
+    type,
+    wmsLayerRef,
+    setError,
+    buildWmsGetFeatureInfoUrl,
+    formatPropertiesPopup,
+  ]);
+
+  return null;
 }
 
 export default function OgcServiceMapPreview({
@@ -260,6 +375,10 @@ export default function OgcServiceMapPreview({
   const [loading, setLoading] = useState(type === "wfs");
   const [error, setError] = useState<PreviewError | null>(null);
   const wmsLayerRef = useRef<L.TileLayer.WMS | null>(null);
+  const wfsDataKey = useMemo(
+    () => (wfsData ? JSON.stringify(wfsData) : "wfs-empty"),
+    [wfsData],
+  );
 
   const serviceInfoPanel = (
     <section
@@ -343,6 +462,7 @@ export default function OgcServiceMapPreview({
         >["features"] = [];
         let startIndex = 0;
         let supportsPagination = true;
+        let stopAfterFallbackPage = false;
 
         while (features.length < MAX_WFS_FEATURES) {
           const remaining = MAX_WFS_FEATURES - features.length;
@@ -371,6 +491,7 @@ export default function OgcServiceMapPreview({
               supportsPagination = false;
               startIndex = 0;
               features.length = 0;
+              stopAfterFallbackPage = true;
               continue;
             }
 
@@ -410,6 +531,9 @@ export default function OgcServiceMapPreview({
           };
 
           features.push(...page.features);
+          if (!supportsPagination && stopAfterFallbackPage) {
+            break;
+          }
 
           const rawMatched = page.numberMatched;
           const numberMatched =
@@ -452,78 +576,6 @@ export default function OgcServiceMapPreview({
     fetchWfs();
     return () => controller.abort();
   }, [parsed, resourceUrl, t, type]);
-
-  function WmsLayer() {
-    const map = useMap();
-
-    useEffect(() => {
-      if (!parsed?.layerName || type !== "wms") return;
-
-      const params = Object.fromEntries(parsed.query.entries());
-      const layer = L.tileLayer.wms(parsed.baseUrl, {
-        ...params,
-        layers: parsed.layerName,
-        format: "image/png",
-        transparent: true,
-      });
-
-      wmsLayerRef.current = layer;
-      layer.addTo(map);
-
-      const onTileError = () => {
-        setError({
-          title: t("Map.ogc.errors.serviceFailedTitle"),
-          message: t("Map.ogc.errors.invalidServiceOrLayer"),
-        });
-      };
-      let pendingInfoRequest: AbortController | null = null;
-
-      const onMapClick = async (event: L.LeafletMouseEvent) => {
-        pendingInfoRequest?.abort();
-        pendingInfoRequest = new AbortController();
-
-        const infoUrl = buildWmsGetFeatureInfoUrl({
-          parsed,
-          map,
-          latlng: event.latlng,
-        });
-
-        try {
-          const response = await fetch(infoUrl, {
-            signal: pendingInfoRequest.signal,
-          });
-          if (!response.ok) return;
-
-          const contentType = response.headers.get("content-type") ?? "";
-          if (!contentType.includes("json")) return;
-
-          const payload = (await response.json()) as {
-            features?: Array<{ properties?: Record<string, unknown> }>;
-          };
-          const props = payload.features?.[0]?.properties;
-          const html = formatPropertiesPopup(props);
-          if (!html) return;
-
-          L.popup().setLatLng(event.latlng).setContent(html).openOn(map);
-        } catch (err) {
-          if (pendingInfoRequest.signal.aborted) return;
-        }
-      };
-
-      layer.on("tileerror", onTileError);
-      map.on("click", onMapClick);
-
-      return () => {
-        pendingInfoRequest?.abort();
-        layer.off("tileerror", onTileError);
-        map.off("click", onMapClick);
-        map.removeLayer(layer);
-        wmsLayerRef.current = null;
-      };
-    }, [map, parsed, t, type]);
-
-    return null;
-  }
 
   if (loading) {
     return (
@@ -573,10 +625,21 @@ export default function OgcServiceMapPreview({
             attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
           />
 
-          {type === "wms" && <WmsLayer />}
+          {type === "wms" && (
+            <WmsLayer
+              parsed={parsed}
+              type={type}
+              t={t}
+              wmsLayerRef={wmsLayerRef}
+              setError={setError}
+              buildWmsGetFeatureInfoUrl={buildWmsGetFeatureInfoUrl}
+              formatPropertiesPopup={formatPropertiesPopup}
+            />
+          )}
           {type === "wfs" && wfsData && (
             <>
               <GeoJSON
+                key={wfsDataKey}
                 data={wfsData}
                 style={{ color: "#136f63", weight: 2, fillOpacity: 0.2 }}
                 pointToLayer={(_, latlng) =>
