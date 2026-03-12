@@ -77,7 +77,7 @@
   },
 
   "Activity": {
-    "error:": " Fel vid laddning av aktivitetsflöde för {type}: {message}",
+    "error": " Fel vid laddning av aktivitetsflöde för {type}: {message}",
     "notFound": "Inga aktiviteter hittades."
   },
 

@@ -56,7 +56,12 @@ const SNIPPET_I18N: Record<SupportedLocale, SnippetI18n> = {
 };
 
 function normalizeLocale(locale?: string): SupportedLocale {
-  return locale?.toLowerCase().startsWith("sv") ? "sv" : "en";
+  const lang = locale?.toLowerCase().slice(0, 2);
+  const others: SupportedLocale[] = ["en", "da"];
+
+  return (others as string[]).includes(lang ?? "")
+    ? (lang as SupportedLocale)
+    : "sv";
 }
 
 function getSnippetText(locale?: string, t?: SnippetTranslator): SnippetI18n {

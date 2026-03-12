@@ -1,2 +1,3 @@
-Inden for Malmö produceres store mængder data hver dag, og vi gemmer en masse historiske data. Åbne data handler om at dele de data, vi har, med blandt andre borgere, forskere, medier og virksomheder.
-Vi har ikke altid svarene på, hvordan data kan bruges, eller hvem der kunne have brug for det. Ved at arbejde med åbne data skaber vi muligheder for andre at bruge de data, der findes.
+I Malmø produceres der store mængder data hver dag, og vi lagrer en masse historiske data. Åbne data handler om at dele de data, vi har, med borgere, forskere, medier og virksomheder, blandt andre.
+
+Vi har ikke altid svarene på, hvordan data kan bruges, eller hvem der har brug for dem. Ved at arbejde med åbne data skaber vi muligheder for, at andre kan bruge de data, der findes.

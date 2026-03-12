@@ -77,7 +77,7 @@
   },
 
   "Activity": {
-    "error:": " Fejl ved indlæsning af aktivitetsstrøm for {type}: {message}",
+    "error": " Fejl ved indlæsning af aktivitetsstrøm for {type}: {message}",
     "notFound": "Ingen aktiviteter fundet."
   },
 
