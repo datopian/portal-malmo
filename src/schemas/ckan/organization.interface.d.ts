@@ -5,9 +5,12 @@ export interface Organization {
     id: string;
     name: string;
     title: string;
+    title_translated?: Record<string, string>;
     display_name: string;
+    display_name_translated?: Record<string, string>;
     type: string;
     description?: string;
+    description_translated?: Record<string, string>;
     image_url?: string;
     image_display_url?: string;
     created?: string;

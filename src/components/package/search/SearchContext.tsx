@@ -68,6 +68,7 @@ export const SearchStateProvider = ({
 
     const offsetRaw = parseInt(getParam("offset") ?? "0", 10);
     const offset = Number.isFinite(offsetRaw) ? offsetRaw : 0;
+    const query = getParam("query") ?? "";
 
     return {
       offset,
@@ -76,8 +77,8 @@ export const SearchStateProvider = ({
       groups: getParamArray("groups"),
       orgs: defaultOrg ? [defaultOrg] : getParamArray("orgs"),
       resFormat: getParamArray("resFormat"),
-      query: getParam("query") ?? "",
-      sort: getParam("sort") ?? "metadata_modified desc",
+      query: query,
+      sort: getParam("sort") ?? (query.trim() ? "score desc" : "metadata_modified desc"),
       include_private: false,
     };
   }, [searchParams, defaultOrg]);

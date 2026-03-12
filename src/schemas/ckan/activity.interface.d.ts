@@ -9,6 +9,7 @@ export interface Activity {
     data?: {
         package?: {
             title?: string;
+            title_translated?: Record<string, string>;
         };
     };
 }

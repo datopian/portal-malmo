@@ -1,6 +1,7 @@
 # City-of-Malmo-Open-Data-Portal
 
 
+
 ## env variables
 ```bash
 NEXT_PUBLIC_DMS=https://ckan.city-of-malmo.datopian.com

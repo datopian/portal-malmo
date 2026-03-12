@@ -7,6 +7,7 @@ import { buildLocalizedMetadata } from "@/lib/seo";
 import { ckan } from "@/lib/ckan";
 import GroupCard from "@/components/groups/GroupCard";
 import { GROUP_CARD_COLORS } from "@/lib/groups";
+import { getLocalizedText } from "@/lib/ckan-translations";
 
 export const revalidate = 300;
 
@@ -27,8 +28,9 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   });
 }
 
-export default async function GroupsPage({ searchParams }: Props) {
+export default async function GroupsPage({ searchParams, params }: Props) {
   const t = await getTranslations();
+  const { locale } = await params;
 
   const groups = await ckan().getGroupsWithDetails();
 
@@ -39,7 +41,13 @@ export default async function GroupsPage({ searchParams }: Props) {
     : qParam?.toLowerCase() || "";
 
   const filtered = groups.filter((group) =>
-    group.display_name.toLowerCase().includes(query)
+    getLocalizedText(
+      group.title_translated,
+      locale,
+      group.display_name || group.title || group.name
+    )
+      .toLowerCase()
+      .includes(query)
   );
 
   return (

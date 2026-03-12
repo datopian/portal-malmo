@@ -3,7 +3,6 @@ import { ckan } from "@/lib/ckan";
 import Page from "@/components/layout/Page";
 import { Badge } from "@/components/ui/badge";
 import { notFound } from "next/navigation";
-import React from "react";
 import { RESOURCE_COLORS, supportsPreview } from "@/lib/resource";
 import ResourcePreview from "@/components/package/resource/ResourcePreview";
 import { getTranslations } from "next-intl/server";
@@ -14,8 +13,9 @@ import { formatDate } from "date-fns";
 import { Button } from "@/components/ui/button";
 import { Link } from "@/i18n/navigation";
 import { DownloadIcon } from "lucide-react";
-import { Heading } from "@/components/ui/heading";
 import { formatFileSize } from "@/lib/utils";
+import ApiDialog from "@/components/package/api/ApiDialog";
+import { getLocalizedText } from "@/lib/ckan-translations";
 
 export const revalidate = 300;
 
@@ -44,19 +44,17 @@ export default async function ResourcePage({ params }: PageProps) {
     locale,
     resource: resourceId,
     dataset: datasetName,
-    org
+    org,
   } = await params;
 
-  if(decodeURIComponent(org) !== "@malmo"){
+  if (decodeURIComponent(org) !== "@malmo") {
     return notFound();
   }
 
   const t = await getTranslations({ locale });
 
   try {
-
     dataset = await ckan().getDatasetDetails(datasetName);
-    
 
     if (!dataset) {
       return notFound();
@@ -75,7 +73,6 @@ export default async function ResourcePage({ params }: PageProps) {
     if (resource.package_id !== dataset.id) {
       return notFound();
     }
-
   } catch (e) {
     console.log(e);
     return notFound();
@@ -90,21 +87,37 @@ export default async function ResourcePage({ params }: PageProps) {
             href: "/data",
           },
           {
-            title: dataset?.title ?? t("Common.dataset"),
+            title: dataset
+              ? getLocalizedText(
+                  dataset.title_translated,
+                  locale,
+                  dataset.title ?? dataset.name
+                )
+              : t("Common.dataset"),
             href: `/@malmo/${dataset?.name ?? ""}`,
           },
           {
-            title: resource?.name ?? t("Common.resource"),
+            title: resource
+              ? getLocalizedText(
+                  resource.name_translated,
+                  locale,
+                  resource.name
+                )
+              : t("Common.resource"),
             href: `/@malmo/${dataset?.name ?? ""}/${resource.id}`,
             current: true,
           },
         ],
       }}
-      title={resource.name ?? ""}
-      description={resource.description}
+      title={getLocalizedText(resource.name_translated, locale, resource.name)}
+      description={getLocalizedText(
+        resource.description_translated,
+        locale,
+        resource.description
+      )}
     >
       <Container className="py-12">
-        <div className="flex gap-6 sm:gap-12 border-b pb-8 mb-8">
+        <div className="flex flex-col md:flex-row gap-6 sm:gap-12 border-b pb-8 mb-8">
           <div className="flex flex-col sm:flex-row gap-6 sm:gap-12">
             <div>
               <span className="font-bold block">{t("Common.format")}</span>
@@ -132,7 +145,7 @@ export default async function ResourcePage({ params }: PageProps) {
               <span>
                 {formatDate(
                   resource.metadata_modified ?? "",
-                  "dd/MM/yyyy, HH:mm"
+                  "dd/MM/yyyy, HH:mm",
                 )}
               </span>
             </div>
@@ -143,13 +156,18 @@ export default async function ResourcePage({ params }: PageProps) {
               </span>
             </div>
           </div>
-          <div className="ml-auto">
+          <div className="ml-auto flex items-center gap-2">
+            <ApiDialog type="resource" includeDatastore={resource.datastore_active } id={resource.id}/>
             <Button
               type="button"
               asChild
-              aria-label={`Download resource ${resource.name}`}
+              aria-label={`Download resource ${getLocalizedText(
+                resource.name_translated,
+                locale,
+                resource.name
+              )}`}
               variant={"theme"}
-              className="bg-[#666666] px-3 font-medium border-[#666666] border-1 text-white hover:bg-[#666666]/90"
+      
             >
               <Link href={resource.url ?? ""} target="_blank" download={true}>
                 <DownloadIcon size={5} />
@@ -160,10 +178,7 @@ export default async function ResourcePage({ params }: PageProps) {
         </div>
         {resource.format && supportsPreview(resource) && (
           <>
-            <Heading level={3} className="text-theme-green font-bold mb-5">
-              {t("Common.preview")}
-            </Heading>
-            <ResourcePreview resource={resource} />
+            <ResourcePreview resource={resource} dataset={dataset} />
           </>
         )}
       </Container>
@@ -176,8 +191,16 @@ export async function generateMetadata({
 }: PageProps): Promise<Metadata> {
   const { locale, org, dataset, resource } = await params;
   const resData = await ckan().getResourceMetadata(resource);
-  const resourceName = resData?.name ?? decodeURIComponent(resource);
-  const description = resData?.description ?? "";
+  const resourceName = resData
+    ? getLocalizedText(resData.name_translated, locale, resData.name)
+    : decodeURIComponent(resource);
+  const description = resData
+    ? getLocalizedText(
+        resData.description_translated,
+        locale,
+        resData.description
+      )
+    : "";
 
   return buildLocalizedMetadata({
     locale,

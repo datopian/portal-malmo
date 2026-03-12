@@ -16,9 +16,12 @@ const buttonVariants = cva(
           "border border-theme-green bg-transparent text-theme-green hover:bg-theme-green hover:text-white",
         secondary:
           "bg-theme-green/5 text-theme-green hover:bg-theme-green/10",
-        ghost: "hover:bg-accent hover:text-accent-foreground",
+        ghost: "hover:bg-theme-green hover:text-accent-foreground",
         link: "text-primary underline-offset-4 hover:underline",
         theme: "bg-theme-green text-white hover:bg-theme-green/90",
+        input:
+          "flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-base ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium file:text-foreground placeholder:text-gray-600 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 text-sm",
+      
 
       },
       size: {

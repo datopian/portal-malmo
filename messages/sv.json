@@ -35,7 +35,7 @@
     "code": "Kod",
     "created": "Skapad",
     "updated": "Uppdaterad",
-    "lastModified" : "Senast ändrad",
+    "lastModified": "Senast ändrad",
     "version": "Version",
     "license": "Licens",
     "size": "Storlek",
@@ -127,7 +127,55 @@
     "pagination": "Sida {page} av {total}",
     "errorLoadingGeoJSON": "Fel vid inläsning av GeoJSON-data",
     "fitWidth": "Anpassa till sidbredd",
-    "failedToLoad": "Misslyckades med att ladda data"
+    "failedToLoad": "Misslyckades med att ladda data",
+    "notSupported": "Förhandsvisning stöds inte"
+  },
+
+  "DataExplorer": {
+    "filtersAndSettings": "Filter och inställningar",
+    "closeSettings": "Stäng inställningar",
+    "filters": "Filter",
+    "filtersLabel": "Filter:",
+    "field": "Fält",
+    "operation": "Operator",
+    "value": "Värde",
+    "removeFilter": "Ta bort filter",
+    "removeFilterRow": "Ta bort filterrad",
+    "addFilter": "Lägg till filter",
+    "link": {
+      "and": "OCH",
+      "or": "ELLER"
+    },
+    "operations": {
+      "equals": "Är lika med",
+      "notEqual": "Är inte lika med",
+      "greaterThan": "Större än",
+      "greaterOrEqual": "Större än eller lika med",
+      "lessThan": "Mindre än",
+      "lessOrEqual": "Mindre än eller lika med",
+      "contains": "Innehåller",
+      "notContains": "Innehåller inte",
+      "startsWith": "Börjar med",
+      "endsWith": "Slutar med"
+    },
+    "columnVisibilityOptions": "Alternativ för kolumnvisning",
+    "searchColumnsAria": "Sök efter kolumner som matchar nyckelorden",
+    "clearColumnSearchInput": "Rensa kolumnsökning",
+    "noColumnResults": "0 resultat hittades för",
+    "columnsRows": "{columns} kolumner, {rows} rader",
+    "range": "{start} - {end} av {total}",
+    "sortColumn": "Sortera kolumn",
+    "sortDesc": "Sortera fallande",
+    "sortAsc": "Sortera stigande",
+    "clearSorting": "Rensa sortering",
+    "pinToLeft": "Fäst till vänster",
+    "pinColumnToLeft": "Fäst kolumn till vänster",
+    "unpin": "Lossa",
+    "unpinColumn": "Lossa kolumn",
+    "selectDate": "Välj datum",
+    "chooseDate": "Välj ett datum",
+    "showMoreLines": "Visa mer ({count} fler rader)",
+    "loadingTable": "Laddar tabell"
   },
 
   "Footer": {
@@ -148,5 +196,85 @@
     "contactPoint": "Kontaktpunkt",
     "issued": "Utfärdad",
     "conformsTo": "Överensstämmer med"
+  },
+
+  "API": {
+    "description": "Få tillgång till resursens data via CKAN Data API med kraftfulla frågemöjligheter. Se <link>DataStore-dokumentationen</link> för mer information.",
+    "snippets": {
+      "title": "Frågeexempel",
+      "hint": "Klicka på ikonen för att kopiera",
+      "copySnippet": "Kopiera kodexempel",
+      "resourceMetadata": "Hämta resursmetadata",
+      "firstFiveResults": "Hämta de första 5 posterna",
+      "containsJones": "Sök poster som innehåller \"{query}\"",
+      "viaSql": "Fråga data med SQL"
+    }
+  },
+
+  "Map": {
+    "sldLegend": {
+      "title": "Legend",
+      "itemsCount": "{count, plural, one {# objekt} other {# objekt}}",
+      "layerBadge": "Lager {layer}",
+      "filterPlaceholder": "Filtrera legend...",
+      "clearFilter": "Rensa filter",
+      "showButton": "Visa legend",
+      "hideButton": "Dölj legend",
+      "untitled": "Utan titel",
+      "noMatches": "Inga legendobjekt matchar.",
+      "groups": {
+        "areas": "Områden",
+        "lines": "Linjer",
+        "points": "Punkter"
+      }
+    },
+    "sld": {
+      "errors": {
+        "emptyStyleUrl": "Tom SLD styleUrl.",
+        "invalidStyleUrl": "styleUrl är varken XML eller en giltig URL.",
+        "failedToFetch": "Kunde inte hämta SLD ({status} {statusText})",
+        "invalidXmlResponse": "Svaret ser inte ut som SLD XML.",
+        "failedToLoad": "Kunde inte ladda SLD.",
+        "failedToLoadStyle": "Kunde inte ladda stil."
+      }
+    },
+    "geoJson": {
+      "noAttributes": "Inga attribut",
+      "errors": {
+        "failedToFetch": "Kunde inte hämta GeoJSON ({status} {statusText})",
+        "invalidResponse": "Svaret är inte giltig GeoJSON.",
+        "failedToLoad": "Kunde inte ladda GeoJSON."
+      }
+    },
+    "ogc": {
+      "loading": "Laddar kartlager...",
+      "serviceInfo": {
+        "title": "Tjänstinformation",
+        "serviceUrlLabel": "Tjänst-URL",
+        "capabilitiesLabel": "GetCapabilities-URL",
+        "openInNewTab": "Öppna {label} i en ny flik"
+      },
+      "popup": {
+        "noAttributes": "Inga attribut tillgängliga för detta objekt.",
+        "featureInfoUnavailable": "Objektinformation är inte tillgänglig för detta lager."
+      },
+      "debug": {
+        "status": "Status"
+      },
+      "errors": {
+        "invalidUrlTitle": "Ogiltig tjänst-URL",
+        "invalidUrl": "Resursens URL saknas eller är ogiltig.",
+        "missingLayerTitle": "Lagernamn saknas",
+        "missingWmsLayer": "WMS-förhandsvisning kräver parametern `layers` i resursens URL.",
+        "missingWfsLayer": "WFS-förhandsvisning kräver parametern `typeName` eller `typeNames` i resursens URL.",
+        "corsOrNetwork": "Det gick inte att nå karttjänsten. Tjänsten kan blockera CORS-förfrågningar från den här webbplatsen.",
+        "serviceFailedTitle": "Fel i karttjänsten",
+        "serviceFailed": "Begäran till karttjänsten misslyckades ({status}).",
+        "invalidServiceOrLayer": "Karttjänstens URL eller lagernamn är inte giltigt.",
+        "invalidResponseTitle": "Ogiltigt kartsvar",
+        "invalidGeoJson": "WFS-tjänsten returnerade inte giltig GeoJSON.",
+        "loadFailedTitle": "Kunde inte ladda kartförhandsvisningen"
+      }
+    }
   }
 }

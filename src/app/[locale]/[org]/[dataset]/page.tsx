@@ -12,6 +12,7 @@ import DatasetInfo from "@/components/package/dataset/DatasetInfo";
 import { Badge } from "@/components/ui/badge";
 import { Link } from "@/i18n/navigation";
 import { formatDate } from "date-fns";
+import { getLocalizedText } from "@/lib/ckan-translations";
 
 type DatasetPageParams = {
   locale: string;
@@ -68,19 +69,38 @@ export default async function DatasetPage({ params }: DatasetPageProps) {
             href: "/data",
           },
           {
-            title: dataset?.title ?? "",
-            href: `/@malmo/${dataset.name}`,
+            title:
+              dataset
+                ? getLocalizedText(
+                    dataset.title_translated,
+                    locale,
+                    dataset.title ?? dataset.name
+                  )
+                : "",
+            href: `/@malmo/${dataset?.name ?? ""}`,
             current: true,
           },
         ],
       }}
-      title={dataset?.title ?? ""}
-      description={dataset.notes}
+      title={
+        dataset
+          ? getLocalizedText(
+              dataset.title_translated,
+              locale,
+              dataset.title ?? dataset.name
+            )
+          : ""
+      }
+      description={
+        dataset
+          ? getLocalizedText(dataset.notes_translated, locale, dataset.notes)
+          : ""
+      }
       metadata={[
         {
           title: t("Common.updated"),
           value: formatDate(
-            dataset.metadata_modified ?? "",
+            dataset?.metadata_modified ?? "",
             "dd/MM/yyyy, HH:mm:ss"
           ),
         }
@@ -101,7 +121,7 @@ export default async function DatasetPage({ params }: DatasetPageProps) {
             />
           </div>
 
-          <div className="w-full lg:max-w-[350px] space-y-6 lg:ml-auto lg:sticky top-10 h-fit">
+          <div className="w-full lg:max-w-[370px] space-y-6 lg:ml-auto lg:sticky top-10 h-fit">
             <div className="p-6 bg-[#F3F3F3]">
               <Heading
                 level={3}
@@ -146,8 +166,12 @@ export async function generateMetadata({
 }: DatasetPageProps): Promise<Metadata> {
   const { locale, org, dataset } = await params;
   const ds = await ckan().getDatasetDetails(dataset);
-  const datasetTitle = ds?.title ?? decodeURIComponent(dataset);
-  const description = ds?.notes ?? "";
+  const datasetTitle = ds
+    ? getLocalizedText(ds.title_translated, locale, ds.title ?? ds.name)
+    : decodeURIComponent(dataset);
+  const description = ds
+    ? getLocalizedText(ds.notes_translated, locale, ds.notes)
+    : "";
 
   return buildLocalizedMetadata({
     locale,

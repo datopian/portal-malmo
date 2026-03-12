@@ -2,14 +2,21 @@ import { Dataset } from "@/schemas/ckan";
 import ListItem from "@/components/ui/list-item";
 import { updateFrequencyValues } from "@/lib/utils";
 import React from "react";
-import { getTranslations } from "next-intl/server";
+import { getLocale, getTranslations } from "next-intl/server";
 import Link from "next/link";
 import { ExternalLink } from "lucide-react";
 import { format, isValid, parseISO } from "date-fns";
+import { getLocalizedText } from "@/lib/ckan-translations";
 
 export default async function DatasetInfo({ dataset }: { dataset: Dataset }) {
 
   const t = await getTranslations();
+  const locale = await getLocale();
+  const organizationTitle = getLocalizedText(
+    dataset.organization?.title_translated,
+    locale,
+    dataset.organization?.title ?? dataset.organization?.name
+  );
   const landingPage = dataset.extras?.find(
     (field) => field.key.toLowerCase() === "landing_page",
   )?.value;
@@ -35,7 +42,7 @@ export default async function DatasetInfo({ dataset }: { dataset: Dataset }) {
   return (
     <div className="divide-y  ">
       <ListItem title={t("Common.organization")}>
-        {dataset.organization.title}
+        {organizationTitle}
       </ListItem>
       <ListItem title={t("Metadata.updateFrequency")}>
         {updateFrequencyLabel || "--"}

@@ -2,7 +2,8 @@ import { Dataset, Resource } from "@/schemas/ckan";
 import ListItem from "@/components/ui/list-item";
 import { formatDateToDDMMYYYY } from "@/lib/utils";
 import { Link } from "@/i18n/navigation";
-import { getTranslations } from "next-intl/server";
+import { getLocale, getTranslations } from "next-intl/server";
+import { getLocalizedText } from "@/lib/ckan-translations";
 
 export interface ResourceWithDataset extends Resource {
   dataset?: Dataset;
@@ -14,7 +15,18 @@ export default async function ResourceDetails({
   resource: ResourceWithDataset;
 }) {
   const t = await getTranslations("Common");
+  const locale = await getLocale();
   const { dataset } = resource;
+  const datasetTitle = dataset
+    ? getLocalizedText(dataset.title_translated, locale, dataset.title ?? dataset.name)
+    : "";
+  const organizationTitle = dataset?.organization
+    ? getLocalizedText(
+        dataset.organization.title_translated,
+        locale,
+        dataset.organization.title ?? dataset.organization.name
+      )
+    : "";
   return (
     <div>
       <div>
@@ -31,7 +43,7 @@ export default async function ResourceDetails({
                 className="underline"
                 href={`/@malmo/${dataset.name}`}
               >
-                {dataset?.title}
+                {datasetTitle}
               </Link>
             </ListItem>
             <ListItem title={t("organization")}>
@@ -39,7 +51,7 @@ export default async function ResourceDetails({
                 href={`/@malmo`}
                 className="underline"
               >
-                {dataset.organization?.title}
+                {organizationTitle}
               </Link>
             </ListItem>
           </>
