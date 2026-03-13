@@ -77,7 +77,7 @@
   },
 
   "Activity": {
-    "error:": " Error loading {type} activity stream: {message}",
+    "error": " Error loading {type} activity stream: {message}",
     "notFound": "No activities found."
   },
 
