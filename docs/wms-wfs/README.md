@@ -76,4 +76,3 @@ https://example.com/geoserver/ows?service=WFS&typeNames=workspace:layer
 
 - The preview also shows a generated **GetCapabilities URL** based on your service URL.
 - `bbox` in the resource URL is optional; if provided, the map will initially fit to it.
-
