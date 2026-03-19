@@ -6,4 +6,4 @@ export const config = {
   matcher: ["/((?!_next|.*\\..*).*)"],
 };
 
-export const proxy = createMiddleware(routing)
+export const proxy = createMiddleware(routing);

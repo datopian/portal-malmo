@@ -1,0 +1,1 @@
+He who seeks often finds something unexpected. Temporary circumstances can create new opportunities and insights. Sometimes simple actions lead to greater results than first anticipated.
