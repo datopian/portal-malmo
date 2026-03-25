@@ -182,7 +182,8 @@
     "note": "Everyone – including private individuals as well as private and public organizations – is free to use the open data available on this portal.\nThe data may be freely reused, modified, and shared.",
     "builtWith": "Built with",
     "onCKAN": "on CKAN Backend",
-    "exportCatalog": "Export DCAT catalog in <rdf>RDF</rdf> or <jsonld>JSON-LD</jsonld>"
+    "exportCatalog": "Export DCAT catalog in <rdf>RDF</rdf> or <jsonld>JSON-LD</jsonld>",
+    "accessibilityStatement" : "Accessibility statement"
   },
 
   "Metadata": {
