@@ -183,7 +183,8 @@
     "note": "Alle – både privatpersoner samt private og offentlige organisationer – kan frit bruge de åbne data, der findes på denne portal.\nData er frie til at blive genbrugt, modificeret og delt.",
     "builtWith": "Bygget med",
     "onCKAN": "med CKAN-backend",
-    "exportCatalog": "Eksporter DCAT-katalog i <rdf>RDF</rdf> eller <jsonld>JSON-LD</jsonld>"
+    "exportCatalog": "Eksporter DCAT-katalog i <rdf>RDF</rdf> eller <jsonld>JSON-LD</jsonld>",
+    "accessibilityStatement": "Tilgængelighedserklæring"
   },
 
   "Metadata": {

@@ -3,6 +3,7 @@ import Container from "../ui/container";
 import { Link } from "@/i18n/navigation";
 import { Roboto } from "next/font/google";
 import { envVars } from "@/lib/env";
+import { Dot } from "lucide-react";
 
 const roboto = Roboto({
   weight: ["400", "500", "700", "900"],
@@ -15,7 +16,14 @@ export default async function Footer() {
   return (
     <footer className="py-10 bg-theme-green text-theme-green-foreground">
       <Container className="grid gap-10 lg:gap-20 grid-2 lg:grid-cols-3">
-        <div className="whitespace-pre-line">{t("Footer.note")}</div>
+        <div className="whitespace-pre-line">
+          {t("Footer.note")}
+          <div className="mt-6">
+            <Link href="/accessibility-statement" className=" underline hover:text-white transition flex items-center gap-1">
+              {t("Footer.accessibilityStatement")}
+            </Link>
+          </div>
+        </div>
         <div>
           <h2 className="text-2xl font-bold mb-4">
             {t("Footer.contactTitle")}
@@ -33,7 +41,7 @@ export default async function Footer() {
 
             <li>
               <span className="font-semibold">{t("Common.address")}: </span>
-              Malmö stad, 250 80 Malmö
+              <span>Malmö stad, 250 80 Malmö</span>
             </li>
             <li>
               <span className="font-semibold">{t("Common.phone")}: </span>
