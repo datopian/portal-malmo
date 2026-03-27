@@ -1,1 +1,0 @@
-Den, der søger, finder ofte noget uventet. Midlertidige omstændigheder kan skabe nye muligheder og indsigter. Sommetider fører enkle handlinger til større resultater, end man først havde forestillet sig.
