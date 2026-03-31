@@ -10,12 +10,20 @@ type Props = { params: Promise<{ locale: string }> };
 
 export const revalidate = 300;
 
-export default async function AboutPage({ params }: Readonly<Props>) {
+export default async function AccessibilityStatementPage({
+  params,
+}: Readonly<Props>) {
   const { locale } = await params;
   const t = await getTranslations({ locale });
-  const content = await getMarkdownContent(`about-us/${locale}.md`);
+  const content = await getMarkdownContent(
+    `accessibility-statement/${locale}.md`,
+  );
   return (
-    <Page title={t("Common.aboutUs")} description={""} heroClass="">
+    <Page
+      title={t("Footer.accessibilityStatement")}
+      description={""}
+      heroClass=""
+    >
       <Container className="relative py-10">
         <MarkdownRender content={content} />
       </Container>
@@ -28,8 +36,8 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const t = await getTranslations({ locale });
   return buildLocalizedMetadata({
     locale,
-    pathname: "/about-us",
-    title: t("Common.aboutUs"),
+    pathname: "/accessibility-statement",
+    title: t("Footer.accessibilityStatement"),
     description: "",
   });
 }
