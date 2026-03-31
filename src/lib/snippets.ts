@@ -47,7 +47,7 @@ const SNIPPET_I18N: Record<SupportedLocale, SnippetI18n> = {
   },
   da: {
     metadataTitle: "Metadata",
-    resourceDataTitle: "Resursdata",
+    resourceDataTitle: "Ressourcedata",
     queriesTitle: "Forespørgsler",
     firstFiveResults: "Eksempel på forespørgsel (de første fem resultater):",
     containsJones: 'Eksempel på forespørgsel (resultater som indeholder "jones"):',
