@@ -59,6 +59,11 @@ export const FacetOptions = ({
       </label>
       <span
         onClick={toggleSelection}
+        onKeyDown={(e) =>
+          (e.key === " " || e.key === "Enter") && toggleSelection()
+        }
+        role="button"
+        tabIndex={0}
         className="ml-3 text-[#364153] cursor-pointer"
       >
         {label} {count !== undefined && `(${count})`}

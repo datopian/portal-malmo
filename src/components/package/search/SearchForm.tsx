@@ -104,7 +104,7 @@ export default function SearchForm({
           {q && (
             <button
               type="button"
-              aria-label="Clear search"
+              aria-label={t("Search.clearSearch")}
               className="cursor-pointer absolute right-[140px] top-[14px] text-gray-600 hover:text-gray-900 transition"
               onClick={handleClearQuery}
             >

@@ -29,7 +29,8 @@ const GroupCard = ({ group, colorClass = "bg-gray-600" }: Props) => {
           width={32}
           height={32}
           src={group.image_display_url || "/graphics/group-default-group.svg"}
-          alt={groupLabel}
+          alt=""
+          aria-hidden="true"
           className="invert"
         />
       </div>
@@ -37,9 +38,9 @@ const GroupCard = ({ group, colorClass = "bg-gray-600" }: Props) => {
         <span className="inline-block bg-theme-green/50 px-3 py-1 text-sm font-bold">
           {group.package_count ?? 0}
         </span>
-        <p className="mt-3 font-semibold leading-snug line-clamp-2 text-[14px] min-h-[38px]">
+        <h3 className="mt-3 font-semibold leading-snug line-clamp-2 text-[14px] min-h-[38px]">
           {groupLabel}
-        </p>
+        </h3>
       </div>
     </Link>
   );

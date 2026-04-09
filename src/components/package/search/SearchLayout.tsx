@@ -15,6 +15,7 @@ import { SearchSkeletonLayout } from "@/components/layout/PageLoading";
 import Facets from "./Facets";
 import { useTranslations } from "next-intl";
 import { Button } from "@/components/ui/button";
+import NoDataFound from "./NoDataFound";
 
 export default function SearchLayout({
   showSearchForm = true,
@@ -26,6 +27,11 @@ export default function SearchLayout({
   const { result, isLoading, options, defaultOrg, setOptions } =
     useSearchState();
   const hasResults = (result?.count ?? 0) > 0;
+  const hasVisibleFacets =
+    !!result?.search_facets?.groups?.items?.length ||
+    !!result?.search_facets?.res_format?.items?.length ||
+    !!result?.search_facets?.tags?.items?.length;
+  const showFilters = hasResults || hasVisibleFacets;
   const isPaginated = result?.count ?? 0 > (options?.limit ?? 10);
   return (
     <div className="relative">
@@ -53,7 +59,7 @@ export default function SearchLayout({
         ) : (
           <div className=" mt-6 grid grid-cols-1 gap-x-20 gap-y-10 lg:grid-cols-4 relative">
             {/* Filters */}
-            {hasResults && (
+            {showFilters && (
               <form className="hidden lg:block h-fit sticky top-5">
                 <Facets title={t("Search.filters")} />
               </form>
@@ -72,33 +78,39 @@ export default function SearchLayout({
               </div>
               <div className="my-6 flex flex-col md:flex-row md:items-end">
                 <div className="">
-                  <Button
-                    onClick={() => {
-                      setMobileFiltersOpen(true);
-                    }}
-                    variant={"outline"}
-                    size={"sm"}
-                    className="cursor-pointer lg:hidden mb-4"
-                  >
-                    <span className="sr-only">{t("Search.filters")}</span>
-                    <Funnel aria-hidden="true" className="size-5" />
-                    {t("Search.filters")}
-                  </Button>
+                  {showFilters && (
+                    <Button
+                      onClick={() => {
+                        setMobileFiltersOpen(true);
+                      }}
+                      variant={"outline"}
+                      size={"sm"}
+                      className="cursor-pointer lg:hidden mb-4"
+                    >
+                      <span className="sr-only">{t("Search.filters")}</span>
+                      <Funnel aria-hidden="true" className="size-5" />
+                      {t("Search.filters")}
+                    </Button>
+                  )}
                   <ActiveFilters
-                    title="Active Filters"
+                    title={t("Search.activeFilters")}
                     hide={defaultOrg ? ["orgs"] : []}
                   />
                 </div>
               </div>
-              <div className="flex flex-col space-y-4 mt-4 w-full border border-b-0">
-                {result?.datasets?.map((d) => (
-                  <SearchResultItem
-                    key={d.id}
-                    dataset={d}
-                    query={options.query}
-                  />
-                ))}
-              </div>
+              {hasResults ? (
+                <ul className="mt-4 flex w-full flex-col border border-b-0">
+                  {result?.datasets?.map((d) => (
+                    <SearchResultItem
+                      key={d.id}
+                      dataset={d}
+                      query={options.query}
+                    />
+                  ))}
+                </ul>
+              ) : (
+                <NoDataFound />
+              )}
               <div className="">
                 {isPaginated ? (
                   <div className="mt-10">
@@ -130,10 +142,10 @@ export default function SearchLayout({
             className="relative ml-auto flex size-full max-w-xs transform flex-col overflow-y-auto bg-white py-4 pb-12 shadow-xl transition duration-300 ease-in-out data-closed:translate-x-full"
           >
             <div className="flex items-center justify-between px-4">
-              <span className="flex items-center gap-2 text-theme-green text-xl font-bold">
-                <SlidersHorizontal size={20} />
+              <h2 className="flex items-center gap-2 text-theme-green text-xl font-bold">
+                <SlidersHorizontal aria-hidden="true" size={20} />
                 {t("Search.filters")}
-              </span>
+              </h2>
               <button
                 type="button"
                 onClick={() => setMobileFiltersOpen(false)}

@@ -80,15 +80,16 @@ export default async function Home() {
                 <Link href={"/themes"}>{t("Common.groups")}</Link>
               </Button>
             </div>
-            <div className="grid grid-cols-1 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-4">
+            <ul className="grid grid-cols-1 gap-4 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6">
               {groups?.map((group, i) => (
-                <GroupCard
-                  key={group.id}
-                  group={group}
-                  colorClass={GROUP_CARD_COLORS[i] || "bg-gray-600"}
-                />
+                <li key={group.id}>
+                  <GroupCard
+                    group={group}
+                    colorClass={GROUP_CARD_COLORS[i] || "bg-gray-600"}
+                  />
+                </li>
               ))}
-            </div>
+            </ul>
           </div>
         </div>
       </Container>
@@ -98,11 +99,13 @@ export default async function Home() {
             <Heading level={3} className="">
               {t("Home.recentUpdates")}
             </Heading>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+            <ul className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
               {datasets?.map((dataset) => (
-                <DatasetSimpleCard key={dataset.id} dataset={dataset} />
+                <li key={dataset.id}>
+                  <DatasetSimpleCard dataset={dataset} />
+                </li>
               ))}
-            </div>
+            </ul>
             <div className="flex justify-center">
               <Button
                 asChild

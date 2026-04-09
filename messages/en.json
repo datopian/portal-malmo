@@ -62,7 +62,9 @@
     "error": "Something went wrong.",
     "skipToContent": "Skip to main content",
     "reset": "Reset",
-    "visit": "Visit"
+    "visit": "Visit",
+    "toggleNavigationMenu": "Toggle navigation menu",
+    "switchLanguage": "Switch language to {language}"
   },
 
   "Dataset": {
@@ -115,7 +117,11 @@
     "sortNameAsc": "Name (A–Z)",
     "sortNameDesc": "Name (Z–A)",
     "searchPlaceholder": "Start typing your keyword...",
-    "datasetsFound": "{count, plural, =0 {No datasets found} one {# dataset found} other {# datasets found}}"
+    "datasetsFound": "{count, plural, =0 {No datasets found} one {# dataset found} other {# datasets found}}",
+    "activeFilters": "Active filters",
+    "clearSearch": "Clear search",
+    "noResultsHelp": "Try removing one or more filters, checking your spelling, or browsing all datasets.",
+    "browseAllDatasets": "Browse all datasets"
   },
 
   "Preview": {
@@ -128,7 +134,8 @@
     "errorLoadingGeoJSON": "Error loading GeoJSON data",
     "fitWidth": "Fit width",
     "failedToLoad": "Failed to load data",
-    "notSupported": "Preview not supported"
+    "notSupported": "Preview not supported",
+    "mapPreviewLabel": "Map preview for {name}"
   },
   "DataExplorer": {
     "filtersAndSettings": "Filters & Settings",

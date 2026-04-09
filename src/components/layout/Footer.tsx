@@ -3,7 +3,6 @@ import Container from "../ui/container";
 import { Link } from "@/i18n/navigation";
 import { Roboto } from "next/font/google";
 import { envVars } from "@/lib/env";
-import { Dot } from "lucide-react";
 
 const roboto = Roboto({
   weight: ["400", "500", "700", "900"],
@@ -14,27 +13,25 @@ export default async function Footer() {
   const t = await getTranslations();
 
   return (
-    <footer className="py-10 bg-theme-green text-theme-green-foreground">
-      <Container className="grid gap-10 lg:gap-20 grid-2 lg:grid-cols-3">
+    <footer className="bg-theme-green py-10 text-theme-green-foreground">
+      <Container className="grid grid-2 gap-10 lg:grid-cols-3 lg:gap-20">
         <div className="whitespace-pre-line">
           {t("Footer.note")}
           <div className="mt-6">
-            <Link href="/accessibility-statement" className=" underline hover:text-white transition flex items-center gap-1">
+            <Link
+              href="/accessibility-statement"
+              className="flex items-center gap-1 underline transition hover:text-white"
+            >
               {t("Footer.accessibilityStatement")}
             </Link>
           </div>
         </div>
         <div>
-          <h2 className="text-2xl font-bold mb-4">
-            {t("Footer.contactTitle")}
-          </h2>
+          <h2 className="mb-4 text-2xl font-bold">{t("Footer.contactTitle")}</h2>
           <ul className="space-y-3">
             <li>
               <span className="font-semibold">{t("Common.email")}: </span>
-              <Link
-                href="mailto:malmostad@malmo.se"
-                className="hover:underline"
-              >
+              <Link href="mailto:malmostad@malmo.se" className="hover:underline">
                 malmostad@malmo.se
               </Link>
             </li>
@@ -52,30 +49,30 @@ export default async function Footer() {
           </ul>
         </div>
 
-        <div className="md:text-right space-y-1 text-sm flex flex-col">
+        <div className="flex flex-col space-y-1 text-sm md:text-right">
           <div className="flex items-center gap-1 md:justify-end">
             <span className="text-sm">{t("Footer.builtWith")}</span>
             <a
-              className="flex flex-col md:flex-row items-center justify-end gap-1 "
+              className="flex flex-col items-center justify-end gap-1 md:flex-row"
               href="https://portaljs.com"
               target="_blank"
               rel="noopener noreferrer"
             >
               <span
-                className={`font-extrabold text-white text-xl sm:text-lg ${roboto.className}`}
+                className={`text-xl font-extrabold text-white sm:text-lg ${roboto.className}`}
               >
-                🌀 PortalJS
+                PortalJS
               </span>
             </a>
             <span>{t("Footer.onCKAN")}</span>
           </div>
-          <p className="">
+          <p>
             {t.rich("Footer.exportCatalog", {
               rdf: (chunks) => (
                 <Link
                   href={`${envVars.dms}/catalog.rdf`}
                   target="_blank"
-                  className={"underline"}
+                  className="underline"
                 >
                   {chunks}
                 </Link>
@@ -84,7 +81,7 @@ export default async function Footer() {
                 <Link
                   target="_blank"
                   href={`${envVars.dms}/catalog.jsonld`}
-                  className={"underline"}
+                  className="underline"
                 >
                   {chunks}
                 </Link>

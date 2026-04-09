@@ -41,6 +41,7 @@ export default function ResourcePreview({
     format === "geojson" &&
     !!dataset.resources?.find((r) => r.format?.toLocaleLowerCase() === "sld")
       ?.url;
+  const isMapPreview = format === "geojson" || format === "wms" || format === "wfs";
 
   const previewContent = (() => {
     if ((format === "wms" || format === "wfs") && resource.url) {
@@ -117,7 +118,16 @@ export default function ResourcePreview({
         )}
       </div>
 
-      {previewContent}
+      {isMapPreview ? (
+        <figure>
+          <figcaption className="sr-only">
+            {t("Preview.mapPreviewLabel", { name: resourceName })}
+          </figcaption>
+          {previewContent}
+        </figure>
+      ) : (
+        previewContent
+      )}
     </div>
   );
 }

@@ -38,7 +38,7 @@ export default function ActiveFilters({
       <div className="space-y-2">
         <div className="flex gap-3 mb-2">
           {title && (
-            <div className="font-medium  md:text-base ">{title}</div>
+            <h2 className="font-medium md:text-base">{title}</h2>
           )}
           <button
             type="button"
@@ -55,7 +55,7 @@ export default function ActiveFilters({
             {t("Common.clearAll")}
           </button>
         </div>
-        <div className="flex gap-x-4 gap-y-2 flex-wrap text-sm">
+        <div className="flex flex-wrap gap-x-4 gap-y-2 text-sm">
           {orgs.length > 0 && !hide.includes("orgs") && (
             <FilterBadge
               badgeClassName="hover:bg-gray-100 transition"

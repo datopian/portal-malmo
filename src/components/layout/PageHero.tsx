@@ -32,7 +32,9 @@ export default function Hero({
   className,
   preTitle,
   title,
+  titleLang,
   description,
+  descriptionLang,
   children,
   breadcrumb = { items: [], hide: false },
   style = "navigation",
@@ -41,7 +43,9 @@ export default function Hero({
   breadcrumb?: BreadcrumbProps;
   preTitle?: string;
   title?: React.ReactNode | string;
+  titleLang?: string;
   description?: string;
+  descriptionLang?: string;
   children?: React.ReactNode;
   style?: "home" | "navigation";
 }) {
@@ -61,7 +65,7 @@ export default function Hero({
           <Image
             src={style === "home" ? homeGraphic : navGraphic}
             alt=""
-            className="object-contain object-right h-fit mt-auto"
+            className="object-contain object-right h-fit mt-auto opacity-40"
             priority
           />
         </div>
@@ -97,23 +101,26 @@ export default function Hero({
             </Breadcrumb>
           )}
           {(preTitle || title || description) && (
-            <div>
+            <div className="max-w-4xl ">
               {preTitle && (
                 <span className="font-semibold text-sm text-gray-600 block ">
                   {preTitle}
                 </span>
               )}
               {title && (
-                <h1 className="text-3xl md:text-[40px] font-bold text-theme-green">
+                <h1
+                  lang={titleLang}
+                  className="text-3xl md:text-[40px] font-bold text-theme-green"
+                >
                   {title}
                 </h1>
               )}
               {description && (
-                <div className="mt-4">
+                <div className="mt-4" lang={descriptionLang}>
                   <div
                     ref={ref}
                     className={[
-                      "md:text-xl text-gray-600",
+                      "md:text-xl text-gray-700",
                       expanded ? "" : "line-clamp-5",
                     ].join(" ")}
                   >

@@ -58,26 +58,27 @@ export default async function GroupsPage({ searchParams, params }: Props) {
         <div className="space-y-3">
           <PageSearchInput
             defaultValue={query}
-            placeholder="Search Themes..."
+            placeholder={t("GroupsPage.searchPlaceholder")}
           />
         </div>
       }
     >
       <Container className="relative">
-        <div className="grid grid-cols-1 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-4 py-12">
-
-            {filtered.length > 0 ? filtered.map((group, i) => (
-              <GroupCard
-                key={group.id}
-                group={group}
-                colorClass={GROUP_CARD_COLORS[i] || "bg-gray-600"}
-              />
-            )): (
-              <span className="text-sm">
-                {t("GroupsPage.noGroups")}
-              </span>
-            )}
-          
+        <div className="py-12">
+          {filtered.length > 0 ? (
+            <ul className="grid grid-cols-1 gap-4 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6">
+              {filtered.map((group, i) => (
+                <li key={group.id}>
+                  <GroupCard
+                    group={group}
+                    colorClass={GROUP_CARD_COLORS[i] || "bg-gray-600"}
+                  />
+                </li>
+              ))}
+            </ul>
+          ) : (
+            <p className="text-sm text-gray-700">{t("GroupsPage.noGroups")}</p>
+          )}
         </div>
       </Container>
     </Page>

@@ -12,7 +12,7 @@ import DatasetInfo from "@/components/package/dataset/DatasetInfo";
 import { Badge } from "@/components/ui/badge";
 import { Link } from "@/i18n/navigation";
 import { formatDate } from "date-fns";
-import { getLocalizedText } from "@/lib/ckan-translations";
+import { getLocalizedText, getLocalizedTextWithLang } from "@/lib/ckan-translations";
 
 type DatasetPageParams = {
   locale: string;
@@ -60,6 +60,17 @@ export default async function DatasetPage({ params }: DatasetPageProps) {
     return notFound();
   }
 
+  const datasetTitle = getLocalizedTextWithLang(
+    dataset.title_translated,
+    locale,
+    dataset.title ?? dataset.name
+  );
+  const datasetDescription = getLocalizedTextWithLang(
+    dataset.notes_translated,
+    locale,
+    dataset.notes
+  );
+
   return (
     <Page
       breadcrumb={{
@@ -70,32 +81,16 @@ export default async function DatasetPage({ params }: DatasetPageProps) {
           },
           {
             title:
-              dataset
-                ? getLocalizedText(
-                    dataset.title_translated,
-                    locale,
-                    dataset.title ?? dataset.name
-                  )
-                : "",
+              datasetTitle.text,
             href: `/@malmo/${dataset?.name ?? ""}`,
             current: true,
           },
         ],
       }}
-      title={
-        dataset
-          ? getLocalizedText(
-              dataset.title_translated,
-              locale,
-              dataset.title ?? dataset.name
-            )
-          : ""
-      }
-      description={
-        dataset
-          ? getLocalizedText(dataset.notes_translated, locale, dataset.notes)
-          : ""
-      }
+      title={datasetTitle.text}
+      titleLang={datasetTitle.lang}
+      description={datasetDescription.text}
+      descriptionLang={datasetDescription.lang}
       metadata={[
         {
           title: t("Common.updated"),
@@ -141,18 +136,20 @@ export default async function DatasetPage({ params }: DatasetPageProps) {
               >
                 {t("Common.tags")}
               </Heading>
-              <div className="mt-5 flex gap-3 flex-wrap">
+              <ul className="mt-5 flex flex-wrap gap-3">
                 {dataset.tags?.map((t) => (
-                  <Link href={`/data?tags=${t.name}`} key={t.id}>
-                    <Badge
-                      variant={"outline"}
-                      className="px-3 py-1 bg-white rounded-lg"
-                    >
-                      {t.display_name}
-                    </Badge>
-                  </Link>
+                  <li key={t.id}>
+                    <Link href={`/data?tags=${t.name}`}>
+                      <Badge
+                        variant={"outline"}
+                        className="rounded-lg bg-white px-3 py-1"
+                      >
+                        {t.display_name}
+                      </Badge>
+                    </Link>
+                  </li>
                 ))}
-              </div>
+              </ul>
             </div>
           </div>
         </div>
