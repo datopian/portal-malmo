@@ -53,14 +53,14 @@ export default function DatasetResources({
                 key={resource.id}
               >
                 <div className="flex w-full flex-col space-y-2">
-                  <h4 className="group block">
+                  <h3 className="group block">
                     <span
                       lang={resourceName.lang}
                       className="flex items-center gap-2 text-xl font-semibold text-theme-green"
                     >
                       {resourceName.text}
                     </span>
-                  </h4>
+                  </h3>
                   <div className="flex gap-4 text-sm text-gray-600">
                     <Badge
                       className="font-bold"
