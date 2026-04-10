@@ -50,9 +50,9 @@ export default function SearchLayout({
         </div>
       </div>
       <section aria-labelledby="search-heading" className="pb-24">
-        <h3 id="search-heading" className="sr-only">
+        <h2 id="search-heading" className="sr-only">
           {t("Search.title")}
-        </h3>
+        </h2>
 
         {isLoading ? (
           <SearchSkeletonLayout />
