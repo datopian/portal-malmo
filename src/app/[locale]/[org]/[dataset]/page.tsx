@@ -104,7 +104,7 @@ export default async function DatasetPage({ params }: DatasetPageProps) {
       <Container className="py-12">
         <div className="flex flex-col lg:flex-row gap-10">
           <div className=" w-full">
-            <Heading level={3} className="text-[24px] font-bold">
+            <Heading level={2} className="text-[24px] font-bold">
               {t("Dataset.resourcesCount", {
                 count: dataset?.resources?.length,
               })}
@@ -119,7 +119,7 @@ export default async function DatasetPage({ params }: DatasetPageProps) {
           <div className="w-full lg:max-w-[370px] space-y-6 lg:ml-auto lg:sticky top-10 h-fit">
             <div className="p-6 bg-[#F3F3F3]">
               <Heading
-                level={3}
+                level={2}
                 className="font-bold text-[#444444] text-[24px]"
               >
                 {t("Common.metadata")}
@@ -131,7 +131,7 @@ export default async function DatasetPage({ params }: DatasetPageProps) {
 
             <div className="p-6 bg-[#F3F3F3]">
               <Heading
-                level={3}
+                level={2}
                 className="font-bold text-[#444444] text-[24px]"
               >
                 {t("Common.tags")}
