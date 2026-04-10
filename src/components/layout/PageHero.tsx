@@ -65,7 +65,7 @@ export default function Hero({
           <Image
             src={style === "home" ? homeGraphic : navGraphic}
             alt=""
-            className="object-contain object-right h-fit mt-auto opacity-40"
+            className="object-contain object-right h-fit mt-auto opacity-25"
             priority
           />
         </div>
