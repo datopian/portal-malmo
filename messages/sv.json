@@ -260,7 +260,8 @@
         "title": "Tjänstinformation",
         "serviceUrlLabel": "Tjänst-URL",
         "capabilitiesLabel": "GetCapabilities-URL",
-        "openInNewTab": "Öppna {label} i en ny flik"
+        "openInNewTab": "Öppna {label} i en ny flik",
+        "styleUrlLabel": "SLD style-URL"
       },
       "popup": {
         "noAttributes": "Inga attribut tillgängliga för detta objekt.",

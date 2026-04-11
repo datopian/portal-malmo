@@ -260,7 +260,8 @@
         "title": "Serviceinformation",
         "serviceUrlLabel": "Service-URL",
         "capabilitiesLabel": "GetCapabilities-URL",
-        "openInNewTab": "Åbn {label} i en ny fane"
+        "openInNewTab": "Åbn {label} i en ny fane",
+        "styleUrlLabel": "SLD style-URL"
       },
       "popup": {
         "noAttributes": "Ingen attributter tilgængelige for dette objekt.",
