@@ -259,7 +259,8 @@
         "title": "Service details",
         "serviceUrlLabel": "Service URL",
         "capabilitiesLabel": "GetCapabilities URL",
-        "openInNewTab": "Open {label} in a new tab"
+        "openInNewTab": "Open {label} in a new tab",
+        "styleUrlLabel": "SLD style URL"
       },
       "popup": {
         "noAttributes": "No attributes available for this feature.",

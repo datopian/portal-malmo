@@ -12,6 +12,7 @@ import { useLocale, useTranslations } from "next-intl";
 import * as React from "react";
 import JsonUrlViewer from "./JSONViewer";
 import { getLocalizedText } from "@/lib/ckan-translations";
+import { getOgcPreviewConfig } from "@/lib/ogc";
 
 const PdfViewerClient = dynamic(() => import("./SimplePdfViewer"), {
   ssr: false,
@@ -37,26 +38,30 @@ export default function ResourcePreview({
   const [showMobileLegend, setShowMobileLegend] = React.useState(false);
   const resourceName = getLocalizedText(resource.name_translated, locale, resource.name);
   const format = resource.format?.toLowerCase() || "--";
-  const hasSld =
-    format === "geojson" &&
-    !!dataset.resources?.find((r) => r.format?.toLocaleLowerCase() === "sld")
-      ?.url;
-  const isMapPreview = format === "geojson" || format === "wms" || format === "wfs";
+  const sldUrl = dataset.resources?.find(
+    (r) => r.format?.toLocaleLowerCase() === "sld",
+  )?.url;
+  const ogcPreview = getOgcPreviewConfig(resource);
+  const hasSld = !!sldUrl && (format === "geojson" || ogcPreview?.type === "wfs");
+  const isMapPreview = format === "geojson" || !!ogcPreview;
 
   const previewContent = (() => {
-    if ((format === "wms" || format === "wfs") && resource.url) {
-      return <OgcServiceMapPreview type={format} resourceUrl={resource.url} />;
+    if (ogcPreview) {
+      return (
+        <OgcServiceMapPreview
+          type={ogcPreview.type}
+          resourceUrl={ogcPreview.resourceUrl}
+          styleUrl={ogcPreview.type === "wfs" ? sldUrl : undefined}
+          showLegendOnMobile={showMobileLegend}
+        />
+      );
     }
 
     if (format === "geojson") {
       return (
         <GeoJsonMap
           data={resource.url ?? ""}
-          styleUrl={
-            dataset.resources?.find(
-              (r) => r.format?.toLocaleLowerCase() === "sld",
-            )?.url
-          }
+          styleUrl={sldUrl}
           showLegendOnMobile={showMobileLegend}
         />
       );

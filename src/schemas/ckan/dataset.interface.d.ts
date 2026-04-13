@@ -108,6 +108,8 @@ export interface Resource {
   url?: string;
   url_type?: string;
   iframe?: boolean;
+  wms_url?: string;
+  wfs_url?: string;
 }
 
 export interface DatasetListQueryOptions {
