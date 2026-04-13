@@ -104,7 +104,7 @@ export default function ResourcePreview({
   return (
     <div>
       <div className="mb-5 flex items-center justify-between gap-3">
-        <Heading level={3} className="text-theme-green font-bold mb-0">
+        <Heading level={2} className="text-theme-green font-bold mb-0">
           {t("Common.preview")}
         </Heading>
         {hasSld && (
