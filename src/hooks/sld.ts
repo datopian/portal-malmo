@@ -8,10 +8,11 @@ export function useSldStyler(sldXml: string) {
 
   useEffect(() => {
     let mounted = true;
+    const normalizedSldXml = sanitizeSldXml(sldXml);
 
     const tryCreate = () => {
       if ("SLDStyler" in L) {
-        const s = new L.SLDStyler(sldXml);
+        const s = new L.SLDStyler(normalizedSldXml);
         if (mounted) setStyler(s);
       } else {
         setTimeout(tryCreate, 50);
