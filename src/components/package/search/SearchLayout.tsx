@@ -87,7 +87,6 @@ export default function SearchLayout({
                       size={"sm"}
                       className="cursor-pointer lg:hidden mb-4"
                     >
-                      <span className="sr-only">{t("Search.filters")}</span>
                       <Funnel aria-hidden="true" className="size-5" />
                       {t("Search.filters")}
                     </Button>

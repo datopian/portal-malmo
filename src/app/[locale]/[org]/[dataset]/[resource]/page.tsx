@@ -171,7 +171,7 @@ export default async function ResourcePage({ params }: PageProps) {
       
             >
               <Link href={resource.url ?? ""} target="_blank" download={true}>
-                <DownloadIcon aria-hidden="true" size={5} />
+                <DownloadIcon aria-hidden="true" size={20} />
                 {t("Common.download")}
               </Link>
             </Button>

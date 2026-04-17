@@ -14,7 +14,7 @@ export default async function Footer() {
 
   return (
     <footer className="bg-theme-green py-10 text-theme-green-foreground">
-      <Container className="grid grid-2 gap-10 lg:grid-cols-3 lg:gap-20">
+      <Container className="grid grid-cols-1 gap-10 lg:grid-cols-3 lg:gap-20">
         <div className="whitespace-pre-line">
           {t("Footer.note")}
           <div className="mt-6">

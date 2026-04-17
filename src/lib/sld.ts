@@ -20,14 +20,20 @@ function normalizeLikeLiteral(comparison: SldComparison): string {
   let value = "";
   let escaped = false;
 
-  for (const char of literal) {
+  for (let index = 0; index < literal.length; index += 1) {
+    const char = literal[index];
+    const isBoundaryWildcard =
+      !escaped &&
+      (char === wildCard || char === singleChar) &&
+      (index === 0 || index === literal.length - 1);
+
     if (!escaped && char === escapeChar) {
       escaped = true;
       continue;
     }
 
-    if (!escaped && (char === wildCard || char === singleChar)) {
-      break;
+    if (isBoundaryWildcard) {
+      continue;
     }
 
     value += char;

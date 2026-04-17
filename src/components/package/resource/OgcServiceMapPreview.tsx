@@ -414,7 +414,7 @@ export default function OgcServiceMapPreview({
     () => (wfsData ? JSON.stringify(wfsData) : "wfs-empty"),
     [wfsData],
   );
-  const styler = useSldStyler(sldXml ?? "");
+  const styler = useSldStyler(sldXml);
   const styleFn: RLStyleFn | undefined = useMemo(() => {
     const fn = styler?.getStyleFunction();
     if (!fn) return undefined;

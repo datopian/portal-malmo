@@ -113,7 +113,7 @@ export default function DatasetResources({
                       className="border-[#666666] px-3 font-medium text-[#666666] hover:bg-[#666666]"
                     >
                       <Link href={`/@${organization}/${dataset}/${resource.id}`}>
-                        <EyeIcon aria-hidden="true" size={5} />
+                        <EyeIcon aria-hidden="true" size={20} />
                         {t("Common.preview")}
                       </Link>
                     </Button>

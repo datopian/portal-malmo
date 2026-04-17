@@ -11,8 +11,10 @@ export default function MarkdownRender({
   textOnly?: boolean;
   lang?: string;
 }) {
+  const Wrapper = textOnly ? "span" : "div";
+
   return (
-    <div lang={lang}>
+    <Wrapper lang={lang} className={textOnly ? "contents" : undefined}>
       <Markdown
         remarkPlugins={[remarkGfm]}
         rehypePlugins={[rehypeRaw]}
@@ -124,6 +126,6 @@ export default function MarkdownRender({
       >
         {content}
       </Markdown>
-    </div>
+    </Wrapper>
   );
 }

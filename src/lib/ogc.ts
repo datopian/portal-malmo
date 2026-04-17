@@ -50,6 +50,7 @@ export function normalizeOgcServiceUrl(
 
   deleteParams(
     params,
+    "service",
     "request",
     "query_layers",
     "info_format",
@@ -73,7 +74,14 @@ export function normalizeOgcServiceUrl(
     // Some CKAN-provided WFS URLs include a bbox filter that can be stale or
     // use an axis order GeoServer interprets differently, which returns an
     // empty feature collection. The preview should query the layer itself.
-    deleteParams(params, "layers", "typenames", "typeNames", "bbox");
+    deleteParams(
+      params,
+      "layers",
+      "typenames",
+      "typename",
+      "typeNames",
+      "bbox",
+    );
 
     if (!getParam(params, "version")) {
       params.set("version", "2.0.0");
@@ -83,7 +91,7 @@ export function normalizeOgcServiceUrl(
       params.set("typename", layerName);
     }
   } else {
-    deleteParams(params, "typenames", "typeNames", "typename");
+    deleteParams(params, "layers", "typenames", "typeNames", "typename");
 
     if (layerName) {
       params.set("layers", layerName);

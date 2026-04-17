@@ -3,17 +3,29 @@
 import { useEffect, useState } from "react";
 import L from "leaflet";
 
-export function useSldStyler(sldXml: string) {
+export function useSldStyler(sldXml?: string | null) {
   const [styler, setStyler] = useState<L.SLDStyler | null>(null);
 
   useEffect(() => {
     let mounted = true;
-    const normalizedSldXml = sanitizeSldXml(sldXml);
+    const trimmedSldXml = sldXml?.trim();
+    if (!trimmedSldXml) {
+      setStyler(null);
+      return () => {
+        mounted = false;
+      };
+    }
+
+    const normalizedSldXml = sanitizeSldXml(trimmedSldXml);
 
     const tryCreate = () => {
       if ("SLDStyler" in L) {
-        const s = new L.SLDStyler(normalizedSldXml);
-        if (mounted) setStyler(s);
+        try {
+          const s = new L.SLDStyler(normalizedSldXml);
+          if (mounted) setStyler(s);
+        } catch {
+          if (mounted) setStyler(null);
+        }
       } else {
         setTimeout(tryCreate, 50);
       }

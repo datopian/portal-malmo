@@ -1,6 +1,7 @@
 @import "tailwindcss";
 @import "tw-animate-css";
 
+/* Dark mode utilities remain enabled, but token overrides are intentionally deferred. */
 @custom-variant dark (&:is(.dark *));
 
 
