@@ -17,7 +17,7 @@ import { formatFileSize } from "@/lib/utils";
 import ApiDialog from "@/components/package/api/ApiDialog";
 import { getLocalizedText, getLocalizedTextWithLang } from "@/lib/ckan-translations";
 
-export const revalidate = 300;
+export const revalidate = 150;
 
 export async function generateStaticParams(): Promise<
   Array<{ org: string; dataset: string; resource: string }>

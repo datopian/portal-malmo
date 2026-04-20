@@ -15,7 +15,7 @@ import { getTranslations } from "next-intl/server";
 
 type Props = { params: Promise<{ locale: string }> };
 
-export const revalidate = 300;
+export const revalidate = 150;
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { locale } = await params;

@@ -24,7 +24,7 @@ type DatasetPageProps = {
   params: Promise<DatasetPageParams>;
 };
 
-export const revalidate = 300;
+export const revalidate = 150;
 
 export async function generateStaticParams(): Promise<
   Array<{ org: string; dataset: string }>

@@ -9,7 +9,7 @@ import GroupCard from "@/components/groups/GroupCard";
 import { GROUP_CARD_COLORS } from "@/lib/groups";
 import { getLocalizedText } from "@/lib/ckan-translations";
 
-export const revalidate = 300;
+export const revalidate = 150;
 
 type Props = {
   params: Promise<{ locale: string }>;
