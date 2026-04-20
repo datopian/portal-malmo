@@ -46,6 +46,10 @@ export default function ResourcePreview({
   const isMapPreview = format === "geojson" || !!ogcPreview;
 
   const previewContent = (() => {
+    console.log("ogc:",ogcPreview);
+    console.log("isMapPreview:",isMapPreview);
+    console.log("format:",format);
+    console.log(resource)
     if (ogcPreview) {
       return (
         <OgcServiceMapPreview
