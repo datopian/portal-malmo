@@ -25,6 +25,7 @@ What still remains:
 - If the source content in CKAN mixes languages inside the same field, frontend code cannot fully fix that.
 - Those cases still need content cleanup in the source data.
 
+
 ### 3. Heading structures lack heading levels
 Status: Fixed
 
