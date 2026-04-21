@@ -4,10 +4,11 @@ import { useRouter, useSearchParams } from "next/navigation";
 import { Input } from "./input";
 import { FormEvent, useState, useTransition } from "react";
 import { X } from "lucide-react";
+import { useTranslations } from "next-intl";
 
 export default function PageSearchInput({
   defaultValue = "",
-  placeholder = "Search...",
+  placeholder,
   paramName = "q",
 }: {
   defaultValue?: string;
@@ -18,6 +19,8 @@ export default function PageSearchInput({
   const searchParams = useSearchParams();
   const [isPending, startTransition] = useTransition();
   const [value, setValue] = useState(defaultValue);
+  const t = useTranslations();
+  const effectivePlaceholder = placeholder || t("Common.searchPlaceholder");
 
   function updateQueryParam(newValue: string) {
     const params = new URLSearchParams(searchParams.toString());
@@ -46,14 +49,14 @@ export default function PageSearchInput({
   return (
     <form onSubmit={handleSubmit} className="relative w-full ">
       <label htmlFor="search-input" className="sr-only">
-        {placeholder}
+        {effectivePlaceholder}
       </label>
       <Input
         id="search-input"
         type="text"
         value={value}
         onChange={(e) => setValue(e.target.value)}
-        placeholder={placeholder}
+        placeholder={effectivePlaceholder}
         disabled={isPending}
         className="w-full pr-10"
       />
@@ -62,7 +65,7 @@ export default function PageSearchInput({
           type="button"
           onClick={handleClear}
           className="absolute right-2 top-1/2 -translate-y-1/2 text-gray-500 hover:text-black"
-          aria-label="Clear search"
+          aria-label={t("Search.clearSearch")}
         >
           <X className="w-4 h-4" />
         </button>

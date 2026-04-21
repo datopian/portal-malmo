@@ -1,6 +1,6 @@
 "use client";
 
-import {useLocale} from "next-intl";
+import {useLocale, useTranslations} from "next-intl";
 import {useRouter, usePathname} from "@/i18n/navigation";
 import {locales} from "@/i18n/config";
 
@@ -8,6 +8,7 @@ export default function LanguageSwitcher() {
   const locale = useLocale();
   const router = useRouter();
   const pathname = usePathname();
+  const t = useTranslations();
 
   // Single language: no switcher, URLs are unprefixed
   if (locales.length === 1) {
@@ -31,6 +32,7 @@ export default function LanguageSwitcher() {
             <button
               type="button"
               onClick={() => setLocale(code)}
+              aria-label={t("Common.switchLanguage", { language: code.toUpperCase() })}
               className={`transition cursor-pointer ${
                 isActive
                   ? "text-theme-green font-semibold"

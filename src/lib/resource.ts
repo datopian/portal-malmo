@@ -1,4 +1,5 @@
 import { Resource } from "@/schemas/ckan";
+import { hasOgcPreview } from "@/lib/ogc";
 
 export const supportedPreviewFormats = [
   "csv",
@@ -17,6 +18,7 @@ export const supportedPreviewFormats = [
 export const supportsPreview = (res: Resource) => {
   return (
     res.iframe ||
+    hasOgcPreview(res) ||
     supportedPreviewFormats.some(
       (format) => format.toLowerCase() === (res.format ?? "").toLowerCase()
     )

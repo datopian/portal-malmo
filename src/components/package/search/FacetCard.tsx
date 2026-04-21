@@ -33,7 +33,7 @@ export default function FacetCard({
 
   return (
     <Disclosure as="div" className="border-b border-gray-200  py-6">
-      <h3 className="-my-3 mx-4 lg:mx-0 flow-root ">
+      <h3 className="-my-3 mx-4 flow-root lg:mx-0">
         <DisclosureButton className="group flex w-full items-center justify-between bg-white py-3  cursor-pointer">
           <span className="font-medium text-theme-green font-semibold">
             {title && <span className="">{title} </span>}
@@ -51,27 +51,28 @@ export default function FacetCard({
         </DisclosureButton>
       </h3>
       <DisclosurePanel className="pt-3">
-        <div className="space-y-3 mx-4 lg:mx-0 max-h-[500px] overflow-y-auto overflow-x-hidden">
+        <ul className="mx-4 max-h-[500px] space-y-3 overflow-x-hidden overflow-y-auto lg:mx-0">
           {items
             ?.slice()
             .sort((a, b) => (b.count ?? 0) - (a.count ?? 0))
             .slice(0, seeMore ? items.length : maxPerView)
             .map((item) => (
-              <FacetOptions
-                name={name}
-                value={item.name}
-                label={getLocalizedText(
-                  item.title_translated,
-                  locale,
-                  item.display_name || item.name,
-                )}
-                count={item.count}
-                key={item.name}
-                options={options || []}
-                onSelect={onSelect}
-              />
+              <li key={item.name}>
+                <FacetOptions
+                  name={name}
+                  value={item.name}
+                  label={getLocalizedText(
+                    item.title_translated,
+                    locale,
+                    item.display_name || item.name,
+                  )}
+                  count={item.count}
+                  options={options || []}
+                  onSelect={onSelect}
+                />
+              </li>
             ))}
-        </div>
+        </ul>
         {items?.length > maxPerView && (
           <Button
             variant={"outline"}
@@ -83,12 +84,12 @@ export default function FacetCard({
             {seeMore ? (
               <>
                 <span className="">{t("Common.showLess")}</span>
-                <ChevronUp width={18} />{" "}
+                <ChevronUp aria-hidden="true" width={18} />{" "}
               </>
             ) : (
               <>
                 <span className="">{t("Common.showMore")}</span>
-                <ChevronDown width={18} />
+                <ChevronDown aria-hidden="true" width={18} />
               </>
             )}
           </Button>

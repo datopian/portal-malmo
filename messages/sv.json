@@ -62,7 +62,9 @@
     "error": "Något gick fel.",
     "skipToContent": "Hoppa till huvudinnehåll",
     "reset": "Återställ",
-    "visit": "Besök"
+    "visit": "Besök",
+    "toggleNavigationMenu": "Växla navigeringsmeny",
+    "switchLanguage": "Byt språk till {language}"
   },
 
   "Dataset": {
@@ -115,7 +117,11 @@
     "sortNameAsc": "Namn (A-Z)",
     "sortNameDesc": "Namn (Z-A)",
     "searchPlaceholder": "Börja skriva ditt sökord...",
-    "datasetsFound": "{count, plural, =0 {Inga datamängder hittades} one {# datamängd hittades} other {# datamängder hittades}}"
+    "datasetsFound": "{count, plural, =0 {Inga datamängder hittades} one {# datamängd hittades} other {# datamängder hittades}}",
+    "activeFilters": "Aktiva filter",
+    "clearSearch": "Rensa sökning",
+    "noResultsHelp": "Prova att ta bort ett eller flera filter, kontrollera stavningen eller bläddra bland alla datamängder.",
+    "browseAllDatasets": "Bläddra bland alla datamängder"
   },
 
   "Preview": {
@@ -128,7 +134,8 @@
     "errorLoadingGeoJSON": "Fel vid inläsning av GeoJSON-data",
     "fitWidth": "Anpassa till sidbredd",
     "failedToLoad": "Misslyckades med att ladda data",
-    "notSupported": "Förhandsvisning stöds inte"
+    "notSupported": "Förhandsvisning stöds inte",
+    "mapPreviewLabel": "Kartförhandsvisning för {name}"
   },
 
   "DataExplorer": {
@@ -253,7 +260,8 @@
         "title": "Tjänstinformation",
         "serviceUrlLabel": "Tjänst-URL",
         "capabilitiesLabel": "GetCapabilities-URL",
-        "openInNewTab": "Öppna {label} i en ny flik"
+        "openInNewTab": "Öppna {label} i en ny flik",
+        "styleUrlLabel": "SLD style-URL"
       },
       "popup": {
         "noAttributes": "Inga attribut tillgängliga för detta objekt.",

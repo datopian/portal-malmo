@@ -7,12 +7,22 @@ import type { Feature, Geometry, GeoJsonProperties } from "geojson";
  * These are NOT official Leaflet types; they reflect that specific plugin's output.
  */
 
-export type SldComparisonOperator = "==" | "!=" | "<" | ">" | "<=" | ">=";
+export type SldComparisonOperator =
+  | "=="
+  | "!="
+  | "<"
+  | ">"
+  | "<="
+  | ">="
+  | "like";
 
 export interface SldComparison {
   operator: SldComparisonOperator;
   property: string;
   literal: string;
+  wildCard?: string;
+  singleChar?: string;
+  escapeChar?: string;
 }
 
 export interface SldFilter {

@@ -7,41 +7,55 @@ export default function Facets({ title=false }: { title?: string | boolean }) {
   const { result, options, setOptions } = useSearchState();
   const searchResultFacets = result?.search_facets || {};
   const t = useTranslations();
+  const selectedGroups = options?.groups ?? [];
+  const selectedFormats = options?.resFormat ?? [];
+  const selectedTags = options?.tags ?? [];
+  const groupItems = searchResultFacets?.groups?.items ?? [];
+  const formatItems = searchResultFacets?.res_format?.items ?? [];
+  const tagItems = searchResultFacets?.tags?.items ?? [];
+
+  const ensureSelectedItems = (items: typeof groupItems, selected: string[]) => {
+    const existing = new Set(items.map((item) => item.name));
+    const missing = selected
+      .filter((name) => !existing.has(name))
+      .map((name) => ({ name, display_name: name, count: 0 }));
+    return [...items, ...missing];
+  };
   return (
     <div className="search-facets">
       {title && (
-        <span className="flex items-center gap-2 mb-3 text-theme-green text-xl font-bold">
-          <SlidersHorizontal size={20} />
+        <h2 className="mb-3 flex items-center gap-2 text-xl font-bold text-theme-green">
+          <SlidersHorizontal aria-hidden="true" size={20} />
           {t("Search.filters")}
-        </span>
+        </h2>
       )}
-      {searchResultFacets?.groups?.items?.length > 0 && (
+      {(groupItems.length > 0 || selectedGroups.length > 0) && (
         <FacetCard
           name="groups"
           title={`${t("Common.groups")}`}
-          items={searchResultFacets?.groups?.items}
+          items={ensureSelectedItems(groupItems, selectedGroups)}
           options={options?.groups}
           onSelect={(updatedValues) => {
             setOptions({ groups: updatedValues, offset: 0 });
           }}
         />
       )}
-      {searchResultFacets?.res_format?.items?.length > 0 && (
+      {(formatItems.length > 0 || selectedFormats.length > 0) && (
         <FacetCard
           name="resFormat"
           title={`${t("Common.formats")}`}
-          items={searchResultFacets?.res_format?.items}
+          items={ensureSelectedItems(formatItems, selectedFormats)}
           options={options?.resFormat}
           onSelect={(updatedValues) => {
             setOptions({ resFormat: updatedValues, offset: 0 });
           }}
         />
       )}
-      {searchResultFacets?.tags?.items?.length > 0 && (
+      {(tagItems.length > 0 || selectedTags.length > 0) && (
         <FacetCard
           name="tags"
           title={`${t("Common.tags")}`}
-          items={searchResultFacets?.tags?.items}
+          items={ensureSelectedItems(tagItems, selectedTags)}
           options={options?.tags}
           onSelect={(updatedValues) => {
             setOptions({ tags: updatedValues, offset: 0 });

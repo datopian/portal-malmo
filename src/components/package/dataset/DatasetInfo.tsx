@@ -40,7 +40,7 @@ export default async function DatasetInfo({ dataset }: { dataset: Dataset }) {
         ]
       : "";
   return (
-    <div className="divide-y  ">
+    <dl className="grid grid-cols-1 divide-y">
       <ListItem title={t("Common.organization")}>
         {organizationTitle}
       </ListItem>
@@ -81,7 +81,6 @@ export default async function DatasetInfo({ dataset }: { dataset: Dataset }) {
           ? format(parseISO(issued), "dd/MM/yyyy")
           : "--"}
       </ListItem>
- 
-    </div>
+    </dl>
   );
 }

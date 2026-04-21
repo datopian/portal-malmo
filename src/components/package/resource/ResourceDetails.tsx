@@ -29,7 +29,7 @@ export default async function ResourceDetails({
     : "";
   return (
     <div>
-      <div>
+      <dl className="divide-y">
         <ListItem title={t("created")}>
           {formatDateToDDMMYYYY(resource.created ?? "")}
         </ListItem>
@@ -56,7 +56,7 @@ export default async function ResourceDetails({
             </ListItem>
           </>
         )}
-      </div>
+      </dl>
     </div>
   );
 }

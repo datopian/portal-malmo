@@ -6,6 +6,8 @@ type HeadingProps = {
   level?: 1 | 2 | 3 | 4 | 5 | 6;
   center?: boolean;
   className?: string;
+  id?: string;
+  lang?: string;
 };
 
 type SubHeading = {
@@ -27,12 +29,16 @@ const Heading: React.FC<HeadingProps> = ({
   level = 1,
   center = false,
   className = "",
+  id,
+  lang,
 }) => {
   const HeadingTag = `h${level}` as keyof JSX.IntrinsicElements;
   const headingClasses = headingSizeMap[level] || headingSizeMap[1];
 
   return (
     <HeadingTag
+      id={id}
+      lang={lang}
       className={`${cn( headingClasses, center ? "text-center" : "text-left", "text-theme-green block", className )}`}
     >
       {children}

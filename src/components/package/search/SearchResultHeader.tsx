@@ -11,10 +11,15 @@ export default function SearchResultHeader() {
   const hasQuery = !!options?.query && options.query.trim().length > 0;
 
   return (
-    <div className="flex flex-col">
-      <h1 className="text-xl lg:text-2xl font-bold relative text-theme-green">
+    <div
+      className="flex flex-col"
+      role="status"
+      aria-live="polite"
+      aria-atomic="true"
+    >
+      <h2 className="text-xl lg:text-2xl font-bold relative text-theme-green">
         {t("datasetsFound", { count })}
-      </h1>
+      </h2>
 
       {!isLoading && hasQuery && (
         <p className="min-h-6">

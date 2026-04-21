@@ -69,10 +69,10 @@ function Swatch({ item }: { item: LegendItem }) {
   );
 }
 
-function groupByKind(items: LegendItem[]) {
+function groupByField(items: LegendItem[]) {
   const map = new Map<string, LegendItem[]>();
   for (const it of items) {
-    const key = it.kind;
+    const key = it.fieldLabel || "All fields";
     if (!map.has(key)) map.set(key, []);
     map.get(key)!.push(it);
   }
@@ -160,15 +160,22 @@ export default function SldLegend({
   const rawItems = useMemo(() => {
     if (!styler) return [];
     const base = legendFromStyler(styler, layerNameOrIndex);
+    const titlesMatchRuleCount = ruleTitles.length >= base.length;
 
-    // If labels are useless (e.g. "All features" repeated), replace by rule titles in order.
-    const allDefault = base.length > 0 && base.every((it) => isDefaultLegendLabel(it.label));
-    if (!allDefault) return base;
+    return base.map((it, idx) => {
+      const fallbackLabel = it.label ?? t("Map.sldLegend.untitled");
+      const label =
+        titlesMatchRuleCount && ruleTitles[idx]
+          ? ruleTitles[idx]
+          : isDefaultLegendLabel(fallbackLabel)
+            ? ruleTitles[idx] ?? fallbackLabel
+            : fallbackLabel;
 
-    return base.map((it, idx) => ({
-      ...it,
-      label: ruleTitles[idx] ?? it.label ?? t("Map.sldLegend.untitled"),
-    }));
+      return {
+        ...it,
+        label,
+      };
+    });
   }, [styler, layerNameOrIndex, ruleTitles, t]);
 
   const [q, setQ] = useState("");
@@ -176,10 +183,14 @@ export default function SldLegend({
   const items = useMemo(() => {
     const query = q.trim().toLowerCase();
     if (!query) return rawItems;
-    return rawItems.filter((it) => (it.label ?? "").toLowerCase().includes(query));
+    return rawItems.filter((it) => {
+      const label = (it.label ?? "").toLowerCase();
+      const field = (it.fieldLabel ?? "").toLowerCase();
+      return label.includes(query) || field.includes(query);
+    });
   }, [rawItems, q]);
 
-  const groups = useMemo(() => groupByKind(items), [items]);
+  const groups = useMemo(() => groupByField(items), [items]);
 
   if (rawItems.length === 0) return null;
 
@@ -223,26 +234,31 @@ export default function SldLegend({
 
       <CardContent className="pt-2">
         <div className="max-h-[40vh] space-y-4 overflow-y-auto pr-1 sm:max-h-[260px]">
-          {groups.map(([kind, groupItems]) => (
-            <div key={kind} className="space-y-2">
+          {groups.map(([field, groupItems]) => (
+            <div key={field} className="space-y-2">
               <div className="text-xs font-medium text-muted-foreground">
-                {kind === "polygon"
-                  ? t("Map.sldLegend.groups.areas")
-                  : kind === "line"
-                    ? t("Map.sldLegend.groups.lines")
-                    : t("Map.sldLegend.groups.points")}
+                {field}
               </div>
 
               <div className="space-y-1.5">
                 {groupItems.map((it, idx) => (
                   <div
-                    key={`${it.kind}-${it.label}-${idx}`}
+                    key={`${field}-${it.kind}-${it.label}-${idx}`}
                     className="flex items-center gap-3 rounded-lg border px-2.5 py-2 bg-card/50 hover:bg-card transition-colors"
                     style={{ borderColor: "rgba(0,0,0,0.08)" }}
                   >
                     <Swatch item={it} />
-                    <div className="text-sm flex-1">
-                      {it.label || t("Map.sldLegend.untitled")}
+                    <div className="flex-1">
+                      <div className="text-sm">
+                        {it.label || t("Map.sldLegend.untitled")}
+                      </div>
+                      <div className="text-xs text-muted-foreground">
+                        {it.kind === "polygon"
+                          ? t("Map.sldLegend.groups.areas")
+                          : it.kind === "line"
+                            ? t("Map.sldLegend.groups.lines")
+                            : t("Map.sldLegend.groups.points")}
+                      </div>
                     </div>
                   </div>
                 ))}

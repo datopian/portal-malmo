@@ -46,9 +46,9 @@ var comparisionOperatorMapping = {
    'ogc:PropertyIsGreaterThan': '>',
    'ogc:PropertyIsLessThanOrEqualTo': '<=',
    'ogc:PropertyIsGreaterThanOrEqualTo': '>=',
+   'ogc:PropertyIsLike': 'like',
    //'ogc:PropertyIsNull': 'isNull',
    //'ogc:PropertyIsBetween'
-   // ogc:PropertyIsLike
 };
 
 // namespaces for Tag lookup in XML
@@ -86,6 +86,52 @@ function getTagNameArray(element, tagName, childrens) {
    else
       return tags;
 };
+
+function escapeRegex(value) {
+   return String(value).replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+}
+
+function getFilterPatternRegex(comp) {
+   var wildCard = typeof comp.wildCard === 'string' && comp.wildCard.length
+      ? comp.wildCard
+      : '*';
+   var singleChar = typeof comp.singleChar === 'string' && comp.singleChar.length
+      ? comp.singleChar
+      : '?';
+   var escapeChar = typeof comp.escapeChar === 'string' && comp.escapeChar.length
+      ? comp.escapeChar
+      : '!';
+   var literal = String(comp.literal ?? '');
+   var pattern = '^';
+   var escaped = false;
+
+   for (var i = 0; i < literal.length; i++) {
+      var char = literal.charAt(i);
+
+      if (!escaped && char === escapeChar) {
+         escaped = true;
+         continue;
+      }
+
+      if (!escaped && char === wildCard) {
+         pattern += '.*';
+      } else if (!escaped && char === singleChar) {
+         pattern += '.';
+      } else {
+         pattern += escapeRegex(char);
+      }
+
+      escaped = false;
+   }
+
+   if (escaped) {
+      pattern += escapeRegex(escapeChar);
+   }
+
+   pattern += '$';
+
+   return new RegExp(pattern);
+}
 
 /**
  * SLD Styler. Reads SLD 1.1.0.
@@ -175,7 +221,10 @@ L.SLDStyler = L.Class.extend({
                filterJson.comparisions.push({
                   operator: comparisionOperator,
                   property: property,
-                  literal: literal
+                  literal: literal,
+                  wildCard: comparisionElement.getAttribute('wildCard') || '*',
+                  singleChar: comparisionElement.getAttribute('singleChar') || '?',
+                  escapeChar: comparisionElement.getAttribute('escapeChar') || '!'
                })
             })
          });
@@ -247,18 +296,25 @@ L.SLDStyler = L.Class.extend({
       if (filter) {
          var operator = filter.operator == null || filter.operator == 'and' ? 'every' : 'some';
          return filter.comparisions[operator](function(comp) {
+            var value = properties ? properties[comp.property] : undefined;
+
             if (comp.operator == '==') {
-               return properties[comp.property] == comp.literal;
+               return value == comp.literal;
             } else if (comp.operator == '!=') {
-               return properties[comp.property] != comp.literal;
+               return value != comp.literal;
             } else if (comp.operator == '<') {
-               return properties[comp.property] < comp.literal;
+               return value < comp.literal;
             } else if (comp.operator == '>') {
-               return properties[comp.property] > comp.literal;
+               return value > comp.literal;
             } else if (comp.operator == '<=') {
-               return properties[comp.property] <= comp.literal;
+               return value <= comp.literal;
             } else if (comp.operator == '>=') {
-               return properties[comp.property] >= comp.literal;
+               return value >= comp.literal;
+            } else if (comp.operator == 'like') {
+               if (typeof value === 'undefined' || value === null) {
+                  return false;
+               }
+               return getFilterPatternRegex(comp).test(String(value));
             } else {
                console.error('Unknown comparision operator', comp.operator);
             }

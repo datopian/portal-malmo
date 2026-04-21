@@ -20,29 +20,28 @@ const FilterBadge = ({
   onItemClick?: (item: string) => void;
   onClick?: MouseEventHandler<HTMLSpanElement>;
 }) => {
-  
   return (
     <div className="flex text-sm space-x-1">
       <span className=" " { ...(description?{title:description}:{}) }>
         {label}
       </span>
-      <div className="flex items-center gap-1 flex-wrap ">
+      <ul className="flex flex-wrap items-center gap-1">
         {items.map((item, i) => (
-          <Badge
-            variant={"outline"}
-            asChild
-            key={`${item}-${i}`}
-            onClick={() => onItemClick?.(item)}
-            className={` ${cn("flex items-center gap-1 cursor-pointer text-start max-w-[180px] ", badgeClassName)}`}
-          >
-            <button type="button" >
-              <span className="truncate w-full overflow-hidden whitespace-nowrap">{itemTitleRender ? itemTitleRender(item) : item}</span>
-
-              <X className="min-w-[14px]" width={16}/>
-            </button>
-          </Badge>
+          <li key={`${item}-${i}`}>
+            <Badge
+              variant={"outline"}
+              asChild
+              onClick={() => onItemClick?.(item)}
+              className={` ${cn("flex max-w-[180px] cursor-pointer items-center gap-1 text-start ", badgeClassName)}`}
+            >
+              <button type="button">
+                <span className="w-full truncate overflow-hidden whitespace-nowrap">{itemTitleRender ? itemTitleRender(item) : item}</span>
+                <X aria-hidden="true" className="min-w-[14px]" width={16}/>
+              </button>
+            </Badge>
+          </li>
         ))}
-      </div>
+      </ul>
     </div>
   );
 };

@@ -7,16 +7,20 @@ import MarkdownRender from "@/components/ui/markdown";
 import { useLocale } from "next-intl";
 import { ArrowRight } from "lucide-react";
 import { Link } from "@/i18n/navigation";
-import { getLocalizedText } from "@/lib/ckan-translations";
+import { getLocalizedTextWithLang } from "@/lib/ckan-translations";
 
 const DatasetSimpleCard = ({ dataset }: { dataset: Dataset }) => {
   const locale = useLocale();
-  const datasetTitle = getLocalizedText(
+  const datasetTitle = getLocalizedTextWithLang(
     dataset.title_translated,
     locale,
     dataset.title ?? dataset.name
   );
-  const datasetNotes = getLocalizedText(dataset.notes_translated, locale, dataset.notes);
+  const datasetNotes = getLocalizedTextWithLang(
+    dataset.notes_translated,
+    locale,
+    dataset.notes
+  );
 
   return (
     <Link href={`/@malmo/${dataset.name}`}>
@@ -25,19 +29,22 @@ const DatasetSimpleCard = ({ dataset }: { dataset: Dataset }) => {
         className={cn("flex flex-col rounded-none h-full p-6", "")}
       >
         <CardHeader className="pb-1 px-0 py-0">
-          <span className="line-clamp-3 text-xl lg:text-2xl font-bold overflow-hidden text-theme-green">
-            {datasetTitle}
-          </span>
+          <h3
+            lang={datasetTitle.lang}
+            className="line-clamp-3 overflow-hidden text-xl font-bold text-theme-green lg:text-2xl"
+          >
+            {datasetTitle.text}
+          </h3>
         </CardHeader>
 
         <CardContent className="text-gray-600 px-0 py-3">
-          <div className="line-clamp-3 overflow-hidden mb-4">
-            <MarkdownRender content={datasetNotes} textOnly />
+          <div className="mb-4 line-clamp-3 overflow-hidden text-gray-700">
+            <MarkdownRender content={datasetNotes.text} textOnly lang={datasetNotes.lang} />
           </div>
           <div className="text-sm flex items-center text-gray-500 w-full">
             {formatPrettyDate(dataset.metadata_modified ?? "", locale)}
 
-            <ArrowRight className="size-5 ml-auto " />
+            <ArrowRight aria-hidden="true" className="size-5 ml-auto " />
           </div>
         </CardContent>
       </Card>

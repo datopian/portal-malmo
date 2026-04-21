@@ -47,7 +47,7 @@ export default function Header() {
               <button
                 className="flex items-center justify-center cursor-pointer"
                 onClick={() => setMenuOpen(!menuOpen)}
-                aria-label="Toggle navigation menu"
+                aria-label={t("Common.toggleNavigationMenu")}
                 aria-expanded={menuOpen}
                 aria-controls="navigation-menu"
               >

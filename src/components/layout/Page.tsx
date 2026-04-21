@@ -9,7 +9,9 @@ import { Link } from "@/i18n/navigation";
 export type PageProps = {
   preTitle?: string;
   title: React.ReactNode | string;
+  titleLang?: string;
   description?: string;
+  descriptionLang?: string;
   breadcrumb?: BreadcrumbProps;
   metadata?: {
     title?: string;
@@ -33,7 +35,9 @@ export type PageProps = {
 export default function Page({
   preTitle,
   title,
+  titleLang,
   description,
+  descriptionLang,
   breadcrumb,
   tabs = [],
   actions,
@@ -49,7 +53,9 @@ export default function Page({
           breadcrumb={breadcrumb}
           preTitle={preTitle}
           title={title}
+          titleLang={titleLang}
           description={description}
+          descriptionLang={descriptionLang}
           className={`${cn(
             `relative ${tabs?.length > 0 ? "pb-[80px]" : ""}`,
             heroClass

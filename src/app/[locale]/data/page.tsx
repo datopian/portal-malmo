@@ -9,7 +9,7 @@ import SearchForm from "@/components/package/search/SearchForm";
 
 type Props = { params: Promise<{ locale: string }> };
 
-export const revalidate = 300;
+export const revalidate = 150;
 
 export default async function SearchPage({ params }: Props) {
   const { locale } = await params;

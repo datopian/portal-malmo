@@ -15,9 +15,9 @@ import { Link } from "@/i18n/navigation";
 import { DownloadIcon } from "lucide-react";
 import { formatFileSize } from "@/lib/utils";
 import ApiDialog from "@/components/package/api/ApiDialog";
-import { getLocalizedText } from "@/lib/ckan-translations";
+import { getLocalizedText, getLocalizedTextWithLang } from "@/lib/ckan-translations";
 
-export const revalidate = 300;
+export const revalidate = 150;
 
 export async function generateStaticParams(): Promise<
   Array<{ org: string; dataset: string; resource: string }>
@@ -78,6 +78,17 @@ export default async function ResourcePage({ params }: PageProps) {
     return notFound();
   }
 
+  const resourceTitle = getLocalizedTextWithLang(
+    resource.name_translated,
+    locale,
+    resource.name
+  );
+  const resourceDescription = getLocalizedTextWithLang(
+    resource.description_translated,
+    locale,
+    resource.description
+  );
+
   return (
     <Page
       breadcrumb={{
@@ -98,23 +109,17 @@ export default async function ResourcePage({ params }: PageProps) {
           },
           {
             title: resource
-              ? getLocalizedText(
-                  resource.name_translated,
-                  locale,
-                  resource.name
-                )
+              ? resourceTitle.text
               : t("Common.resource"),
             href: `/@malmo/${dataset?.name ?? ""}/${resource.id}`,
             current: true,
           },
         ],
       }}
-      title={getLocalizedText(resource.name_translated, locale, resource.name)}
-      description={getLocalizedText(
-        resource.description_translated,
-        locale,
-        resource.description
-      )}
+      title={resourceTitle.text}
+      titleLang={resourceTitle.lang}
+      description={resourceDescription.text}
+      descriptionLang={resourceDescription.lang}
     >
       <Container className="py-12">
         <div className="flex flex-col md:flex-row gap-6 sm:gap-12 border-b pb-8 mb-8">
@@ -161,16 +166,12 @@ export default async function ResourcePage({ params }: PageProps) {
             <Button
               type="button"
               asChild
-              aria-label={`Download resource ${getLocalizedText(
-                resource.name_translated,
-                locale,
-                resource.name
-              )}`}
+              aria-label={`${t("Common.download")} ${resourceTitle.text}`}
               variant={"theme"}
       
             >
               <Link href={resource.url ?? ""} target="_blank" download={true}>
-                <DownloadIcon size={5} />
+                <DownloadIcon aria-hidden="true" size={20} />
                 {t("Common.download")}
               </Link>
             </Button>

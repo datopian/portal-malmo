@@ -8,7 +8,7 @@ import MarkdownRender from "@/components/ui/markdown";
 
 type Props = { params: Promise<{ locale: string }> };
 
-export const revalidate = 300;
+export const revalidate = 150;
 
 export default async function AboutPage({ params }: Readonly<Props>) {
   const { locale } = await params;
