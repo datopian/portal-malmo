@@ -105,7 +105,7 @@ export function normalizeOgcServiceUrl(
 export function getOgcPreviewConfig(
   resource: Resource,
 ): OgcPreviewConfig | null {
-  if (resource.wfs_url) {
+ /* if (resource.wfs_url) {
     return {
       type: "wfs",
       resourceUrl:
@@ -119,7 +119,7 @@ export function getOgcPreviewConfig(
       resourceUrl:
         normalizeOgcServiceUrl(resource.wms_url, "wms") ?? resource.wms_url,
     };
-  }
+  }*/
 
   const format = resource.format?.toLowerCase();
   if ((format === "wfs" || format === "wms") && resource.url) {
