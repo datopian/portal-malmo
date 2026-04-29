@@ -219,6 +219,7 @@
   },
 
   "Map": {
+    "featureCount": "Total of {count} features.",
     "sldLegend": {
       "title": "Legend",
       "itemsCount": "{count, plural, one {# item} other {# items}}",
@@ -253,16 +254,28 @@
         "failedToLoad": "Failed to load GeoJSON."
       }
     },
-    "ogc": {
-      "loading": "Loading map layer...",
-      "serviceInfo": {
-        "title": "Service details",
-        "serviceUrlLabel": "Service URL",
-        "capabilitiesLabel": "GetCapabilities URL",
-        "openInNewTab": "Open {label} in a new tab",
-        "styleUrlLabel": "SLD style URL"
-      },
-      "popup": {
+      "ogc": {
+        "loading": "Loading map layer...",
+        "serviceInfo": {
+          "title": "Service details",
+          "serviceUrlLabel": "Service URL",
+          "capabilitiesLabel": "GetCapabilities URL",
+          "openInNewTab": "Open {label} in a new tab",
+          "styleUrlLabel": "SLD style URL"
+        },
+        "links": {
+          "title": "OGC service links",
+          "wfsTitle": "WFS",
+          "wmsTitle": "WMS",
+          "serviceApiUrl": "Service API URL",
+          "getCapabilitiesUrl": "GetCapabilities URL",
+          "sldTitle": "SLD style",
+          "sldStyleUrl": "SLD style URL",
+          "fullUrl": "Full URL",
+          "open": "Open",
+          "openInNewTab": "Open {label} in a new tab"
+        },
+        "popup": {
         "noAttributes": "No attributes available for this feature.",
         "featureInfoUnavailable": "Feature info is unavailable for this layer."
       },
