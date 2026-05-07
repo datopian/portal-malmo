@@ -19,6 +19,18 @@ import { ckan } from "@/lib/ckan";
 
 const DMS = process.env.NEXT_PUBLIC_DMS ?? "";
 
+const SQL_IDENTIFIER_REGEX = /^[A-Za-z_][A-Za-z0-9_]*$/;
+
+function toSqlIdentifier(column: string): string {
+  return SQL_IDENTIFIER_REGEX.test(column)
+    ? column
+    : `"${column.replace(/"/g, '""')}"`;
+}
+
+function escapeSqlLiteral(value: string): string {
+  return value.replace(/'/g, "''");
+}
+
 function Snippet({
   title,
   value,
@@ -132,6 +144,10 @@ export default function ApiDialog({
   const snippets = React.useMemo(() => {
     const base = DMS.replace(/\/$/, "");
     const rid = encodeURIComponent(id);
+    const escapedValue = escapeSqlLiteral(searchExampleData.value);
+    const column = toSqlIdentifier(searchExampleData.column);
+    const sql = `SELECT * FROM "${id}" WHERE ${column} LIKE '%${escapedValue}%'`;
+    const encodedSql = encodeURIComponent(sql);
 
     return [
       {
@@ -142,14 +158,14 @@ export default function ApiDialog({
         title: t("API.snippets.containsJones", {
           query: searchExampleData.value,
         }),
-        value: `${base}/api/3/action/datastore_search?resource_id=${rid}&q=${searchExampleData.value}`,
+        value: `${base}/api/3/action/datastore_search?resource_id=${rid}&q=${encodeURIComponent(searchExampleData.value)}`,
       },
       {
         title: t("API.snippets.viaSql"),
-        value: `${base}/api/3/action/datastore_search_sql?sql=${`SELECT * FROM "${id}" WHERE '${searchExampleData.column}' LIKE '%${searchExampleData.value}%'`}`,
+        value: `${base}/api/3/action/datastore_search_sql?sql=${encodedSql}`,
       },
     ];
-  }, [id, searchExampleData, t, searchExampleData]);
+  }, [id, searchExampleData, t]);
 
   const resourceMetadataSnippet = React.useMemo(() => {
     const base = DMS.replace(/\/$/, "");
@@ -158,7 +174,7 @@ export default function ApiDialog({
       title: t("API.snippets.resourceMetadata"),
       value: `${base}/api/3/action/resource_show?id=${rid}`,
     };
-  }, [id, searchExampleData, t, searchExampleData]);
+  }, [id, t]);
 
   React.useEffect(() => {
     if (includeDatastore) getExample();
