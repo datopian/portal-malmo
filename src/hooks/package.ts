@@ -14,5 +14,6 @@ export function usePackageSearch(
         owner_org,
       }),
     placeholderData: (previousData) => previousData,
+    refetchOnWindowFocus:false
   });
 }
