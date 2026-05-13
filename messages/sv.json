@@ -220,6 +220,7 @@
   },
 
   "Map": {
+    "featureCount": "Totalt {count} objekt.",
     "sldLegend": {
       "title": "Legend",
       "itemsCount": "{count, plural, one {# objekt} other {# objekt}}",
@@ -254,16 +255,28 @@
         "failedToLoad": "Kunde inte ladda GeoJSON."
       }
     },
-    "ogc": {
-      "loading": "Laddar kartlager...",
-      "serviceInfo": {
-        "title": "Tjänstinformation",
-        "serviceUrlLabel": "Tjänst-URL",
-        "capabilitiesLabel": "GetCapabilities-URL",
-        "openInNewTab": "Öppna {label} i en ny flik",
-        "styleUrlLabel": "SLD style-URL"
-      },
-      "popup": {
+      "ogc": {
+        "loading": "Laddar kartlager...",
+        "serviceInfo": {
+          "title": "Tjänstinformation",
+          "serviceUrlLabel": "Tjänst-URL",
+          "capabilitiesLabel": "GetCapabilities-URL",
+          "openInNewTab": "Öppna {label} i en ny flik",
+          "styleUrlLabel": "SLD style-URL"
+        },
+        "links": {
+          "title": "OGC-tjänstlänkar",
+          "wfsTitle": "WFS",
+          "wmsTitle": "WMS",
+          "serviceApiUrl": "Tjänstens API-URL",
+          "getCapabilitiesUrl": "GetCapabilities-URL",
+          "sldTitle": "SLD-stil",
+          "sldStyleUrl": "SLD-stil-URL",
+          "fullUrl": "Full URL",
+          "open": "Öppna",
+          "openInNewTab": "Öppna {label} i en ny flik"
+        },
+        "popup": {
         "noAttributes": "Inga attribut tillgängliga för detta objekt.",
         "featureInfoUnavailable": "Objektinformation är inte tillgänglig för detta lager."
       },

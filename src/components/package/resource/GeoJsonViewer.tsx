@@ -18,6 +18,7 @@ import { escapeHtml } from "@/lib/utils";
 import { useSldStyler } from "@/hooks/sld";
 import LeafletSldLoader from "@/components/map/LeafletSldLoader";
 import SldLegend from "@/components/map/SldLegend";
+import { Loader2 } from "lucide-react";
 
 type RLFeature = Feature<Geometry, GeoJsonProperties>;
 type RLStyleFn = (feature?: RLFeature) => PathOptions;
@@ -123,6 +124,23 @@ function isGeoJsonObject(value: unknown): value is GeoJsonObject {
     typeof value === "object" &&
     "type" in (value as Record<string, unknown>)
   );
+}
+
+function getGeoJsonFeatureCount(value: GeoJsonObject | null): number {
+  if (!value) return 0;
+
+  if (
+    value.type === "FeatureCollection" &&
+    Array.isArray((value as { features?: unknown[] }).features)
+  ) {
+    return ((value as unknown as { features: unknown[] }).features ?? []).length;
+  }
+
+  if (value.type === "Feature") {
+    return 1;
+  }
+
+  return 0;
 }
 
 /* detect EPSG from optional GeoJSON crs (RFC 7946 ignores crs, but files still include it) */
@@ -376,9 +394,18 @@ export default function GeoJsonMap({
   }, [memoGeoJson]);
 
   const showSldError = sldState === "error";
+  const featureCount = useMemo(
+    () => getGeoJsonFeatureCount(memoGeoJson),
+    [memoGeoJson],
+  );
 
   if (state === "loading") {
-    return <div className="text-sm">{t("Common.loading")}</div>;
+    return (
+      <div className="flex items-center gap-2 text-sm text-gray-700">
+        <Loader2 className="h-4 w-4 animate-spin" aria-hidden="true" />
+        <span>{t("Common.loading")}</span>
+      </div>
+    );
   }
 
   if (state === "error") {
@@ -411,8 +438,8 @@ export default function GeoJsonMap({
         <div
           className={
             showLegendOnMobile
-              ? "mb-3 w-full md:mb-0 md:absolute md:right-4 md:top-4 md:z-[1000] md:w-auto pr-4"
-              : "hidden md:block md:absolute md:right-4 md:top-4 md:z-[1000] md:w-auto"
+              ? "mb-3 w-full md:mb-0 md:absolute md:right-4 md:top-12 md:z-[1000] md:w-auto pr-4"
+              : "hidden md:block md:absolute md:right-4 md:top-12 md:z-[1000] md:w-auto"
           }
         >
           <SldLegend
@@ -422,7 +449,10 @@ export default function GeoJsonMap({
         </div>
       )}
 
-      <div className="h-[550px] pr-4 md:pr-0 md:h-[600px] lg:h-[800px] w-full overflow-hidden rounded-xl">
+      <div className="relative h-[400px] pr-4 md:pr-0 md:h-[500px] w-full overflow-hidden rounded-xl">
+        <div className="pointer-events-none absolute right-6 top-3 z-[1001] rounded bg-white/95 px-2 py-1 text-xs font-medium text-slate-700 shadow-sm ring-1 ring-slate-200">
+          {t("Map.featureCount", { count: featureCount })}
+        </div>
         <MapContainer
           center={[0, 0]}
           zoom={2}

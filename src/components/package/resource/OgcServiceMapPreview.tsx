@@ -11,6 +11,7 @@ import type {
 } from "geojson";
 import type { PathOptions } from "leaflet";
 import { useTranslations } from "next-intl";
+import { Loader2 } from "lucide-react";
 
 import LeafletSldLoader from "@/components/map/LeafletSldLoader";
 import SldLegend from "@/components/map/SldLegend";
@@ -414,6 +415,7 @@ export default function OgcServiceMapPreview({
     () => (wfsData ? JSON.stringify(wfsData) : "wfs-empty"),
     [wfsData],
   );
+  const wfsFeatureCount = wfsData?.features.length ?? 0;
   const styler = useSldStyler(sldXml);
   const styleFn: RLStyleFn | undefined = useMemo(() => {
     const fn = styler?.getStyleFunction();
@@ -700,7 +702,10 @@ export default function OgcServiceMapPreview({
         {serviceInfoPanel}
         <div className="space-y-3">
           <Skeleton className="h-[320px] w-full rounded-xl" />
-          <p className="text-sm text-gray-700">{t("Map.ogc.loading")}</p>
+          <p className="flex items-center gap-2 text-sm text-gray-700">
+            <Loader2 className="h-4 w-4 animate-spin" aria-hidden="true" />
+            <span>{t("Map.ogc.loading")}</span>
+          </p>
         </div>
       </>
     );
@@ -731,7 +736,7 @@ export default function OgcServiceMapPreview({
   return (
     <div className="relative z-1">
       <LeafletSldLoader />
-      {serviceInfoPanel}
+
       <div className="relative">
       {type === "wfs" && sldError && (
         <div className="mb-2 text-sm text-amber-700">
@@ -742,8 +747,8 @@ export default function OgcServiceMapPreview({
         <div
           className={
             showLegendOnMobile
-              ? "mb-3 w-full md:mb-0 md:absolute md:right-4 md:top-4 md:z-[1000] md:w-auto pr-4"
-              : "hidden md:block md:absolute md:right-4 md:top-4 md:z-[1000] md:w-auto"
+              ? "mb-3 w-full md:mb-0 md:absolute md:right-4 md:top-12 md:z-[1000] md:w-auto pr-4"
+              : "hidden md:block md:absolute md:right-4 md:top-12 md:z-[1000] md:w-auto"
           }
         >
           <SldLegend
@@ -752,7 +757,12 @@ export default function OgcServiceMapPreview({
           />
         </div>
       )}
-      <div className="h-[500px] w-full overflow-hidden rounded-xl border lg:h-[800px]">
+      <div className="relative h-[400px] w-full overflow-hidden rounded-xl border md:h-[500px]">
+        {type === "wfs" && (
+          <div className="pointer-events-none absolute right-3 top-3 z-[1001] rounded bg-white/95 px-2 py-1 text-xs font-medium text-slate-700 shadow-sm ring-1 ring-slate-200">
+            {t("Map.featureCount", { count: wfsFeatureCount })}
+          </div>
+        )}
         <MapContainer
           center={DEFAULT_CENTER}
           zoom={DEFAULT_ZOOM}
