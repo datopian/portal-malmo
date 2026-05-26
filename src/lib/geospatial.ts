@@ -1,4 +1,6 @@
-import type { GeoJsonObject } from "geojson";
+import type { Feature, FeatureCollection, GeoJsonObject, Geometry } from "geojson";
+
+import { escapeHtml } from "@/lib/utils";
 
 export type BoundingBox = [number, number, number, number];
 
@@ -21,6 +23,31 @@ export function isProbablyXml(input: string) {
     value.startsWith("<StyledLayerDescriptor") ||
     value.startsWith("<sld:StyledLayerDescriptor")
   );
+}
+
+export function formatGeoJsonPropertiesHtml(
+  properties: Record<string, unknown> | null | undefined,
+  options?: {
+    className?: string;
+    emptyLabel?: string;
+  },
+) {
+  const className = options?.className ?? "text-sm space-y-1";
+
+  if (!properties || typeof properties !== "object") {
+    return options?.emptyLabel
+      ? `<em>${escapeHtml(options.emptyLabel)}</em>`
+      : null;
+  }
+
+  const rows = Object.entries(properties)
+    .map(
+      ([key, value]) =>
+        `<div><strong>${escapeHtml(key)}:</strong> ${escapeHtml(String(value ?? ""))}</div>`,
+    )
+    .join("");
+
+  return `<div class="${className}">${rows}</div>`;
 }
 
 export function parseBbox(raw: string | null): BoundingBox | undefined {
@@ -89,6 +116,45 @@ function collectCoordinateNumbers(
   }
 }
 
+function collectGeometryCoordinateNumbers(
+  geometry: Geometry | null | undefined,
+  out: number[],
+  limit: number,
+) {
+  if (!geometry || out.length >= limit) return;
+
+  if (geometry.type === "GeometryCollection") {
+    for (const item of geometry.geometries) {
+      if (out.length >= limit) break;
+      collectGeometryCoordinateNumbers(item, out, limit);
+    }
+    return;
+  }
+
+  collectCoordinateNumbers(geometry.coordinates, out, limit);
+}
+
+function collectGeoJsonCoordinateNumbers(
+  value: GeoJsonObject,
+  out: number[],
+  limit: number,
+) {
+  if (value.type === "FeatureCollection") {
+    for (const feature of (value as FeatureCollection).features) {
+      if (out.length >= limit) break;
+      collectGeometryCoordinateNumbers(feature.geometry, out, limit);
+    }
+    return;
+  }
+
+  if (value.type === "Feature") {
+    collectGeometryCoordinateNumbers((value as Feature).geometry, out, limit);
+    return;
+  }
+
+  collectGeometryCoordinateNumbers(value as Geometry, out, limit);
+}
+
 /**
  * Leaflet's default basemap flow expects coordinates in geographic degrees.
  * We combine the optional EPSG hint with a small coordinate sample so we can
@@ -100,7 +166,7 @@ export function isLeafletReadyGeoJson(value: GeoJsonObject): boolean {
   if (epsg !== null && epsg !== 4326) return false;
 
   const coords: number[] = [];
-  collectCoordinateNumbers(value, coords, 40);
+  collectGeoJsonCoordinateNumbers(value, coords, 40);
 
   if (coords.length < 2) return true;
 

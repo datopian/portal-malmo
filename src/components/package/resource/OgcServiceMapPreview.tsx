@@ -16,9 +16,11 @@ import { useTranslations } from "next-intl";
 import LeafletSldLoader from "@/components/map/LeafletSldLoader";
 import SldLegend from "@/components/map/SldLegend";
 import { Skeleton } from "@/components/ui/skeleton";
+import { useLayerRemountKey } from "@/hooks/useLayerRemountKey";
 import { useSldStyler } from "@/hooks/sld";
 import { useSldDocument } from "@/hooks/useSldDocument";
 import {
+  formatGeoJsonPropertiesHtml,
   isLeafletReadyGeoJson,
   toLeafletBounds,
 } from "@/lib/geospatial";
@@ -27,8 +29,6 @@ import {
   type OgcType,
   type ParsedOgcUrl,
 } from "@/lib/ogc";
-import { escapeHtml } from "@/lib/utils";
-
 import "leaflet/dist/leaflet.css";
 
 type OgcServiceMapPreviewProps = {
@@ -142,17 +142,9 @@ function getErrorDetails(error: unknown): PreviewError {
 function formatPropertiesPopup(
   properties: Record<string, unknown> | null | undefined,
 ): string | null {
-  if (!properties || Object.keys(properties).length === 0) return null;
-
-  const rows = Object.entries(properties)
-    .map(([key, value]) => {
-      const safeKey = escapeHtml(String(key));
-      const safeValue = escapeHtml(String(value ?? ""));
-      return `<div><strong>${safeKey}:</strong> ${safeValue}</div>`;
-    })
-    .join("");
-
-  return `<div class="space-y-1 text-sm max-h-[300px] overflow-auto">${rows}</div>`;
+  return formatGeoJsonPropertiesHtml(properties, {
+    className: "space-y-1 text-sm max-h-[300px] overflow-auto",
+  });
 }
 
 function buildWmsGetFeatureInfoUrl({
@@ -305,6 +297,7 @@ export default function OgcServiceMapPreview({
   });
   const wmsLayerRef = useRef<L.TileLayer.WMS | null>(null);
   const wfsFeatureCount = wfsData?.features.length ?? 0;
+  const wfsLayerKey = useLayerRemountKey(wfsData, "wfs-layer");
   const usesProjectedCoordinates = useMemo(() => {
     if (!wfsData) return false;
     return !isLeafletReadyGeoJson(wfsData);
@@ -548,6 +541,7 @@ export default function OgcServiceMapPreview({
             {type === "wfs" && wfsData && (
               <>
                 <GeoJSON
+                  key={wfsLayerKey}
                   data={wfsData}
                   style={styleFn ?? { color: "#136f63", weight: 2, fillOpacity: 0.2 }}
                   pointToLayer={(feature, latlng) => {
@@ -575,7 +569,7 @@ export default function OgcServiceMapPreview({
                     leafletLayer.on("click", () => leafletLayer.openPopup());
                   }}
                 />
-                <FitToGeoJson data={wfsData} />
+                <FitToGeoJson key={`${wfsLayerKey}-fit`} data={wfsData} />
               </>
             )}
 

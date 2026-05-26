@@ -132,6 +132,8 @@ export default async function ResourcePage({ params }: PageProps) {
     locale,
     resource.description,
   );
+  const downloadUrl = resource.url ?? null;
+  const hasDownloadUrl = !!downloadUrl;
 
   return (
     <Page
@@ -185,14 +187,28 @@ export default async function ResourcePage({ params }: PageProps) {
             />
             <Button
               type="button"
-              asChild
               aria-label={`${t("Common.download")} ${resourceTitle.text}`}
               variant="theme"
+              disabled={!hasDownloadUrl}
+              aria-disabled={!hasDownloadUrl}
+              {...(hasDownloadUrl ? { asChild: true } : {})}
             >
-              <Link href={resource.url ?? ""} target="_blank" download>
-                <DownloadIcon aria-hidden="true" size={20} />
-                {t("Common.download")}
-              </Link>
+              {hasDownloadUrl ? (
+                <Link
+                  href={downloadUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  download
+                >
+                  <DownloadIcon aria-hidden="true" size={20} />
+                  {t("Common.download")}
+                </Link>
+              ) : (
+                <>
+                  <DownloadIcon aria-hidden="true" size={20} />
+                  {t("Common.download")}
+                </>
+              )}
             </Button>
           </div>
         </div>

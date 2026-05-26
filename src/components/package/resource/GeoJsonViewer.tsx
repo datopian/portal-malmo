@@ -18,13 +18,14 @@ import { Loader2 } from "lucide-react";
 
 import LeafletSldLoader from "@/components/map/LeafletSldLoader";
 import SldLegend from "@/components/map/SldLegend";
+import { useLayerRemountKey } from "@/hooks/useLayerRemountKey";
 import { useSldStyler } from "@/hooks/sld";
 import { useSldDocument } from "@/hooks/useSldDocument";
 import {
+  formatGeoJsonPropertiesHtml,
   isProbablyUrl,
   isLeafletReadyGeoJson,
 } from "@/lib/geospatial";
-import { escapeHtml } from "@/lib/utils";
 
 type RLFeature = Feature<Geometry, GeoJsonProperties>;
 type RLStyleFn = (feature?: RLFeature) => PathOptions;
@@ -87,26 +88,6 @@ function safeParseGeoJson(value: string): GeoJsonObject | null {
   } catch {
     return null;
   }
-}
-
-function formatProperties(
-  properties: Record<string, unknown> | null | undefined,
-  noAttributesLabel: string,
-) {
-  if (!properties || typeof properties !== "object") {
-    return `<em>${escapeHtml(noAttributesLabel)}</em>`;
-  }
-
-  return `
-    <div class="text-sm space-y-1">
-      ${Object.entries(properties)
-        .map(
-          ([key, value]) =>
-            `<div><strong>${escapeHtml(key)}:</strong> ${escapeHtml(String(value))}</div>`,
-        )
-        .join("")}
-    </div>
-  `;
 }
 
 function isGeoJsonObject(value: unknown): value is GeoJsonObject {
@@ -237,6 +218,7 @@ export default function GeoJsonMap({
     return !isLeafletReadyGeoJson(geoJson);
   }, [geoJson]);
   const featureCount = useMemo(() => getGeoJsonFeatureCount(geoJson), [geoJson]);
+  const geoJsonLayerKey = useLayerRemountKey(geoJson, "geojson-layer");
 
   const setLayerRef = useCallback((layer: LeafletGeoJSON | null) => {
     layerRef.current = layer;
@@ -316,6 +298,7 @@ export default function GeoJsonMap({
           )}
 
           <RLGeoJSON
+            key={geoJsonLayerKey}
             data={geoJson}
             style={styleFn}
             ref={setLayerRef}
@@ -333,17 +316,18 @@ export default function GeoJsonMap({
             onEachFeature={(feature, layer) => {
               if (!feature.properties) return;
 
-              layer.bindPopup(
-                formatProperties(
-                  feature.properties,
-                  t("Map.geoJson.noAttributes"),
-                ),
-              );
+              const html = formatGeoJsonPropertiesHtml(feature.properties, {
+                emptyLabel: t("Map.geoJson.noAttributes"),
+              });
+              if (!html) return;
+
+              layer.bindPopup(html);
               layer.on("click", () => layer.openPopup());
             }}
           />
 
           <FitToGeoJson
+            key={`${geoJsonLayerKey}-fit`}
             layerRef={layerRef}
             padding={padding}
             maxZoom={maxZoom}

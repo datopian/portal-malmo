@@ -202,7 +202,7 @@ export function buildOgcServiceApiUrl(
   const parsed = parseUrlSafely(resourceUrl);
   if (!parsed) return null;
 
-  const query = new URLSearchParams(parsed.search);
+  const query = createLowerCaseQuery(parsed.searchParams);
   stripOgcNoise(query);
   removeLayerSelectors(query, type);
   query.set("service", type.toUpperCase());
@@ -250,9 +250,10 @@ export function hasOgcPreview(resource: Resource) {
 
 export function getOgcLinkGroups(resource: Resource): OgcLinkGroup[] {
   const groups: OgcLinkGroup[] = [];
+  const format = resource.format?.toLowerCase();
   const candidates: Array<{ type: OgcType; url?: string }> = [
-    { type: "wfs", url: resource.wfs_url },
-    { type: "wms", url: resource.wms_url },
+    { type: "wfs", url: resource.wfs_url ?? (format === "wfs" ? resource.url : undefined) },
+    { type: "wms", url: resource.wms_url ?? (format === "wms" ? resource.url : undefined) },
   ];
 
   for (const candidate of candidates) {
