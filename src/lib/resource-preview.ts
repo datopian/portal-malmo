@@ -39,6 +39,7 @@ function resolvePreviewKind(
   ogcPreview: OgcPreviewConfig | null,
 ): ResourcePreviewKind {
   if (format === "geojson") return "geojson";
+  if (format === "gpkg") return ogcPreview ? "ogc" : "unsupported";
   if (ogcPreview) return "ogc";
   if (format === "json") return "json";
   if (resource.datastore_active) return "datastore";
