@@ -14,20 +14,21 @@ import type { GeoJSON as LeafletGeoJSON } from "leaflet";
 import type { PathOptions } from "leaflet";
 import "leaflet/dist/leaflet.css";
 import { useTranslations } from "next-intl";
-import { escapeHtml } from "@/lib/utils";
-import { useSldStyler } from "@/hooks/sld";
+import { Loader2 } from "lucide-react";
+
 import LeafletSldLoader from "@/components/map/LeafletSldLoader";
 import SldLegend from "@/components/map/SldLegend";
-import { Loader2 } from "lucide-react";
+import { useSldStyler } from "@/hooks/sld";
+import { useSldDocument } from "@/hooks/useSldDocument";
+import {
+  isProbablyUrl,
+  isLeafletReadyGeoJson,
+} from "@/lib/geospatial";
+import { escapeHtml } from "@/lib/utils";
 
 type RLFeature = Feature<Geometry, GeoJsonProperties>;
 type RLStyleFn = (feature?: RLFeature) => PathOptions;
-
-
-const DefaultIcon = L.Icon.Default as unknown as {
-  prototype: { _getIconUrl?: unknown };
-};
-delete DefaultIcon.prototype._getIconUrl;
+type LoadState = "idle" | "loading" | "ready" | "error";
 
 type Props = {
   data: GeoJsonObject | string;
@@ -36,6 +37,11 @@ type Props = {
   styleUrl?: string;
   showLegendOnMobile?: boolean;
 };
+
+const DefaultIcon = L.Icon.Default as unknown as {
+  prototype: { _getIconUrl?: unknown };
+};
+delete DefaultIcon.prototype._getIconUrl;
 
 L.Icon.Default.mergeOptions({
   iconRetinaUrl: "/leaflet/marker-icon-2x.png",
@@ -67,19 +73,6 @@ function FitToGeoJson({
   return null;
 }
 
-function isProbablyUrl(value: string) {
-  return /^(https?:\/\/|\/|\.\/|\.\.\/)/.test(value.trim());
-}
-
-function isProbablyXml(input: string) {
-  const s = input.trim();
-  return (
-    s.startsWith("<?xml") ||
-    s.startsWith("<StyledLayerDescriptor") ||
-    s.startsWith("<sld:StyledLayerDescriptor")
-  );
-}
-
 function safeParseGeoJson(value: string): GeoJsonObject | null {
   try {
     const parsed = JSON.parse(value) as unknown;
@@ -96,19 +89,17 @@ function safeParseGeoJson(value: string): GeoJsonObject | null {
   }
 }
 
-type LoadState = "idle" | "loading" | "ready" | "error";
-
 function formatProperties(
-  props: Record<string, unknown> | null | undefined,
+  properties: Record<string, unknown> | null | undefined,
   noAttributesLabel: string,
 ) {
-  if (!props || typeof props !== "object") {
+  if (!properties || typeof properties !== "object") {
     return `<em>${escapeHtml(noAttributesLabel)}</em>`;
   }
 
   return `
     <div class="text-sm space-y-1">
-      ${Object.entries(props)
+      ${Object.entries(properties)
         .map(
           ([key, value]) =>
             `<div><strong>${escapeHtml(key)}:</strong> ${escapeHtml(String(value))}</div>`,
@@ -133,7 +124,7 @@ function getGeoJsonFeatureCount(value: GeoJsonObject | null): number {
     value.type === "FeatureCollection" &&
     Array.isArray((value as { features?: unknown[] }).features)
   ) {
-    return ((value as unknown as { features: unknown[] }).features ?? []).length;
+    return ((value as { features?: unknown[] }).features ?? []).length;
   }
 
   if (value.type === "Feature") {
@@ -141,73 +132,6 @@ function getGeoJsonFeatureCount(value: GeoJsonObject | null): number {
   }
 
   return 0;
-}
-
-/* detect EPSG from optional GeoJSON crs (RFC 7946 ignores crs, but files still include it) */
-function getEpsgFromGeoJsonCrs(value: unknown): number | null {
-  if (!value || typeof value !== "object") return null;
-
-  const crs = (value as Record<string, unknown>).crs;
-  if (!crs || typeof crs !== "object") return null;
-
-  const props = (crs as Record<string, unknown>).properties;
-  if (!props || typeof props !== "object") return null;
-
-  const name = (props as Record<string, unknown>).name;
-  if (typeof name !== "string") return null;
-
-  const match = name.match(/EPSG(?::|::)\s*(\d+)/i);
-  if (!match?.[1]) return null;
-
-  const epsg = Number(match[1]);
-  return Number.isFinite(epsg) ? epsg : null;
-}
-
-/* sample coordinate numbers quickly (avoid walking entire huge file) */
-function collectCoordinateNumbers(
-  value: unknown,
-  out: number[],
-  limit: number,
-) {
-  if (out.length >= limit) return;
-
-  if (Array.isArray(value)) {
-    for (const v of value) {
-      if (out.length >= limit) break;
-      collectCoordinateNumbers(v, out, limit);
-    }
-    return;
-  }
-
-  if (typeof value === "number" && Number.isFinite(value)) {
-    out.push(value);
-  }
-}
-
-/* “Leaflet-ready” = lon/lat degrees (WGS84-ish). Otherwise use CRS.Simple */
-function isLeafletReadyGeoJson(value: GeoJsonObject): boolean {
-  const epsg = getEpsgFromGeoJsonCrs(value);
-  if (epsg !== null && epsg !== 4326) return false;
-
-  const coords: number[] = [];
-  collectCoordinateNumbers(value as unknown, coords, 40);
-
-  if (coords.length < 2) return true;
-
-  let maxAbsX = 0;
-  let maxAbsY = 0;
-
-  for (let i = 0; i + 1 < coords.length; i += 2) {
-    const x = coords[i] ?? 0;
-    const y = coords[i + 1] ?? 0;
-    maxAbsX = Math.max(maxAbsX, Math.abs(x));
-    maxAbsY = Math.max(maxAbsY, Math.abs(y));
-  }
-
-  if (maxAbsX <= 180 && maxAbsY <= 90) return true;
-  if (maxAbsX > 1000 || maxAbsY > 1000) return false;
-
-  return false;
 }
 
 export default function GeoJsonMap({
@@ -219,7 +143,6 @@ export default function GeoJsonMap({
 }: Props) {
   const t = useTranslations();
   const layerRef = useRef<LeafletGeoJSON | null>(null);
-
   const [geoJson, setGeoJson] = useState<GeoJsonObject | null>(
     typeof data === "string" ? null : data,
   );
@@ -227,84 +150,9 @@ export default function GeoJsonMap({
     typeof data === "string" ? "loading" : "ready",
   );
   const [error, setError] = useState<string | null>(null);
-
-  const [sldXml, setSldXml] = useState<string | null>(null);
-  const [sldState, setSldState] = useState<LoadState>(
-    styleUrl ? "loading" : "ready",
-  );
-  const [sldError, setSldError] = useState<string | null>(null);
-
-  useEffect(() => {
-    if (!styleUrl) {
-      setSldXml(null);
-      setSldState("ready");
-      setSldError(null);
-      return;
-    }
-
-    const controller = new AbortController();
-
-    async function loadSld(input: string) {
-      setSldState("loading");
-      setSldError(null);
-      setSldXml(null);
-
-      const trimmed = input.trim();
-      if (!trimmed) {
-        setSldState("error");
-        setSldError(t("Map.sld.errors.emptyStyleUrl"));
-        return;
-      }
-
-      if (isProbablyXml(trimmed)) {
-        setSldXml(trimmed);
-        setSldState("ready");
-        return;
-      }
-
-      if (!isProbablyUrl(trimmed)) {
-        setSldState("error");
-        setSldError(t("Map.sld.errors.invalidStyleUrl"));
-        return;
-      }
-
-      try {
-        const res = await fetch(trimmed, {
-          signal: controller.signal,
-        });
-
-        if (!res.ok) {
-          throw new Error(
-            t("Map.sld.errors.failedToFetch", {
-              status: res.status,
-              statusText: res.statusText,
-            }),
-          );
-        }
-
-        const xmlText = await res.text();
-        if (!isProbablyXml(xmlText)) {
-          throw new Error(t("Map.sld.errors.invalidXmlResponse"));
-        }
-
-        setSldXml(xmlText);
-        setSldState("ready");
-      } catch (e) {
-        if (controller.signal.aborted) return;
-        setSldState("error");
-        setSldError(
-          e instanceof Error ? e.message : t("Map.sld.errors.failedToLoad"),
-        );
-      }
-    }
-
-    loadSld(styleUrl);
-
-    return () => controller.abort();
-  }, [styleUrl]);
+  const { sldXml, sldError } = useSldDocument(styleUrl);
 
   const styler = useSldStyler(sldXml ?? "");
-
   const styleFn: RLStyleFn | undefined = useMemo(() => {
     const fn = styler?.getStyleFunction();
     if (!fn) return undefined;
@@ -351,27 +199,29 @@ export default function GeoJsonMap({
       }
 
       try {
-        const res = await fetch(trimmed, { signal: controller.signal });
-        if (!res.ok) {
+        const response = await fetch(trimmed, { signal: controller.signal });
+        if (!response.ok) {
           throw new Error(
             t("Map.geoJson.errors.failedToFetch", {
-              status: res.status,
-              statusText: res.statusText,
+              status: response.status,
+              statusText: response.statusText,
             }),
           );
         }
 
-        const json = (await res.json()) as unknown;
+        const json = (await response.json()) as unknown;
         if (!isGeoJsonObject(json)) {
           throw new Error(t("Map.geoJson.errors.invalidResponse"));
         }
 
         setGeoJson(json);
         setState("ready");
-      } catch (e) {
+      } catch (loadError) {
         if (controller.signal.aborted) return;
         setError(
-          e instanceof Error ? e.message : t("Map.geoJson.errors.failedToLoad"),
+          loadError instanceof Error
+            ? loadError.message
+            : t("Map.geoJson.errors.failedToLoad"),
         );
         setState("error");
       }
@@ -382,22 +232,15 @@ export default function GeoJsonMap({
     return () => controller.abort();
   }, [data, t]);
 
-  const memoGeoJson = useMemo(() => geoJson, [geoJson]);
+  const usesProjectedCoordinates = useMemo(() => {
+    if (!geoJson) return false;
+    return !isLeafletReadyGeoJson(geoJson);
+  }, [geoJson]);
+  const featureCount = useMemo(() => getGeoJsonFeatureCount(geoJson), [geoJson]);
 
   const setLayerRef = useCallback((layer: LeafletGeoJSON | null) => {
     layerRef.current = layer;
   }, []);
-
-  const hasBasemap = useMemo(() => {
-    if (!memoGeoJson) return false;
-    return !isLeafletReadyGeoJson(memoGeoJson);
-  }, [memoGeoJson]);
-
-  const showSldError = sldState === "error";
-  const featureCount = useMemo(
-    () => getGeoJsonFeatureCount(memoGeoJson),
-    [memoGeoJson],
-  );
 
   if (state === "loading") {
     return (
@@ -416,7 +259,7 @@ export default function GeoJsonMap({
     );
   }
 
-  if (!memoGeoJson) {
+  if (!geoJson) {
     return (
       <div className="text-sm text-gray-600">
         {t("Common.noData", { default: "No data found." })}
@@ -428,7 +271,7 @@ export default function GeoJsonMap({
     <div className="relative z-1">
       <LeafletSldLoader />
 
-      {showSldError && (
+      {sldError && (
         <div className="mb-2 text-sm text-amber-700">
           {sldError ?? t("Map.sld.errors.failedToLoadStyle")}
         </div>
@@ -442,14 +285,11 @@ export default function GeoJsonMap({
               : "hidden md:block md:absolute md:right-4 md:top-12 md:z-[1000] md:w-auto"
           }
         >
-          <SldLegend
-            sldXml={sldXml}
-            className=" md:shadow-lg"
-          />
+          <SldLegend sldXml={sldXml} className="md:shadow-lg" />
         </div>
       )}
 
-      <div className="relative h-[400px] pr-4 md:pr-0 md:h-[500px] w-full overflow-hidden rounded-xl">
+      <div className="relative h-[400px] w-full overflow-hidden rounded-xl pr-4 md:h-[500px] md:pr-0">
         <div className="pointer-events-none absolute right-6 top-3 z-[1001] rounded bg-white/95 px-2 py-1 text-xs font-medium text-slate-700 shadow-sm ring-1 ring-slate-200">
           {t("Map.featureCount", { count: featureCount })}
         </div>
@@ -457,7 +297,7 @@ export default function GeoJsonMap({
           center={[0, 0]}
           zoom={2}
           scrollWheelZoom
-          {...(hasBasemap
+          {...(usesProjectedCoordinates
             ? {
                 crs: L.CRS.Simple,
                 minZoom: -10,
@@ -468,7 +308,7 @@ export default function GeoJsonMap({
             : {})}
           style={{ height: "100%", width: "100%" }}
         >
-          {!hasBasemap && (
+          {!usesProjectedCoordinates && (
             <TileLayer
               attribution="&copy; OpenStreetMap contributors"
               url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
@@ -476,30 +316,29 @@ export default function GeoJsonMap({
           )}
 
           <RLGeoJSON
-            data={memoGeoJson}
+            data={geoJson}
             style={styleFn}
             ref={setLayerRef}
             pointToLayer={(feature, latlng) => {
-              // react-leaflet's pointToLayer gives a *real* Feature here (not undefined)
-              const s = (styleFn?.(feature) ?? {}) as PathOptions & {
+              const style = (styleFn?.(feature) ?? {}) as PathOptions & {
                 radius?: number;
               };
-
-              const radius = typeof s.radius === "number" ? s.radius : 5;
+              const radius = typeof style.radius === "number" ? style.radius : 5;
 
               return L.circleMarker(latlng, {
-                ...(s as L.CircleMarkerOptions),
+                ...(style as L.CircleMarkerOptions),
                 radius,
               });
             }}
             onEachFeature={(feature, layer) => {
-              if (feature.properties)
-                layer.bindPopup(
-                  formatProperties(
-                    feature.properties,
-                    t("Map.geoJson.noAttributes"),
-                  ),
-                );
+              if (!feature.properties) return;
+
+              layer.bindPopup(
+                formatProperties(
+                  feature.properties,
+                  t("Map.geoJson.noAttributes"),
+                ),
+              );
               layer.on("click", () => layer.openPopup());
             }}
           />

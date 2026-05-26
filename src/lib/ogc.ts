@@ -1,4 +1,5 @@
 import { Resource } from "@/schemas/ckan";
+import { BoundingBox, parseBbox, parseUrlSafely } from "@/lib/geospatial";
 
 export type OgcType = "wms" | "wfs";
 
@@ -7,13 +8,37 @@ export type OgcPreviewConfig = {
   resourceUrl: string;
 };
 
-function parseUrl(value: string): URL | null {
-  try {
-    return new URL(value);
-  } catch {
-    return null;
-  }
-}
+export type ParsedOgcUrl = {
+  baseUrl: string;
+  query: URLSearchParams;
+  layerName?: string;
+  bbox?: BoundingBox;
+};
+
+export type OgcLinkGroup = {
+  type: OgcType;
+  serviceUrl: string;
+  getCapabilitiesUrl: string;
+};
+
+const OGC_NOISY_PARAMS = [
+  "request",
+  "query_layers",
+  "info_format",
+  "feature_count",
+  "width",
+  "height",
+  "x",
+  "y",
+  "i",
+  "j",
+  "bbox",
+  "count",
+  "startindex",
+  "maxfeatures",
+  "outputformat",
+  "resulttype",
+];
 
 function getParam(params: URLSearchParams, ...names: string[]) {
   const normalizedNames = names.map((name) => name.toLowerCase());
@@ -38,11 +63,36 @@ function deleteParams(params: URLSearchParams, ...names: string[]) {
   }
 }
 
+function createLowerCaseQuery(params: URLSearchParams) {
+  const normalized = new URLSearchParams();
+
+  for (const [key, value] of params.entries()) {
+    normalized.append(key.toLowerCase(), value);
+  }
+
+  return normalized;
+}
+
+function stripOgcNoise(params: URLSearchParams) {
+  for (const key of OGC_NOISY_PARAMS) {
+    params.delete(key);
+  }
+}
+
+function removeLayerSelectors(params: URLSearchParams, type: OgcType) {
+  if (type === "wms") {
+    deleteParams(params, "typename", "typenames", "typeNames");
+    return;
+  }
+
+  deleteParams(params, "layers");
+}
+
 export function normalizeOgcServiceUrl(
   resourceUrl: string,
   type: OgcType,
 ): string | null {
-  const url = parseUrl(resourceUrl);
+  const url = parseUrlSafely(resourceUrl);
   if (!url) return null;
 
   const params = new URLSearchParams(url.search);
@@ -102,6 +152,67 @@ export function normalizeOgcServiceUrl(
   return url.toString();
 }
 
+export function parseOgcResourceUrl(resourceUrl: string): ParsedOgcUrl | null {
+  const url = parseUrlSafely(resourceUrl);
+  if (!url) return null;
+
+  const query = createLowerCaseQuery(url.searchParams);
+  const layerName =
+    query.get("layers") ??
+    query.get("typenames") ??
+    query.get("typename") ??
+    undefined;
+
+  return {
+    baseUrl: `${url.origin}${url.pathname}`,
+    query,
+    layerName,
+    bbox: parseBbox(query.get("bbox")),
+  };
+}
+
+export function buildOgcGetCapabilitiesUrl(
+  resourceUrl: string,
+  type: OgcType,
+): string | null {
+  const parsed = parseOgcResourceUrl(resourceUrl);
+  if (!parsed) return null;
+
+  return buildOgcGetCapabilitiesUrlFromParsed(parsed, type);
+}
+
+export function buildOgcGetCapabilitiesUrlFromParsed(
+  parsed: ParsedOgcUrl,
+  type: OgcType,
+): string {
+  const query = new URLSearchParams(parsed.query.toString());
+
+  stripOgcNoise(query);
+  removeLayerSelectors(query, type);
+  query.set("service", type.toUpperCase());
+  query.set("request", "GetCapabilities");
+
+  return `${parsed.baseUrl}?${query.toString()}`;
+}
+
+export function buildOgcServiceApiUrl(
+  resourceUrl: string,
+  type: OgcType,
+): string | null {
+  const parsed = parseUrlSafely(resourceUrl);
+  if (!parsed) return null;
+
+  const query = new URLSearchParams(parsed.search);
+  stripOgcNoise(query);
+  removeLayerSelectors(query, type);
+  query.set("service", type.toUpperCase());
+
+  const queryString = query.toString();
+  return queryString
+    ? `${parsed.origin}${parsed.pathname}?${queryString}`
+    : `${parsed.origin}${parsed.pathname}`;
+}
+
 export function getOgcPreviewConfig(
   resource: Resource,
 ): OgcPreviewConfig | null {
@@ -135,4 +246,32 @@ export function getOgcPreviewConfig(
 
 export function hasOgcPreview(resource: Resource) {
   return getOgcPreviewConfig(resource) !== null;
+}
+
+export function getOgcLinkGroups(resource: Resource): OgcLinkGroup[] {
+  const groups: OgcLinkGroup[] = [];
+  const candidates: Array<{ type: OgcType; url?: string }> = [
+    { type: "wfs", url: resource.wfs_url },
+    { type: "wms", url: resource.wms_url },
+  ];
+
+  for (const candidate of candidates) {
+    if (!candidate.url) continue;
+
+    const serviceUrl = buildOgcServiceApiUrl(candidate.url, candidate.type);
+    const getCapabilitiesUrl = buildOgcGetCapabilitiesUrl(
+      candidate.url,
+      candidate.type,
+    );
+
+    if (!serviceUrl || !getCapabilitiesUrl) continue;
+
+    groups.push({
+      type: candidate.type,
+      serviceUrl,
+      getCapabilitiesUrl,
+    });
+  }
+
+  return groups;
 }
