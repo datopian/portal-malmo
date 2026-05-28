@@ -10,18 +10,26 @@ import type {
   Geometry,
 } from "geojson";
 import type { PathOptions } from "leaflet";
-import { useTranslations } from "next-intl";
 import { Loader2 } from "lucide-react";
+import { useTranslations } from "next-intl";
 
 import LeafletSldLoader from "@/components/map/LeafletSldLoader";
 import SldLegend from "@/components/map/SldLegend";
 import { Skeleton } from "@/components/ui/skeleton";
+import { useLayerRemountKey } from "@/hooks/useLayerRemountKey";
 import { useSldStyler } from "@/hooks/sld";
-import { cn, escapeHtml } from "@/lib/utils";
-
+import { useSldDocument } from "@/hooks/useSldDocument";
+import {
+  formatGeoJsonPropertiesHtml,
+  isLeafletReadyGeoJson,
+  toLeafletBounds,
+} from "@/lib/geospatial";
+import {
+  parseOgcResourceUrl,
+  type OgcType,
+  type ParsedOgcUrl,
+} from "@/lib/ogc";
 import "leaflet/dist/leaflet.css";
-
-type OgcType = "wms" | "wfs";
 
 type OgcServiceMapPreviewProps = {
   type: OgcType;
@@ -37,86 +45,30 @@ type PreviewError = {
   status?: number;
 };
 
-type ParsedOgcUrl = {
-  baseUrl: string;
-  query: URLSearchParams;
-  layerName?: string;
-  bbox?: [number, number, number, number];
+type RLFeature = Feature<Geometry, GeoJsonProperties>;
+type RLStyleFn = (feature?: RLFeature) => PathOptions;
+
+type WfsPage = FeatureCollection<Geometry, GeoJsonProperties> & {
+  numberMatched?: number | string;
+};
+
+type WmsLayerProps = {
+  parsed: ParsedOgcUrl | null;
+  t: ReturnType<typeof useTranslations>;
+  wmsLayerRef: React.MutableRefObject<L.TileLayer.WMS | null>;
+  setError: React.Dispatch<React.SetStateAction<PreviewError | null>>;
 };
 
 const DEFAULT_CENTER: [number, number] = [0, 0];
 const DEFAULT_ZOOM = 2;
 const MAX_WFS_FEATURES = 5000;
 const WFS_PAGE_SIZE = 1000;
-type RLFeature = Feature<Geometry, GeoJsonProperties>;
-type RLStyleFn = (feature?: RLFeature) => PathOptions;
 
-function parseUrl(value: string): URL | null {
-  try {
-    return new URL(value);
-  } catch {
-    return null;
-  }
-}
-
-function parseBbox(
-  raw: string | null,
-): [number, number, number, number] | undefined {
-  if (!raw) return undefined;
-  const parts = raw.split(",").map((part) => Number(part.trim()));
-  if (parts.length < 4 || parts.some((n) => !Number.isFinite(n))) {
-    return undefined;
-  }
-  return [parts[0], parts[1], parts[2], parts[3]];
-}
-
-function parseOgcResourceUrl(resourceUrl: string): ParsedOgcUrl | null {
-  const url = parseUrl(resourceUrl);
-  if (!url) return null;
-
-  const query = new URLSearchParams();
-  for (const [key, value] of url.searchParams.entries()) {
-    query.append(key.toLowerCase(), value);
-  }
-
-  const layerName =
-    query.get("layers") ??
-    query.get("typenames") ??
-    query.get("typename") ??
-    undefined;
-
-  return {
-    baseUrl: `${url.origin}${url.pathname}`,
-    query,
-    layerName,
-    bbox: parseBbox(query.get("bbox")),
-  };
-}
-
-function isProbablyUrl(value: string) {
-  return /^(https?:\/\/|\/|\.\/|\.\.\/)/.test(value.trim());
-}
-
-function isProbablyXml(input: string) {
-  const value = input.trim();
-  return (
-    value.startsWith("<?xml") ||
-    value.startsWith("<StyledLayerDescriptor") ||
-    value.startsWith("<sld:StyledLayerDescriptor")
-  );
-}
-
-function toLeafletBounds(
-  bbox: [number, number, number, number],
-): [[number, number], [number, number]] {
-  const [minX, minY, maxX, maxY] = bbox;
-  return [
-    [minY, minX],
-    [maxY, maxX],
-  ];
-}
-
-function FitToBbox({ bbox }: { bbox: [number, number, number, number] }) {
+function FitToBbox({
+  bbox,
+}: {
+  bbox: [number, number, number, number];
+}) {
   const map = useMap();
 
   useEffect(() => {
@@ -135,6 +87,7 @@ function FitToGeoJson({
 
   useEffect(() => {
     if (!data?.features.length) return;
+
     const layer = L.geoJSON(data);
     const bounds = layer.getBounds();
     if (bounds.isValid()) {
@@ -145,7 +98,7 @@ function FitToGeoJson({
   return null;
 }
 
-function buildWfsUrl({
+function buildWfsRequestUrl({
   baseUrl,
   sourceParams,
   layerName,
@@ -163,6 +116,7 @@ function buildWfsUrl({
   query.set("service", "WFS");
   query.set("request", "GetFeature");
   query.set("outputformat", "application/json");
+  query.set("srsname", "EPSG:4326");
   if (!query.get("version")) query.set("version", "2.0.0");
   if (layerName) query.set("typename", layerName);
   query.set("count", String(count));
@@ -188,25 +142,20 @@ function getErrorDetails(error: unknown): PreviewError {
 function formatPropertiesPopup(
   properties: Record<string, unknown> | null | undefined,
 ): string | null {
-  if (!properties || Object.keys(properties).length === 0) return null;
-
-  const rows = Object.entries(properties)
-    .map(([key, value]) => {
-      const safeKey = escapeHtml(String(key));
-      const safeValue = escapeHtml(String(value ?? ""));
-      return `<div><strong>${safeKey}:</strong> ${safeValue}</div>`;
-    })
-    .join("");
-
-  return `<div class="space-y-1 text-sm max-h-[300px] overflow-auto">${rows}</div>`;
+  return formatGeoJsonPropertiesHtml(properties, {
+    className: "space-y-1 text-sm max-h-[300px] overflow-auto",
+  });
 }
 
-function buildWmsGetFeatureInfoUrl(params: {
+function buildWmsGetFeatureInfoUrl({
+  parsed,
+  map,
+  latlng,
+}: {
   parsed: ParsedOgcUrl;
   map: L.Map;
   latlng: L.LatLng;
-}): string {
-  const { parsed, map, latlng } = params;
+}) {
   const query = new URLSearchParams(parsed.query.toString());
   const mapSize = map.getSize();
   const point = map.latLngToContainerPoint(latlng);
@@ -245,61 +194,11 @@ function buildWmsGetFeatureInfoUrl(params: {
   return `${parsed.baseUrl}?${query.toString()}`;
 }
 
-function buildGetCapabilitiesUrl(parsed: ParsedOgcUrl, type: OgcType): string {
-  const query = new URLSearchParams(parsed.query.toString());
-
-  query.set("service", type.toUpperCase());
-  query.set("request", "GetCapabilities");
-
-  [
-    "layers",
-    "query_layers",
-    "typenames",
-    "typename",
-    "bbox",
-    "count",
-    "startIndex",
-    "outputFormat",
-    "info_format",
-    "feature_count",
-    "width",
-    "height",
-    "x",
-    "y",
-    "i",
-    "j",
-    "srs",
-    "crs",
-  ].forEach((param) => {
-    query.delete(param);
-  });
-
-  return `${parsed.baseUrl}?${query.toString()}`;
-}
-
-type WmsLayerProps = {
-  parsed: ParsedOgcUrl | null;
-  type: OgcType;
-  t: ReturnType<typeof useTranslations>;
-  wmsLayerRef: React.MutableRefObject<L.TileLayer.WMS | null>;
-  setError: React.Dispatch<React.SetStateAction<PreviewError | null>>;
-  buildWmsGetFeatureInfoUrl: typeof buildWmsGetFeatureInfoUrl;
-  formatPropertiesPopup: typeof formatPropertiesPopup;
-};
-
-function WmsLayer({
-  parsed,
-  type,
-  t,
-  wmsLayerRef,
-  setError,
-  buildWmsGetFeatureInfoUrl,
-  formatPropertiesPopup,
-}: WmsLayerProps) {
+function WmsLayer({ parsed, t, wmsLayerRef, setError }: WmsLayerProps) {
   const map = useMap();
 
   useEffect(() => {
-    if (!parsed?.layerName || type !== "wms") return;
+    if (!parsed?.layerName) return;
 
     const params = Object.fromEntries(parsed.query.entries());
     delete params.bbox;
@@ -330,6 +229,7 @@ function WmsLayer({
         message: t("Map.ogc.errors.invalidServiceOrLayer"),
       });
     };
+
     let pendingInfoRequest: AbortController | null = null;
 
     const onMapClick = async (event: L.LeafletMouseEvent) => {
@@ -354,8 +254,7 @@ function WmsLayer({
         const payload = (await response.json()) as {
           features?: Array<{ properties?: Record<string, unknown> }>;
         };
-        const props = payload.features?.[0]?.properties;
-        const html = formatPropertiesPopup(props);
+        const html = formatPropertiesPopup(payload.features?.[0]?.properties);
         if (!html) return;
 
         L.popup().setLatLng(event.latlng).setContent(html).openOn(map);
@@ -374,16 +273,7 @@ function WmsLayer({
       map.removeLayer(layer);
       wmsLayerRef.current = null;
     };
-  }, [
-    map,
-    parsed,
-    t,
-    type,
-    wmsLayerRef,
-    setError,
-    buildWmsGetFeatureInfoUrl,
-    formatPropertiesPopup,
-  ]);
+  }, [map, parsed, setError, t, wmsLayerRef]);
 
   return null;
 }
@@ -395,27 +285,24 @@ export default function OgcServiceMapPreview({
   showLegendOnMobile = true,
 }: OgcServiceMapPreviewProps) {
   const t = useTranslations();
-
   const parsed = useMemo(() => parseOgcResourceUrl(resourceUrl), [resourceUrl]);
-  const getCapabilitiesUrl = useMemo(
-    () => (parsed ? buildGetCapabilitiesUrl(parsed, type) : resourceUrl),
-    [parsed, resourceUrl, type],
-  );
-  const serviceUrl = resourceUrl;
   const [wfsData, setWfsData] = useState<FeatureCollection<
     Geometry,
     GeoJsonProperties
   > | null>(null);
   const [loading, setLoading] = useState(type === "wfs");
   const [error, setError] = useState<PreviewError | null>(null);
-  const [sldXml, setSldXml] = useState<string | null>(null);
-  const [sldError, setSldError] = useState<string | null>(null);
+  const { sldXml, sldError } = useSldDocument(styleUrl, {
+    enabled: type === "wfs",
+  });
   const wmsLayerRef = useRef<L.TileLayer.WMS | null>(null);
-  const wfsDataKey = useMemo(
-    () => (wfsData ? JSON.stringify(wfsData) : "wfs-empty"),
-    [wfsData],
-  );
   const wfsFeatureCount = wfsData?.features.length ?? 0;
+  const wfsLayerKey = useLayerRemountKey(wfsData, "wfs-layer");
+  const usesProjectedCoordinates = useMemo(() => {
+    if (!wfsData) return false;
+    return !isLeafletReadyGeoJson(wfsData);
+  }, [wfsData]);
+
   const styler = useSldStyler(sldXml);
   const styleFn: RLStyleFn | undefined = useMemo(() => {
     const fn = styler?.getStyleFunction();
@@ -426,132 +313,6 @@ export default function OgcServiceMapPreview({
       return fn(feature);
     };
   }, [styler]);
-
-  const serviceInfoPanel = (
-    <section
-      aria-label={t("Map.ogc.serviceInfo.title")}
-      className="mb-4"
-    >
-      <div className={cn("mt-3 grid gap-3 md:grid-cols-3", !styleUrl && "md:grid-cols-2")}>
-        <div className="min-w-0 rounded-lg border border-gray-200 bg-white p-3">
-          <p className="text-xs font-medium uppercase tracking-wide text-gray-600">
-            {t("Map.ogc.serviceInfo.serviceUrlLabel")}
-          </p>
-          <a
-            href={serviceUrl}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="mt-1 block break-all text-xs text-theme-green underline underline-offset-2 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-theme-green focus-visible:ring-offset-2"
-            aria-label={t("Map.ogc.serviceInfo.openInNewTab", {
-              label: t("Map.ogc.serviceInfo.serviceUrlLabel"),
-            })}
-          >
-            {serviceUrl}
-          </a>
-        </div>
-
-        <div className="min-w-0 rounded-lg border border-gray-200 bg-white p-3">
-          <p className="text-xs font-medium uppercase tracking-wide text-gray-600">
-            {t("Map.ogc.serviceInfo.capabilitiesLabel")}
-          </p>
-          <a
-            href={getCapabilitiesUrl}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="mt-1 block break-all text-xs text-theme-green underline underline-offset-2 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-theme-green focus-visible:ring-offset-2"
-            aria-label={t("Map.ogc.serviceInfo.openInNewTab", {
-              label: t("Map.ogc.serviceInfo.capabilitiesLabel"),
-            })}
-          >
-            {getCapabilitiesUrl}
-          </a>
-        </div>
-
-        {styleUrl && (
-          <div className="min-w-0 rounded-lg border border-gray-200 bg-white p-3">
-            <p className="text-xs font-medium uppercase tracking-wide text-gray-600">
-              {t("Map.ogc.serviceInfo.styleUrlLabel")}
-            </p>
-            <a
-              href={styleUrl}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="mt-1 block break-all text-xs text-theme-green underline underline-offset-2 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-theme-green focus-visible:ring-offset-2"
-              aria-label={t("Map.ogc.serviceInfo.openInNewTab", {
-                label: t("Map.ogc.serviceInfo.styleUrlLabel"),
-              })}
-            >
-              {styleUrl}
-            </a>
-          </div>
-        )}
-      </div>
-    </section>
-  );
-
-  useEffect(() => {
-    if (type !== "wfs" || !styleUrl) {
-      setSldXml(null);
-      setSldError(null);
-      return;
-    }
-
-    const controller = new AbortController();
-
-    async function loadSld(input: string) {
-      setSldXml(null);
-      setSldError(null);
-
-      const trimmed = input.trim();
-      if (!trimmed) {
-        setSldError(t("Map.sld.errors.emptyStyleUrl"));
-        return;
-      }
-
-      if (isProbablyXml(trimmed)) {
-        setSldXml(trimmed);
-        return;
-      }
-
-      if (!isProbablyUrl(trimmed)) {
-        setSldError(t("Map.sld.errors.invalidStyleUrl"));
-        return;
-      }
-
-      try {
-        const response = await fetch(trimmed, {
-          signal: controller.signal,
-        });
-
-        if (!response.ok) {
-          throw new Error(
-            t("Map.sld.errors.failedToFetch", {
-              status: response.status,
-              statusText: response.statusText,
-            }),
-          );
-        }
-
-        const xmlText = await response.text();
-        if (!isProbablyXml(xmlText)) {
-          throw new Error(t("Map.sld.errors.invalidXmlResponse"));
-        }
-
-        setSldXml(xmlText);
-      } catch (rawError) {
-        if (controller.signal.aborted) return;
-        setSldError(
-          rawError instanceof Error
-            ? rawError.message
-            : t("Map.sld.errors.failedToLoad"),
-        );
-      }
-    }
-
-    loadSld(styleUrl);
-
-    return () => controller.abort();
-  }, [styleUrl, t, type]);
 
   useEffect(() => {
     setError(null);
@@ -589,16 +350,13 @@ export default function OgcServiceMapPreview({
 
     async function fetchWfs() {
       try {
-        const features: FeatureCollection<
-          Geometry,
-          GeoJsonProperties
-        >["features"] = [];
+        const features: WfsPage["features"] = [];
         let startIndex = 0;
 
         while (features.length < MAX_WFS_FEATURES) {
           const remaining = MAX_WFS_FEATURES - features.length;
           const count = Math.min(WFS_PAGE_SIZE, remaining);
-          const requestUrl = buildWfsUrl({
+          const requestUrl = buildWfsRequestUrl({
             baseUrl: parsedConfig.baseUrl,
             sourceParams: parsedConfig.query,
             layerName: parsedConfig.layerName,
@@ -644,13 +402,7 @@ export default function OgcServiceMapPreview({
             return;
           }
 
-          const page = json as FeatureCollection<
-            Geometry,
-            GeoJsonProperties
-          > & {
-            numberMatched?: number | string;
-          };
-
+          const page = json as WfsPage;
           features.push(...page.features);
 
           const rawMatched = page.numberMatched;
@@ -676,10 +428,10 @@ export default function OgcServiceMapPreview({
           type: "FeatureCollection",
           features,
         });
-      } catch (rawError) {
+      } catch (loadError) {
         if (controller.signal.aborted) return;
 
-        const mapped = getErrorDetails(rawError);
+        const mapped = getErrorDetails(loadError);
         setError({
           title: t("Map.ogc.errors.loadFailedTitle"),
           message: mapped.message,
@@ -698,38 +450,32 @@ export default function OgcServiceMapPreview({
 
   if (loading) {
     return (
-      <>
-        {serviceInfoPanel}
-        <div className="space-y-3">
-          <Skeleton className="h-[320px] w-full rounded-xl" />
-          <p className="flex items-center gap-2 text-sm text-gray-700">
-            <Loader2 className="h-4 w-4 animate-spin" aria-hidden="true" />
-            <span>{t("Map.ogc.loading")}</span>
-          </p>
-        </div>
-      </>
+      <div className="space-y-3">
+        <Skeleton className="h-[320px] w-full rounded-xl" />
+        <p className="flex items-center gap-2 text-sm text-gray-700">
+          <Loader2 className="h-4 w-4 animate-spin" aria-hidden="true" />
+          <span>{t("Map.ogc.loading")}</span>
+        </p>
+      </div>
     );
   }
 
   if (error) {
     return (
-      <>
-        {serviceInfoPanel}
-        <div
-          role="alert"
-          aria-live="assertive"
-          className="rounded-lg border border-red-300 bg-red-50 p-4 text-sm text-red-900"
-        >
-          <p className="font-semibold">{error.title}</p>
-          <p>{error.message}</p>
-          {typeof error.status === "number" && (
-            <p>
-              {t("Map.ogc.debug.status")}: {error.status}
-            </p>
-          )}
-          {error.details && <p className="break-words">{error.details}</p>}
-        </div>
-      </>
+      <div
+        role="alert"
+        aria-live="assertive"
+        className="rounded-lg border border-red-300 bg-red-50 p-4 text-sm text-red-900"
+      >
+        <p className="font-semibold">{error.title}</p>
+        <p>{error.message}</p>
+        {typeof error.status === "number" && (
+          <p>
+            {t("Map.ogc.debug.status")}: {error.status}
+          </p>
+        )}
+        {error.details && <p className="break-words">{error.details}</p>}
+      </div>
     );
   }
 
@@ -738,91 +484,98 @@ export default function OgcServiceMapPreview({
       <LeafletSldLoader />
 
       <div className="relative">
-      {type === "wfs" && sldError && (
-        <div className="mb-2 text-sm text-amber-700">
-          {sldError ?? t("Map.sld.errors.failedToLoadStyle")}
-        </div>
-      )}
-      {type === "wfs" && sldXml && (
-        <div
-          className={
-            showLegendOnMobile
-              ? "mb-3 w-full md:mb-0 md:absolute md:right-4 md:top-12 md:z-[1000] md:w-auto pr-4"
-              : "hidden md:block md:absolute md:right-4 md:top-12 md:z-[1000] md:w-auto"
-          }
-        >
-          <SldLegend
-            sldXml={sldXml}
-            className="md:shadow-lg"
-          />
-        </div>
-      )}
-      <div className="relative h-[400px] w-full overflow-hidden rounded-xl border md:h-[500px]">
-        {type === "wfs" && (
-          <div className="pointer-events-none absolute right-3 top-3 z-[1001] rounded bg-white/95 px-2 py-1 text-xs font-medium text-slate-700 shadow-sm ring-1 ring-slate-200">
-            {t("Map.featureCount", { count: wfsFeatureCount })}
+        {type === "wfs" && sldError && (
+          <div className="mb-2 text-sm text-amber-700">
+            {sldError ?? t("Map.sld.errors.failedToLoadStyle")}
           </div>
         )}
-        <MapContainer
-          center={DEFAULT_CENTER}
-          zoom={DEFAULT_ZOOM}
-          style={{ width: "100%", height: "100%" }}
-        >
-          <TileLayer
-            url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-            attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
-          />
 
-          {type === "wms" && (
-            <WmsLayer
-              parsed={parsed}
-              type={type}
-              t={t}
-              wmsLayerRef={wmsLayerRef}
-              setError={setError}
-              buildWmsGetFeatureInfoUrl={buildWmsGetFeatureInfoUrl}
-              formatPropertiesPopup={formatPropertiesPopup}
-            />
+        {type === "wfs" && sldXml && (
+          <div
+            className={
+              showLegendOnMobile
+                ? "mb-3 w-full pr-4 md:absolute md:right-4 md:top-12 md:z-[1000] md:mb-0 md:w-auto"
+                : "hidden md:absolute md:right-4 md:top-12 md:z-[1000] md:block md:w-auto"
+            }
+          >
+            <SldLegend sldXml={sldXml} className="md:shadow-lg" />
+          </div>
+        )}
+        <div className="relative h-[400px] w-full overflow-hidden rounded-xl border md:h-[500px]">
+          {type === "wfs" && (
+            <div className="pointer-events-none absolute right-3 top-3 z-[1001] rounded bg-white/95 px-2 py-1 text-xs font-medium text-slate-700 shadow-sm ring-1 ring-slate-200">
+              {t("Map.featureCount", { count: wfsFeatureCount })}
+            </div>
           )}
-          {type === "wfs" && wfsData && (
-            <>
-              <GeoJSON
-                key={wfsDataKey}
-                data={wfsData}
-                style={styleFn ?? { color: "#136f63", weight: 2, fillOpacity: 0.2 }}
-                pointToLayer={(feature, latlng) => {
-                  const style = (styleFn?.(feature) ?? {}) as PathOptions & {
-                    radius?: number;
-                  };
-                  const radius =
-                    typeof style.radius === "number" ? style.radius : 4;
 
-                  return L.circleMarker(latlng, {
-                    ...(style as L.CircleMarkerOptions),
-                    radius,
-                    color: style.color ?? "#136f63",
-                    fillColor: style.fillColor ?? "#136f63",
-                    fillOpacity: style.fillOpacity ?? 0.6,
-                  });
-                }}
-                onEachFeature={(feature, leafletLayer) => {
-                  const html = formatPropertiesPopup(
-                    (feature.properties as
-                      | Record<string, unknown>
-                      | undefined) ?? null,
-                  );
-                  if (!html) return;
-                  leafletLayer.bindPopup(html);
-                  leafletLayer.on("click", () => leafletLayer.openPopup());
-                }}
+          <MapContainer
+            center={DEFAULT_CENTER}
+            zoom={DEFAULT_ZOOM}
+            {...(usesProjectedCoordinates
+              ? {
+                  crs: L.CRS.Simple,
+                  minZoom: -10,
+                  maxZoom: 10,
+                  zoomSnap: 0.1,
+                  zoomDelta: 0.5,
+                }
+              : {})}
+            style={{ width: "100%", height: "100%" }}
+          >
+            {!usesProjectedCoordinates && (
+              <TileLayer
+                url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+                attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
               />
-              <FitToGeoJson data={wfsData} />
-            </>
-          )}
+            )}
 
-          {parsed?.bbox && <FitToBbox bbox={parsed.bbox} />}
-        </MapContainer>
-      </div>
+            {type === "wms" && (
+              <WmsLayer
+                parsed={parsed}
+                t={t}
+                wmsLayerRef={wmsLayerRef}
+                setError={setError}
+              />
+            )}
+
+            {type === "wfs" && wfsData && (
+              <>
+                <GeoJSON
+                  key={wfsLayerKey}
+                  data={wfsData}
+                  style={styleFn ?? { color: "#136f63", weight: 2, fillOpacity: 0.2 }}
+                  pointToLayer={(feature, latlng) => {
+                    const style = (styleFn?.(feature) ?? {}) as PathOptions & {
+                      radius?: number;
+                    };
+                    const radius =
+                      typeof style.radius === "number" ? style.radius : 4;
+
+                    return L.circleMarker(latlng, {
+                      ...(style as L.CircleMarkerOptions),
+                      radius,
+                      color: style.color ?? "#136f63",
+                      fillColor: style.fillColor ?? "#136f63",
+                      fillOpacity: style.fillOpacity ?? 0.6,
+                    });
+                  }}
+                  onEachFeature={(feature, leafletLayer) => {
+                    const html = formatPropertiesPopup(
+                      (feature.properties as Record<string, unknown> | undefined) ??
+                        null,
+                    );
+                    if (!html) return;
+                    leafletLayer.bindPopup(html);
+                    leafletLayer.on("click", () => leafletLayer.openPopup());
+                  }}
+                />
+                <FitToGeoJson key={`${wfsLayerKey}-fit`} data={wfsData} />
+              </>
+            )}
+
+            {parsed?.bbox && <FitToBbox bbox={parsed.bbox} />}
+          </MapContainer>
+        </div>
       </div>
     </div>
   );
