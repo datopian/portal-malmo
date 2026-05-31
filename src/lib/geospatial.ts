@@ -89,10 +89,11 @@ export function getEpsgFromGeoJsonCrs(value: unknown): number | null {
   const name = (props as Record<string, unknown>).name;
   if (typeof name !== "string") return null;
 
-  const match = name.match(/EPSG(?::|::)\s*(\d+)/i);
-  if (!match?.[1]) return null;
+  const matches = Array.from(name.matchAll(/EPSG(?::|::)(?:[^0-9]*)(\d+)/gi));
+  const lastMatch = matches.at(-1)?.[1];
+  if (!lastMatch) return null;
 
-  const epsg = Number(match[1]);
+  const epsg = Number(lastMatch);
   return Number.isFinite(epsg) ? epsg : null;
 }
 
@@ -104,6 +105,14 @@ function collectCoordinateNumbers(
   if (out.length >= limit) return;
 
   if (Array.isArray(value)) {
+    if (value.every((item) => typeof item === "number")) {
+      const [x, y] = value;
+      if (Number.isFinite(x)) out.push(x);
+      if (out.length >= limit) return;
+      if (Number.isFinite(y)) out.push(y);
+      return;
+    }
+
     for (const item of value) {
       if (out.length >= limit) break;
       collectCoordinateNumbers(item, out, limit);
