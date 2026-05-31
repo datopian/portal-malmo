@@ -81,11 +81,11 @@ function stripOgcNoise(params: URLSearchParams) {
 
 function removeLayerSelectors(params: URLSearchParams, type: OgcType) {
   if (type === "wms") {
-    deleteParams(params, "typename", "typenames", "typeNames");
+    deleteParams(params, "layers");
     return;
   }
 
-  deleteParams(params, "layers");
+  deleteParams(params, "typename", "typenames", "typeNames");
 }
 
 export function normalizeOgcServiceUrl(
