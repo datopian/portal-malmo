@@ -129,7 +129,7 @@ export default function DwgPreview({
               <img
                 src={previewSrc}
                 alt={resourceName}
-                className="block max-w-full max-h-[72vh] w-auto h-auto border border-border bg-white shadow-sm select-none"
+                className="block max-w-full max-h-[72vh] w-auto h-auto bg-white  select-none"
                 draggable={false}
                 style={{ transform: `scale(${scale})`, transformOrigin: "center center" }}
               />
