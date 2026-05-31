@@ -59,9 +59,11 @@ export function getResourcePreviewModel(
   const format = getResourceFormat(resource);
   const ogcPreview = getOgcPreviewConfig(resource);
   const ogcLinkGroups = getOgcLinkGroups(resource);
-  const sldUrl = getDatasetSldUrl(dataset);
   const previewKind = resolvePreviewKind(resource, format, ogcPreview);
-  const hasSldLegend = !!sldUrl && (format === "geojson" || ogcPreview?.type === "wfs");
+  const supportsSldLegend =
+    previewKind === "geojson" || (previewKind === "ogc" && ogcPreview?.type === "wfs");
+  const sldUrl = supportsSldLegend ? getDatasetSldUrl(dataset) : undefined;
+  const hasSldLegend = !!sldUrl;
 
   return {
     previewKind,

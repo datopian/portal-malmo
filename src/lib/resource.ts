@@ -31,12 +31,26 @@ export function hasDwgPreview(resource: Pick<Resource, "format" | "mimetype" | "
 
 export function supportsPreview(resource: Resource) {
   const format = getResourceFormat(resource);
+  const hasUrl = typeof resource.url === "string" && resource.url.trim().length > 0;
+
+  if (resource.iframe || resource.datastore_active) {
+    return true;
+  }
+
+  if (hasOgcPreview(resource)) {
+    return true;
+  }
+
+  if (!hasUrl) {
+    return false;
+  }
 
   return (
-    resource.iframe ||
     hasDwgPreview(resource) ||
-    hasOgcPreview(resource) ||
-    SUPPORTED_PREVIEW_FORMATS.has(format)
+    (SUPPORTED_PREVIEW_FORMATS.has(format) &&
+      format !== "wms" &&
+      format !== "wfs" &&
+      format !== "gpkg")
   );
 }
 
