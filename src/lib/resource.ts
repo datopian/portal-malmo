@@ -17,6 +17,19 @@ export function getResourceFormat(resource: Pick<Resource, "format">) {
 
 export function supportsPreview(resource: Resource) {
   const format = getResourceFormat(resource);
+  const hasUrl = typeof resource.url === "string" && resource.url.trim().length > 0;
+
+  if (resource.iframe || resource.datastore_active) {
+    return true;
+  }
+
+  if (hasOgcPreview(resource)) {
+    return true;
+  }
+
+  if (!hasUrl) {
+    return false;
+  }
 
   return (
     resource.iframe ||
