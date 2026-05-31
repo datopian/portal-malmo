@@ -129,6 +129,26 @@ This comes from LibreDWG.
 
 Our CKAN code does not parse CAD geometry itself. It delegates that work to `dwg2SVG`, then post-processes the SVG output to make it easier to display in the portal.
 
+### 4.1 About LibreDWG
+
+LibreDWG is a real external dependency, not custom code in this project.
+
+In practice, it is trustable enough for preview generation because:
+- it is a maintained GNU project
+- it is open source
+- it is the component that actually understands DWG structure for this pipeline
+
+But it is important to understand its limits:
+- it is not a perfect or authoritative renderer for every DWG file
+- some advanced or CAD-specific entities may still be skipped or rendered incompletely
+- preview quality depends partly on LibreDWG coverage, not only on our frontend or CKAN wrapper
+
+So the right expectation is:
+- good and reasonable for previews
+- not guaranteed to be pixel-perfect for every complex DWG
+
+The version used by the running CKAN image is pinned in the Docker build, so it should be reviewed and updated periodically as newer LibreDWG releases become available.
+
 ### 5. The two conversion strategies
 
 The backend always tries two SVG conversions:
