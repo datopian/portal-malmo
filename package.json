@@ -39,6 +39,7 @@
     "react-leaflet": "^5.0.0",
     "react-markdown": "^10.1.0",
     "react-pdf": "^10.3.0",
+    "react-zoom-pan-pinch": "^4.0.3",
     "rehype-raw": "^7.0.0",
     "remark-gfm": "^4.0.1",
     "start-server-and-test": "^2.1.3",
