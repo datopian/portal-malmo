@@ -394,6 +394,13 @@ export default class CKAN {
     }
   }
 
+  getDwgPreviewUrl(resourceId: string) {
+    const baseUrl = `${this.DMS.replace(/\/$/, "")}/`;
+    const url = new URL("api/3/action/dwg_preview_convert", baseUrl);
+    url.searchParams.set("resource_id", resourceId);
+    return url.toString();
+  }
+
   async getResourceInfo(resourceId: string) {
     const response = await fetchRetry(
       `${this.DMS}/api/3/action/datastore_info`,

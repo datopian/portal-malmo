@@ -3,6 +3,7 @@ import { hasOgcPreview } from "@/lib/ogc";
 
 export const SUPPORTED_PREVIEW_FORMATS = new Set([
   "csv",
+  "dwg",
   "pdf",
   "geojson",
   "wms",
@@ -15,11 +16,25 @@ export function getResourceFormat(resource: Pick<Resource, "format">) {
   return resource.format?.toLowerCase() ?? "";
 }
 
+export function hasDwgPreview(resource: Pick<Resource, "format" | "mimetype" | "url">) {
+  const format = getResourceFormat(resource);
+  const mimetype = resource.mimetype?.toLowerCase() ?? "";
+  const url = resource.url?.toLowerCase() ?? "";
+
+  return (
+    format === "dwg" ||
+    format.includes("dwg") ||
+    mimetype.includes("dwg") ||
+    url.endsWith(".dwg")
+  );
+}
+
 export function supportsPreview(resource: Resource) {
   const format = getResourceFormat(resource);
 
   return (
     resource.iframe ||
+    hasDwgPreview(resource) ||
     hasOgcPreview(resource) ||
     SUPPORTED_PREVIEW_FORMATS.has(format)
   );
@@ -71,6 +86,7 @@ export const RESOURCE_COLORS: Record<string, string> = {
   jpg: "#651B6D",
   jpeg: "#4F1D76",
   svg: "#3D1F6E",
+  dwg: "#6F5400",
 
   // Services / APIs
   api: "#2E4F2E",

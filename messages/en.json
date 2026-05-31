@@ -134,7 +134,11 @@
     "errorLoadingGeoJSON": "Error loading GeoJSON data",
     "fitWidth": "Fit width",
     "failedToLoad": "Failed to load data",
+    "failedToLoadDwg": "Failed to load DWG preview",
     "notSupported": "Preview not supported",
+    "dwgPreviewLabel": "DWG preview for {name}",
+    "zoomIn": "Zoom in",
+    "zoomOut": "Zoom out",
     "mapPreviewLabel": "Map preview for {name}"
   },
   "DataExplorer": {

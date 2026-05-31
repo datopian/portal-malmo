@@ -9,6 +9,7 @@ import { DataExplorer } from "@/components/data-explorer/DataExplorer";
 import { Button } from "@/components/ui/button";
 import { Heading } from "@/components/ui/heading";
 import IframeWrapper from "@/components/ui/iframe";
+import { ckan } from "@/lib/ckan";
 import { getLocalizedText } from "@/lib/ckan-translations";
 import {
   getResourcePreviewModel,
@@ -16,6 +17,7 @@ import {
 } from "@/lib/resource-preview";
 import { Dataset, Resource } from "@/schemas/ckan";
 
+import DwgPreview from "./DwgPreview";
 import JsonUrlViewer from "./JSONViewer";
 import ResourceOgcLinks from "./ResourceOgcLinks";
 
@@ -49,7 +51,7 @@ function PreviewRenderer({
   ogcPreview,
   showLegendOnMobile,
   notSupportedLabel,
-}: PreviewRendererProps) {
+}: Readonly<PreviewRendererProps>) {
   switch (previewKind) {
     case "geojson":
       return (
@@ -84,6 +86,14 @@ function PreviewRenderer({
     case "csv":
       return <CSVExplorerWrapper dataUrl={resource.url ?? ""} />;
 
+    case "dwg":
+      return (
+        <DwgPreview
+          url={ckan().getDwgPreviewUrl(resource.id)}
+          resourceName={resourceName}
+        />
+      );
+
     case "pdf":
       return <PdfViewerClient url={resource.url ?? ""} />;
 
@@ -100,10 +110,10 @@ function PreviewRenderer({
 export default function ResourcePreview({
   resource,
   dataset,
-}: {
+}: Readonly<{
   resource: Resource;
   dataset: Dataset;
-}) {
+}>) {
   const t = useTranslations();
   const locale = useLocale();
   const [showMobileLegend, setShowMobileLegend] = React.useState(false);

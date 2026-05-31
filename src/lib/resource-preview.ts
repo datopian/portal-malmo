@@ -6,7 +6,7 @@ import {
   getOgcLinkGroups,
   getOgcPreviewConfig,
 } from "@/lib/ogc";
-import { getResourceFormat } from "@/lib/resource";
+import { getResourceFormat, hasDwgPreview } from "@/lib/resource";
 
 export type ResourcePreviewKind =
   | "geojson"
@@ -14,6 +14,7 @@ export type ResourcePreviewKind =
   | "json"
   | "datastore"
   | "csv"
+  | "dwg"
   | "pdf"
   | "iframe"
   | "unsupported";
@@ -40,6 +41,7 @@ function resolvePreviewKind(
 ): ResourcePreviewKind {
   if (format === "geojson") return "geojson";
   if (format === "gpkg") return ogcPreview ? "ogc" : "unsupported";
+  if (hasDwgPreview(resource)) return "dwg";
   if (ogcPreview) return "ogc";
   if (format === "json") return "json";
   if (resource.datastore_active) return "datastore";

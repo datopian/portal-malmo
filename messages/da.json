@@ -134,7 +134,11 @@
     "errorLoadingGeoJSON": "Fejl ved indlæsning af GeoJSON-data",
     "fitWidth": "Tilpas til sidebredde",
     "failedToLoad": "Kunne ikke indlæse data",
+    "failedToLoadDwg": "Kunne ikke indlæse DWG-forhåndsvisningen",
     "notSupported": "Forhåndsvisning understøttes ikke",
+    "dwgPreviewLabel": "DWG-forhåndsvisning for {name}",
+    "zoomIn": "Zoom ind",
+    "zoomOut": "Zoom ud",
     "mapPreviewLabel": "Kortforhåndsvisning for {name}"
   },
 
