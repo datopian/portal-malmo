@@ -1,30 +1,42 @@
 import { Resource } from "@/schemas/ckan";
 import { hasOgcPreview } from "@/lib/ogc";
 
-export const supportedPreviewFormats = [
+export const SUPPORTED_PREVIEW_FORMATS = new Set([
   "csv",
-  //"json",
   "pdf",
-  //"xlsx",
-  //"xls",
-  //"kml",
   "geojson",
   "wms",
   "wfs",
-  "json"
-  //"shp",
-];
+  "json",
+  "gpkg",
+]);
 
-export const supportsPreview = (res: Resource) => {
+export function getResourceFormat(resource: Pick<Resource, "format">) {
+  return resource.format?.toLowerCase() ?? "";
+}
+
+export function supportsPreview(resource: Resource) {
+  const format = getResourceFormat(resource);
+  const hasUrl = typeof resource.url === "string" && resource.url.trim().length > 0;
+
+  if (resource.iframe || resource.datastore_active) {
+    return true;
+  }
+
+  if (hasOgcPreview(resource)) {
+    return true;
+  }
+
+  if (!hasUrl) {
+    return false;
+  }
+
   return (
-    res.iframe ||
-    hasOgcPreview(res) ||
-    supportedPreviewFormats.some(
-      (format) => format.toLowerCase() === (res.format ?? "").toLowerCase()
-    )
+    resource.iframe ||
+    hasOgcPreview(resource) ||
+    SUPPORTED_PREVIEW_FORMATS.has(format)
   );
-};
-
+}
 
 export const RESOURCE_COLORS: Record<string, string> = {
   // Documents
@@ -80,3 +92,7 @@ export const RESOURCE_COLORS: Record<string, string> = {
 
   default: "#3F4652",
 };
+
+export function getResourceColor(format?: string | null) {
+  return RESOURCE_COLORS[format?.toLowerCase() ?? ""] ?? RESOURCE_COLORS.default;
+}
