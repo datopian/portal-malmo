@@ -135,6 +135,7 @@
     "fitWidth": "Anpassa till sidbredd",
     "failedToLoad": "Misslyckades med att ladda data",
     "failedToLoadDwg": "Det gick inte att ladda DWG-förhandsvisningen",
+    "dwgPreviewMayBeInaccurate": "Denna DWG-förhandsvisning kan vara felaktig. Ladda ner originalfilen för exakt visning.",
     "notSupported": "Förhandsvisning stöds inte",
     "dwgPreviewLabel": "DWG-förhandsvisning för {name}",
     "zoomIn": "Zooma in",

@@ -135,6 +135,7 @@
     "fitWidth": "Fit width",
     "failedToLoad": "Failed to load data",
     "failedToLoadDwg": "Failed to load DWG preview",
+    "dwgPreviewMayBeInaccurate": "This DWG preview may be inaccurate. Please download the original file for precise viewing.",
     "notSupported": "Preview not supported",
     "dwgPreviewLabel": "DWG preview for {name}",
     "zoomIn": "Zoom in",

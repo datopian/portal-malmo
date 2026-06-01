@@ -135,6 +135,7 @@
     "fitWidth": "Tilpas til sidebredde",
     "failedToLoad": "Kunne ikke indlæse data",
     "failedToLoadDwg": "Kunne ikke indlæse DWG-forhåndsvisningen",
+    "dwgPreviewMayBeInaccurate": "Denne DWG-forhåndsvisning kan være unøjagtig. Download originalfilen for præcis visning.",
     "notSupported": "Forhåndsvisning understøttes ikke",
     "dwgPreviewLabel": "DWG-forhåndsvisning for {name}",
     "zoomIn": "Zoom ind",

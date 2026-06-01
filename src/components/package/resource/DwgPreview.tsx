@@ -28,12 +28,14 @@ export default function DwgPreview({
   const [hasError, setHasError] = useState(false);
   const [previewSrc, setPreviewSrc] = useState(url);
   const [scale, setScale] = useState(initialScale);
+  const [isSuspiciousSvg, setIsSuspiciousSvg] = useState(false);
 
   useEffect(() => {
     setIsLoaded(false);
     setHasError(false);
     setPreviewSrc(url);
     setScale(initialScale);
+    setIsSuspiciousSvg(false);
   }, [url, initialScale]);
 
   useEffect(() => {
@@ -49,6 +51,7 @@ export default function DwgPreview({
         if (!contentType.includes("svg")) return;
 
         const svgText = await response.text();
+        const suspicious = detectSuspiciousDwgSvg(svgText);
         const boostedSvg = enhanceSvgForPreview(svgText);
 
         const blob = new Blob([boostedSvg], { type: "image/svg+xml" });
@@ -58,6 +61,7 @@ export default function DwgPreview({
           setPreviewSrc(blobUrl);
           setIsLoaded(false);
           setHasError(false);
+          setIsSuspiciousSvg(suspicious);
         }
       } catch {
         // Keep original URL if preprocessing fails.
@@ -103,6 +107,12 @@ export default function DwgPreview({
         </div>
       </div>
 
+      {isSuspiciousSvg && (
+        <div className="mb-2 border border-amber-300 bg-amber-50 px-3 py-2 text-sm text-amber-900">
+          {t("Preview.dwgPreviewMayBeInaccurate")}
+        </div>
+      )}
+
       <div className="overflow-hidden border bg-background max-h-[85vh]">
         <figure className="min-h-[18rem] p-3">
           <figcaption className="sr-only">
@@ -115,9 +125,13 @@ export default function DwgPreview({
               alt=""
               aria-hidden="true"
               className="hidden"
-              onLoad={() => {
+              onLoad={(event) => {
                 setIsLoaded(true);
                 setHasError(false);
+                const imageElement = event.currentTarget;
+                if (detectSuspiciousImageDimensions(imageElement.naturalWidth, imageElement.naturalHeight)) {
+                  setIsSuspiciousSvg(true);
+                }
               }}
               onError={() => {
                 setHasError(true);
@@ -157,4 +171,35 @@ function enhanceSvgForPreview(svgText: string) {
   }
 
   return svgText.replace(/<svg\b[^>]*>/i, (rootTag) => `${rootTag}${styleBlock}`);
+}
+
+function detectSuspiciousDwgSvg(svgText: string) {
+  const viewBoxMatch = svgText.match(
+    /viewBox="(-?\d+(?:\.\d+)?)\s+(-?\d+(?:\.\d+)?)\s+(-?\d+(?:\.\d+)?)\s+(-?\d+(?:\.\d+)?)"/i,
+  );
+
+  const viewBoxWidth = viewBoxMatch ? Number(viewBoxMatch[3]) : 0;
+  const viewBoxHeight = viewBoxMatch ? Number(viewBoxMatch[4]) : 0;
+
+  const hasExtremeCoords = /(^|[\s,>])\d{12,}(?:\.\d+)?(?=$|[\s,<"])/.test(svgText);
+  const drawableCount = (
+    svgText.match(/<(path|line|polyline|polygon|circle|ellipse|text)\b/gi) || []
+  ).length;
+
+  const hugeCanvas = viewBoxWidth > 1_000_000 || viewBoxHeight > 1_000_000;
+  const verySparse =
+    viewBoxWidth > 0 && viewBoxHeight > 0
+      ? drawableCount / (viewBoxWidth * viewBoxHeight) < 1e-10
+      : false;
+
+  return hugeCanvas || hasExtremeCoords || verySparse;
+}
+
+function detectSuspiciousImageDimensions(width: number, height: number) {
+  if (!width || !height) return false;
+  const maxDimension = Math.max(width, height);
+  const minDimension = Math.min(width, height);
+  const ratio = maxDimension / Math.max(1, minDimension);
+
+  return maxDimension > 8000 || ratio > 25;
 }
