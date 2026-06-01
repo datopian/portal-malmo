@@ -119,37 +119,46 @@ export default function DwgPreview({
             {t("Preview.dwgPreviewLabel", { name: resourceName })}
           </figcaption>
 
-          <div className="flex min-h-[75vh] items-center justify-center overflow-auto bg-white">
-            <img
-              src={previewSrc}
-              alt=""
-              aria-hidden="true"
-              className="hidden"
-              onLoad={(event) => {
-                setIsLoaded(true);
-                setHasError(false);
-                const imageElement = event.currentTarget;
-                if (detectSuspiciousImageDimensions(imageElement.naturalWidth, imageElement.naturalHeight)) {
-                  setIsSuspiciousSvg(true);
-                }
-              }}
-              onError={() => {
-                setHasError(true);
-                setIsLoaded(false);
-              }}
-            />
-
-            {isLoaded && !hasError && (
+          <div className="relative flex min-h-[75vh] items-center justify-center overflow-auto bg-white">
+            {!hasError && (
               <img
                 src={previewSrc}
                 alt={resourceName}
-                className="block max-w-full max-h-[72vh] w-auto h-auto bg-white  select-none"
+                className={[
+                  "block max-w-full max-h-[72vh] w-auto h-auto bg-white select-none transition-opacity duration-150",
+                  isLoaded ? "opacity-100" : "opacity-0",
+                ].join(" ")}
                 draggable={false}
                 style={{ transform: `scale(${scale})`, transformOrigin: "center center" }}
+                onLoad={(event) => {
+                  const imageElement = event.currentTarget;
+                  if (
+                    detectSuspiciousImageDimensions(
+                      imageElement.naturalWidth,
+                      imageElement.naturalHeight,
+                    )
+                  ) {
+                    setIsSuspiciousSvg(true);
+                  }
+
+                  // Wait one paint frame so we hide loading only when image is actually rendered.
+                  requestAnimationFrame(() => {
+                    setIsLoaded(true);
+                    setHasError(false);
+                  });
+                }}
+                onError={() => {
+                  setHasError(true);
+                  setIsLoaded(false);
+                }}
               />
             )}
 
-            {!isLoaded && !hasError && <div className="p-4 text-sm">{t("Common.loading")}</div>}
+            {!isLoaded && !hasError && (
+              <div className="pointer-events-none absolute inset-0 flex items-center justify-center p-4 text-sm">
+                {t("Common.loading")}
+              </div>
+            )}
 
             {hasError && <div className="p-4 text-sm">{t("Preview.failedToLoadDwg")}</div>}
           </div>
