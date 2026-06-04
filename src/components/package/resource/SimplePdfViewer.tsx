@@ -20,6 +20,7 @@ type Props = {
 
   minFitWidth?: number;
   fitPaddingPx?: number;
+  initialFitWidth?: boolean;
 };
 
 pdfjs.GlobalWorkerOptions.workerSrc = new URL(
@@ -40,11 +41,12 @@ export default function SimplePdfViewer({
   renderAnnotationLayer = false,
   minFitWidth = 320,
   fitPaddingPx = 24,
+  initialFitWidth = false,
 }: Props) {
   const [numPages, setNumPages] = useState<number>(0);
   const [page, setPage] = useState<number>(initialPage);
   const [zoom, setZoom] = useState<number>(initialZoom);
-  const [fitWidth, setFitWidth] = useState<boolean>(false);
+  const [fitWidth, setFitWidth] = useState<boolean>(initialFitWidth);
   const t = useTranslations();
 
   const viewerScrollRef = useRef<HTMLDivElement | null>(null);
@@ -58,8 +60,8 @@ export default function SimplePdfViewer({
     setNumPages(0);
     setPage(initialPage);
     setZoom(initialZoom);
-    setFitWidth(false);
-  }, [url, initialPage, initialZoom]);
+    setFitWidth(initialFitWidth);
+  }, [url, initialPage, initialZoom, initialFitWidth]);
 
   const canPrev = page > 1;
   const canNext = numPages > 0 && page < numPages;

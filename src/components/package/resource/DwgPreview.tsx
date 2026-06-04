@@ -1,74 +1,57 @@
 "use client";
 
-import { Button } from "@/components/ui/button";
 import { useTranslations } from "next-intl";
 import { useEffect, useState } from "react";
+
+import SimplePdfViewer from "./SimplePdfViewer";
 
 type Props = {
   url: string;
   resourceName: string;
   className?: string;
-  initialScale?: number;
-  minScale?: number;
-  maxScale?: number;
-  wheelStep?: number;
 };
 
-export default function DwgPreview({
-  url,
-  resourceName,
-  className,
-  initialScale = 1,
-  minScale = 0.75,
-  maxScale = 8,
-  wheelStep = 0.15,
-}: Props) {
+export default function DwgPreview({ url, className }: Readonly<Props>) {
   const t = useTranslations();
-  const [isLoaded, setIsLoaded] = useState(false);
-  const [hasError, setHasError] = useState(false);
-  const [previewSrc, setPreviewSrc] = useState(url);
-  const [scale, setScale] = useState(initialScale);
-  const [isSuspiciousSvg, setIsSuspiciousSvg] = useState(false);
-
-  useEffect(() => {
-    setIsLoaded(false);
-    setHasError(false);
-    setPreviewSrc(url);
-    setScale(initialScale);
-    setIsSuspiciousSvg(false);
-  }, [url, initialScale]);
+  const [previewUrl, setPreviewUrl] = useState<string | null>(null);
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
     let isCancelled = false;
     let blobUrl: string | null = null;
 
-    const buildBoostedSvg = async () => {
+    const loadPreview = async () => {
       try {
-        const response = await fetch(url, { credentials: "include" });
-        if (!response.ok) return;
-
-        const contentType = response.headers.get("content-type") || "";
-        if (!contentType.includes("svg")) return;
-
-        const svgText = await response.text();
-        const suspicious = detectSuspiciousDwgSvg(svgText);
-        const boostedSvg = enhanceSvgForPreview(svgText);
-
-        const blob = new Blob([boostedSvg], { type: "image/svg+xml" });
-        blobUrl = URL.createObjectURL(blob);
-
-        if (!isCancelled) {
-          setPreviewSrc(blobUrl);
-          setIsLoaded(false);
-          setHasError(false);
-          setIsSuspiciousSvg(suspicious);
+        const response = await fetch(url);
+        if (!response.ok) {
+          throw new Error(await getPreviewErrorMessage(response, t));
         }
-      } catch {
-        // Keep original URL if preprocessing fails.
+
+        const blob = await response.blob();
+        if (!blob.size || !blob.type.includes("pdf")) {
+          throw new Error("The preview service returned an unexpected response.");
+        }
+
+        blobUrl = URL.createObjectURL(blob);
+        if (!isCancelled) {
+          setPreviewUrl(blobUrl);
+          setErrorMessage(null);
+          setIsLoading(false);
+        }
+      } catch (error) {
+        if (!isCancelled) {
+          setPreviewUrl(null);
+          setErrorMessage(error instanceof Error ? error.message : null);
+          setIsLoading(false);
+        }
       }
     };
 
-    buildBoostedSvg();
+    setPreviewUrl(null);
+    setErrorMessage(null);
+    setIsLoading(true);
+    loadPreview();
 
     return () => {
       isCancelled = true;
@@ -78,137 +61,69 @@ export default function DwgPreview({
     };
   }, [url]);
 
-  return (
-    <div className={["w-full", className].filter(Boolean).join(" ")}>
-      <div className="mb-2 flex flex-wrap items-center gap-2 border bg-background p-2">
-        <div className="ml-auto flex items-center gap-2">
-          <span className="w-14 text-center text-sm">{Math.round(scale * 100)}%</span>
-          <Button
-            type="button"
-            variant="outline"
-            size="sm"
-            onClick={() => setScale((s) => Math.max(minScale, s - wheelStep))}
-            aria-label={t("Preview.zoomOut")}
-          >
-            &minus;
-          </Button>
-          <Button
-            type="button"
-            variant="outline"
-            size="sm"
-            onClick={() => setScale((s) => Math.min(maxScale, s + wheelStep))}
-            aria-label={t("Preview.zoomIn")}
-          >
-            +
-          </Button>
-          <Button type="button" variant="outline" size="sm" onClick={() => setScale(initialScale)}>
-            {t("Common.reset")}
-          </Button>
-        </div>
+  if (isLoading) {
+    return (
+      <div className={["overflow-hidden border bg-background max-h-[85vh]", className]
+        .filter(Boolean)
+        .join(" ")}>
+        <div className="p-4 text-sm">{t("Common.loading")}</div>
       </div>
-
-      {isSuspiciousSvg && (
-        <div className="mb-2 border border-amber-300 bg-amber-50 px-3 py-2 text-sm text-amber-900">
-          {t("Preview.dwgPreviewMayBeInaccurate")}
-        </div>
-      )}
-
-      <div className="overflow-hidden border bg-background max-h-[85vh]">
-        <figure className="min-h-[18rem] p-3">
-          <figcaption className="sr-only">
-            {t("Preview.dwgPreviewLabel", { name: resourceName })}
-          </figcaption>
-
-          <div className="relative flex min-h-[75vh] items-center justify-center overflow-auto bg-white">
-            {!hasError && (
-              <img
-                src={previewSrc}
-                alt={resourceName}
-                className={[
-                  "block max-w-full max-h-[72vh] w-auto h-auto bg-white select-none transition-opacity duration-150",
-                  isLoaded ? "opacity-100" : "opacity-0",
-                ].join(" ")}
-                draggable={false}
-                style={{ transform: `scale(${scale})`, transformOrigin: "center center" }}
-                onLoad={(event) => {
-                  const imageElement = event.currentTarget;
-                  if (
-                    detectSuspiciousImageDimensions(
-                      imageElement.naturalWidth,
-                      imageElement.naturalHeight,
-                    )
-                  ) {
-                    setIsSuspiciousSvg(true);
-                  }
-
-                  // Wait one paint frame so we hide loading only when image is actually rendered.
-                  requestAnimationFrame(() => {
-                    setIsLoaded(true);
-                    setHasError(false);
-                  });
-                }}
-                onError={() => {
-                  setHasError(true);
-                  setIsLoaded(false);
-                }}
-              />
-            )}
-
-            {!isLoaded && !hasError && (
-              <div className="pointer-events-none absolute inset-0 flex items-center justify-center p-4 text-sm">
-                {t("Common.loading")}
-              </div>
-            )}
-
-            {hasError && <div className="p-4 text-sm">{t("Preview.failedToLoadDwg")}</div>}
-          </div>
-        </figure>
-      </div>
-    </div>
-  );
-}
-
-function enhanceSvgForPreview(svgText: string) {
-  const hasStyle = svgText.includes("ckan-dwg-preview-stroke-style");
-  const styleBlock =
-    '<style id="ckan-dwg-preview-stroke-style">svg path,svg line,svg polyline,svg polygon,svg circle,svg ellipse,svg use{stroke:#111 !important;stroke-width:1.6px !important;vector-effect:non-scaling-stroke !important;stroke-linecap:round;stroke-linejoin:round;stroke-opacity:1 !important;}</style>';
-
-  if (hasStyle) return svgText;
-
-  if (svgText.includes("</defs>")) {
-    return svgText.replace("</defs>", `</defs>${styleBlock}`);
+    );
   }
 
-  return svgText.replace(/<svg\b[^>]*>/i, (rootTag) => `${rootTag}${styleBlock}`);
+  if (errorMessage || !previewUrl) {
+    return (
+      <div className={["overflow-hidden border bg-background max-h-[85vh]", className]
+        .filter(Boolean)
+        .join(" ")}>
+        <div className="space-y-2 p-4 text-sm">
+          <div>{t("Preview.failedToLoadDwg")}</div>
+          {errorMessage && (
+            <div className="rounded border border-amber-300 bg-amber-50 px-3 py-2 text-amber-900">
+              {errorMessage}
+            </div>
+          )}
+        </div>
+      </div>
+    );
+  }
+
+  return <SimplePdfViewer url={previewUrl} className={className} initialFitWidth />;
 }
 
-function detectSuspiciousDwgSvg(svgText: string) {
-  const viewBoxMatch = svgText.match(
-    /viewBox="(-?\d+(?:\.\d+)?)\s+(-?\d+(?:\.\d+)?)\s+(-?\d+(?:\.\d+)?)\s+(-?\d+(?:\.\d+)?)"/i,
-  );
+async function getPreviewErrorMessage(
+  response: Response,
+  t: ReturnType<typeof useTranslations>,
+) {
+  try {
+    const payload = await response.json();
+    const previewReason = payload?.error?.preview_reason?.[0];
+    if (typeof previewReason === "string") {
+      const mapped = getTranslatedPreviewReason(previewReason, t);
+      if (mapped) return mapped;
+    }
 
-  const viewBoxWidth = viewBoxMatch ? Number(viewBoxMatch[3]) : 0;
-  const viewBoxHeight = viewBoxMatch ? Number(viewBoxMatch[4]) : 0;
+    const conversionMessage = payload?.error?.conversion?.[0];
+    if (typeof conversionMessage === "string" && conversionMessage.trim()) {
+      return conversionMessage;
+    }
+  } catch {
+    // Ignore JSON parsing errors and use the generic fallback below.
+  }
 
-  const hasExtremeCoords = /(^|[\s,>])\d{12,}(?:\.\d+)?(?=$|[\s,<"])/.test(svgText);
-  const drawableCount = (
-    svgText.match(/<(path|line|polyline|polygon|circle|ellipse|text)\b/gi) || []
-  ).length;
-
-  const hugeCanvas = viewBoxWidth > 1_000_000 || viewBoxHeight > 1_000_000;
-  const verySparse =
-    viewBoxWidth > 0 && viewBoxHeight > 0
-      ? drawableCount / (viewBoxWidth * viewBoxHeight) < 1e-10
-      : false;
-
-  return hugeCanvas || hasExtremeCoords || verySparse;
+  return t("Preview.dwgPreviewUnavailable");
 }
 
-function detectSuspiciousImageDimensions(width: number, height: number) {
-  if (!width || !height) return false;
-  const maxDimension = Math.max(width, height);
-  const minDimension = Math.min(width, height);
-  const ratio = maxDimension / Math.max(1, minDimension);
-
-  return maxDimension > 8000 || ratio > 25;
+function getTranslatedPreviewReason(
+  reason: string,
+  t: ReturnType<typeof useTranslations>,
+) {
+  switch (reason) {
+    case "modelspace_too_complex":
+      return t("Preview.dwgPreviewTooDetailed");
+    case "preview_unavailable":
+      return t("Preview.dwgPreviewUnavailable");
+    default:
+      return null;
+  }
 }

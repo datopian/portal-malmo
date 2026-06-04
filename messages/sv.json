@@ -4,7 +4,6 @@
     "description": "Hitta öppna data från Malmö stad.",
     "homeTitle": "Hem"
   },
-
   "Common": {
     "organization": "Organisation",
     "organizations": "Organisationer",
@@ -66,7 +65,6 @@
     "toggleNavigationMenu": "Växla navigeringsmeny",
     "switchLanguage": "Byt språk till {language}"
   },
-
   "Dataset": {
     "searchLabel": "Sök datamängder",
     "latest": "Senaste datamängderna",
@@ -77,32 +75,27 @@
     "noResources": "Inga resurser tillgängliga för denna datamängd.",
     "exploreAll": "Utforska alla datamängder"
   },
-
   "Activity": {
     "error": " Fel vid laddning av aktivitetsflöde för {type}: {message}",
     "notFound": "Inga aktiviteter hittades."
   },
-
   "Home": {
     "title": "Öppna data för",
     "titleStrong": "Malmö",
     "tagline": "Hitta öppna data från Malmö stad.",
     "recentUpdates": "Senaste uppdateringar"
   },
-
   "OrganizationsPage": {
     "description": "Utforska den fullständiga listan över organisationer som delar data på vår portal.",
     "searchPlaceholder": "Sök organisationer...",
     "noOrganizations": "Inga organisationer hittades"
   },
-
   "GroupsPage": {
     "description": "Utforska alla grupper som organiserar och kuraterar datamängder efter ämnen och teman.",
     "searchPlaceholder": "Sök teman...",
     "noGroups": "Inga teman hittades",
     "discoverGroups": "Upptäck efter teman"
   },
-
   "Search": {
     "title": "Sök datamängder",
     "subtitle": "Hitta datamängder att utforska, analysera och ladda ner.",
@@ -123,7 +116,6 @@
     "noResultsHelp": "Prova att ta bort ett eller flera filter, kontrollera stavningen eller bläddra bland alla datamängder.",
     "browseAllDatasets": "Bläddra bland alla datamängder"
   },
-
   "Preview": {
     "columns": "Kolumner",
     "searchColumnsPlaceholder": "Sök kolumner...",
@@ -135,6 +127,8 @@
     "fitWidth": "Anpassa till sidbredd",
     "failedToLoad": "Misslyckades med att ladda data",
     "failedToLoadDwg": "Det gick inte att ladda DWG-förhandsvisningen",
+    "dwgPreviewTooDetailed": "Den här DWG-filen är för detaljerad för att förhandsgranskas här. Ladda ner den för att visa alla detaljer.",
+    "dwgPreviewUnavailable": "Förhandsvisning är inte tillgänglig för den här DWG-filen. Ladda ner den för att visa alla detaljer.",
     "dwgPreviewMayBeInaccurate": "Denna DWG-förhandsvisning kan vara felaktig. Ladda ner originalfilen för exakt visning.",
     "notSupported": "Förhandsvisning stöds inte",
     "dwgPreviewLabel": "DWG-förhandsvisning för {name}",
@@ -142,7 +136,6 @@
     "zoomOut": "Zooma ut",
     "mapPreviewLabel": "Kartförhandsvisning för {name}"
   },
-
   "DataExplorer": {
     "filtersAndSettings": "Filter och inställningar",
     "closeSettings": "Stäng inställningar",
@@ -189,7 +182,6 @@
     "showMoreLines": "Visa mer ({count} fler rader)",
     "loadingTable": "Laddar tabell"
   },
-
   "Footer": {
     "contactTitle": "Kontakt",
     "note": "Alla – såväl privatpersoner som privata och offentliga organisationer – får fritt använda de öppna data som finns på denna portal.\nDatan är fri att återanvändas, modifieras och delas.",
@@ -198,7 +190,6 @@
     "exportCatalog": "Exportera DCAT-katalog i <rdf>RDF</rdf> eller <jsonld>JSON-LD</jsonld>",
     "accessibilityStatement": "Tillgänglighetsredogörelse"
   },
-
   "Metadata": {
     "author": "Ansvarig",
     "updateFrequency": "Uppdateringsfrekvens",
@@ -210,7 +201,6 @@
     "issued": "Utfärdad",
     "conformsTo": "Överensstämmer med"
   },
-
   "API": {
     "description": "Få tillgång till resursens data via CKAN Data API med kraftfulla frågemöjligheter. Se <link>DataStore-dokumentationen</link> för mer information.",
     "snippets": {
@@ -223,7 +213,6 @@
       "viaSql": "Fråga data med SQL"
     }
   },
-
   "Map": {
     "featureCount": "Totalt {count} objekt.",
     "sldLegend": {
@@ -260,28 +249,28 @@
         "failedToLoad": "Kunde inte ladda GeoJSON."
       }
     },
-      "ogc": {
-        "loading": "Laddar kartlager...",
-        "serviceInfo": {
-          "title": "Tjänstinformation",
-          "serviceUrlLabel": "Tjänst-URL",
-          "capabilitiesLabel": "GetCapabilities-URL",
-          "openInNewTab": "Öppna {label} i en ny flik",
-          "styleUrlLabel": "SLD style-URL"
-        },
-        "links": {
-          "title": "OGC-tjänstlänkar",
-          "wfsTitle": "WFS",
-          "wmsTitle": "WMS",
-          "serviceApiUrl": "Tjänstens API-URL",
-          "getCapabilitiesUrl": "GetCapabilities-URL",
-          "sldTitle": "SLD-stil",
-          "sldStyleUrl": "SLD-stil-URL",
-          "fullUrl": "Full URL",
-          "open": "Öppna",
-          "openInNewTab": "Öppna {label} i en ny flik"
-        },
-        "popup": {
+    "ogc": {
+      "loading": "Laddar kartlager...",
+      "serviceInfo": {
+        "title": "Tjänstinformation",
+        "serviceUrlLabel": "Tjänst-URL",
+        "capabilitiesLabel": "GetCapabilities-URL",
+        "openInNewTab": "Öppna {label} i en ny flik",
+        "styleUrlLabel": "SLD style-URL"
+      },
+      "links": {
+        "title": "OGC-tjänstlänkar",
+        "wfsTitle": "WFS",
+        "wmsTitle": "WMS",
+        "serviceApiUrl": "Tjänstens API-URL",
+        "getCapabilitiesUrl": "GetCapabilities-URL",
+        "sldTitle": "SLD-stil",
+        "sldStyleUrl": "SLD-stil-URL",
+        "fullUrl": "Full URL",
+        "open": "Öppna",
+        "openInNewTab": "Öppna {label} i en ny flik"
+      },
+      "popup": {
         "noAttributes": "Inga attribut tillgängliga för detta objekt.",
         "featureInfoUnavailable": "Objektinformation är inte tillgänglig för detta lager."
       },

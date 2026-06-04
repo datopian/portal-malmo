@@ -4,7 +4,6 @@
     "description": "Find open data from the City of Malmö.",
     "homeTitle": "Home"
   },
-
   "Common": {
     "organization": "Organization",
     "organizations": "Organizations",
@@ -66,7 +65,6 @@
     "toggleNavigationMenu": "Toggle navigation menu",
     "switchLanguage": "Switch language to {language}"
   },
-
   "Dataset": {
     "searchLabel": "Search datasets",
     "latest": "Latest datasets",
@@ -77,32 +75,27 @@
     "noResources": "No resources available for this dataset.",
     "exploreAll": "Explore all datasets"
   },
-
   "Activity": {
     "error": " Error loading {type} activity stream: {message}",
     "notFound": "No activities found."
   },
-
   "Home": {
     "title": "Open data for",
     "titleStrong": "Malmö",
     "tagline": "Find open data from the City of Malmö.",
     "recentUpdates": "Recent updates"
   },
-
   "OrganizationsPage": {
     "description": "Explore the full list of organizations sharing data on our portal.",
     "searchPlaceholder": "Search organizations...",
     "noOrganizations": "No organizations found"
   },
-
   "GroupsPage": {
     "description": "Explore all themes that organize and curate datasets across topics.",
     "searchPlaceholder": "Search themes...",
     "noGroups": "No theme found",
     "discoverGroups": "Discover by themes"
   },
-
   "Search": {
     "title": "Search Datasets",
     "subtitle": "Find datasets to explore, analyze, and download.",
@@ -123,7 +116,6 @@
     "noResultsHelp": "Try removing one or more filters, checking your spelling, or browsing all datasets.",
     "browseAllDatasets": "Browse all datasets"
   },
-
   "Preview": {
     "columns": "Columns",
     "searchColumnsPlaceholder": "Search columns...",
@@ -134,7 +126,9 @@
     "errorLoadingGeoJSON": "Error loading GeoJSON data",
     "fitWidth": "Fit width",
     "failedToLoad": "Failed to load data",
-    "failedToLoadDwg": "Failed to load DWG preview",
+    "failedToLoadDwg": "DWG preview unavailable",
+    "dwgPreviewTooDetailed": "This DWG file is too detailed to preview here. Download it to view the full details.",
+    "dwgPreviewUnavailable": "Preview isn't available for this DWG file. Download it to view the full details.",
     "dwgPreviewMayBeInaccurate": "This DWG preview may be inaccurate. Please download the original file for precise viewing.",
     "notSupported": "Preview not supported",
     "dwgPreviewLabel": "DWG preview for {name}",
@@ -188,16 +182,14 @@
     "showMoreLines": "Show more ({count} more lines)",
     "loadingTable": "Loading table"
   },
-
   "Footer": {
     "contactTitle": "Contact",
     "note": "Everyone – including private individuals as well as private and public organizations – is free to use the open data available on this portal.\nThe data may be freely reused, modified, and shared.",
     "builtWith": "Built with",
     "onCKAN": "on CKAN Backend",
     "exportCatalog": "Export DCAT catalog in <rdf>RDF</rdf> or <jsonld>JSON-LD</jsonld>",
-    "accessibilityStatement" : "Accessibility statement"
+    "accessibilityStatement": "Accessibility statement"
   },
-
   "Metadata": {
     "author": "Author",
     "updateFrequency": "Update frequency",
@@ -209,7 +201,6 @@
     "issued": "Issued",
     "conformsTo": "Conforms to"
   },
-
   "API": {
     "description": "Access the resource data via the CKAN Data API with powerful query support. See the <link>DataStore documentation</link> for more details.",
     "snippets": {
@@ -222,7 +213,6 @@
       "viaSql": "Query data using SQL"
     }
   },
-
   "Map": {
     "featureCount": "Total of {count} features.",
     "sldLegend": {
@@ -259,28 +249,28 @@
         "failedToLoad": "Failed to load GeoJSON."
       }
     },
-      "ogc": {
-        "loading": "Loading map layer...",
-        "serviceInfo": {
-          "title": "Service details",
-          "serviceUrlLabel": "Service URL",
-          "capabilitiesLabel": "GetCapabilities URL",
-          "openInNewTab": "Open {label} in a new tab",
-          "styleUrlLabel": "SLD style URL"
-        },
-        "links": {
-          "title": "OGC service links",
-          "wfsTitle": "WFS",
-          "wmsTitle": "WMS",
-          "serviceApiUrl": "Service API URL",
-          "getCapabilitiesUrl": "GetCapabilities URL",
-          "sldTitle": "SLD style",
-          "sldStyleUrl": "SLD style URL",
-          "fullUrl": "Full URL",
-          "open": "Open",
-          "openInNewTab": "Open {label} in a new tab"
-        },
-        "popup": {
+    "ogc": {
+      "loading": "Loading map layer...",
+      "serviceInfo": {
+        "title": "Service details",
+        "serviceUrlLabel": "Service URL",
+        "capabilitiesLabel": "GetCapabilities URL",
+        "openInNewTab": "Open {label} in a new tab",
+        "styleUrlLabel": "SLD style URL"
+      },
+      "links": {
+        "title": "OGC service links",
+        "wfsTitle": "WFS",
+        "wmsTitle": "WMS",
+        "serviceApiUrl": "Service API URL",
+        "getCapabilitiesUrl": "GetCapabilities URL",
+        "sldTitle": "SLD style",
+        "sldStyleUrl": "SLD style URL",
+        "fullUrl": "Full URL",
+        "open": "Open",
+        "openInNewTab": "Open {label} in a new tab"
+      },
+      "popup": {
         "noAttributes": "No attributes available for this feature.",
         "featureInfoUnavailable": "Feature info is unavailable for this layer."
       },
