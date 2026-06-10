@@ -20,6 +20,7 @@ import { Dataset, Resource } from "@/schemas/ckan";
 import DwgPreview from "./DwgPreview";
 import JsonUrlViewer from "./JSONViewer";
 import ResourceOgcLinks from "./ResourceOgcLinks";
+import { Info } from "lucide-react";
 
 const PdfViewerClient = dynamic(() => import("./SimplePdfViewer"), {
   ssr: false,
@@ -52,6 +53,9 @@ function PreviewRenderer({
   showLegendOnMobile,
   notSupportedLabel,
 }: Readonly<PreviewRendererProps>) {
+
+  const t = useTranslations();
+
   switch (previewKind) {
     case "geojson":
       return (
@@ -88,10 +92,36 @@ function PreviewRenderer({
 
     case "dwg":
       return (
-        <DwgPreview
-          url={ckan().getDwgPreviewUrl(resource.id)}
-          resourceName={resourceName}
-        />
+        <div className="space-y-3">
+          <Button asChild variant="outline" size="lg" className="">
+            <a
+              href={`https://www.innerscene.com/tools/dwg-viewer?embedded=1&url=${resource.url}`}
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              {t("Preview.openInnerscenePreview")}
+            </a>
+          </Button>
+          <p className="mb-10 text-muted-foreground text-sm flex items-center gap-1">
+            <Info size={16} />
+            {t.rich("Preview.externalPreviewNote", {
+              link: (chunks) => (
+                <a
+                  href="https://www.innerscene.com/tools/dwg-viewer#faq"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-theme-green underline underline-offset-2"
+                >
+                  {chunks}
+                </a>
+              ),
+            })}
+          </p>
+          <DwgPreview
+            url={ckan().getDwgPreviewUrl(resource.id)}
+            resourceName={resourceName}
+          />
+        </div>
       );
 
     case "pdf":
@@ -99,7 +129,11 @@ function PreviewRenderer({
 
     case "iframe":
       return (
-        <IframeWrapper src={resource.url ?? ""} title={resourceName} height={800} />
+        <IframeWrapper
+          src={resource.url ?? ""}
+          title={resourceName}
+          height={800}
+        />
       );
 
     default:

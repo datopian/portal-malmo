@@ -396,8 +396,8 @@ export default class CKAN {
 
   getDwgPreviewUrl(resourceId: string) {
     const baseUrl = `${this.DMS.replace(/\/$/, "")}/`;
-    const url = new URL("api/3/action/dwg_preview_convert", baseUrl);
-    url.searchParams.set("resource_id", resourceId);
+    const url = new URL("api/3/action/convert_dwg", baseUrl);
+    url.searchParams.set("id", resourceId);
     return url.toString();
   }
 

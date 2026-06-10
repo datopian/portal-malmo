@@ -3,15 +3,13 @@
 import { useTranslations } from "next-intl";
 import { useEffect, useState } from "react";
 
-import SimplePdfViewer from "./SimplePdfViewer";
-
 type Props = {
   url: string;
   resourceName: string;
   className?: string;
 };
 
-export default function DwgPreview({ url, className }: Readonly<Props>) {
+export default function DwgPreview({ url, className, resourceName }: Readonly<Props>) {
   const t = useTranslations();
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
@@ -29,7 +27,7 @@ export default function DwgPreview({ url, className }: Readonly<Props>) {
         }
 
         const blob = await response.blob();
-        if (!blob.size || !blob.type.includes("pdf")) {
+        if (!blob.size || !blob.type.includes("png")) {
           throw new Error("The preview service returned an unexpected response.");
         }
 
@@ -66,7 +64,10 @@ export default function DwgPreview({ url, className }: Readonly<Props>) {
       <div className={["overflow-hidden border bg-background max-h-[85vh]", className]
         .filter(Boolean)
         .join(" ")}>
-        <div className="p-4 text-sm">{t("Common.loading")}</div>
+        <div className="space-y-2 p-4 text-sm">
+          <div className="font-medium">{t("Preview.builtInPreviewTitle")}</div>
+          <div>{t("Common.loading")}</div>
+        </div>
       </div>
     );
   }
@@ -77,7 +78,7 @@ export default function DwgPreview({ url, className }: Readonly<Props>) {
         .filter(Boolean)
         .join(" ")}>
         <div className="space-y-2 p-4 text-sm">
-          <div>{t("Preview.failedToLoadDwg")}</div>
+          <div className="font-medium">{t("Preview.builtInPreviewUnavailableTitle")}</div>
           {errorMessage && (
             <div className="rounded border border-amber-300 bg-amber-50 px-3 py-2 text-amber-900">
               {errorMessage}
@@ -88,7 +89,22 @@ export default function DwgPreview({ url, className }: Readonly<Props>) {
     );
   }
 
-  return <SimplePdfViewer url={previewUrl} className={className} initialFitWidth />;
+  return (
+    <div
+      className={["overflow-hidden border bg-background max-h-[85vh]", className]
+        .filter(Boolean)
+        .join(" ")}
+    >
+      <div className="border-b px-4 py-3 text-sm font-medium">
+        {t("Preview.builtInPreviewTitle")}
+      </div>
+      <img
+        src={previewUrl}
+        alt={resourceName}
+        className="h-auto max-h-[85vh] w-full object-contain bg-white"
+      />
+    </div>
+  );
 }
 
 async function getPreviewErrorMessage(
@@ -121,6 +137,7 @@ function getTranslatedPreviewReason(
   switch (reason) {
     case "modelspace_too_complex":
       return t("Preview.dwgPreviewTooDetailed");
+    case "preview_too_sparse":
     case "preview_unavailable":
       return t("Preview.dwgPreviewUnavailable");
     default:
