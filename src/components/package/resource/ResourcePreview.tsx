@@ -58,12 +58,12 @@ function PreviewRenderer({
 
   React.useEffect(() => {
     const dwgProxyUrl = new URL(
-      `/api/dwg?url=${encodeURIComponent(resource.url ?? "")}`,
+      `/api/dwg?url=${resource.url ?? ""}`,
       `${window.location.origin.replace(/\/$/, "")}/`,
     ).toString();
 
     setExternalViewerUrl(
-      `https://www.innerscene.com/tools/dwg-viewer?embedded=1&url=${encodeURIComponent(dwgProxyUrl)}`,
+      `https://www.innerscene.com/tools/dwg-viewer?embedded=1&url=${dwgProxyUrl}`,
     );
   }, [resource.url]);
   switch (previewKind) {
@@ -133,11 +133,11 @@ function PreviewRenderer({
               ),
             })}
           </p>
-          {/*
+          
           <DwgPreview
             url={ckan().getDwgPreviewUrl(resource.id)}
             resourceName={resourceName}
-          />*/}
+          />
         </div>
       );
 
