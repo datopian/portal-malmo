@@ -56,7 +56,6 @@ function PreviewRenderer({
   const t = useTranslations();
 
   const siteOrigin =
-    process.env.NEXT_PUBLIC_SITE_URL ??
     (typeof window !== "undefined" ? window.location.origin : "");
   const dwgProxyUrl = new URL(
     `/api/dwg?url=${encodeURIComponent(resource.url ?? "")}`,
