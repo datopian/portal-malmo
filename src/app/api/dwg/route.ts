@@ -7,23 +7,56 @@ export async function GET(request: Request) {
     return new Response("Missing url param", { status: 400 });
   }
 
-  const response = await fetch(fileUrl);
+  const response = await fetch(fileUrl, {
+    redirect: "follow",
+    cache: "no-store",
+  });
 
-  if (!response.ok || !response.body) {
+  if (!response.ok) {
     return new Response("Failed to fetch file", {
       status: response.status || 500,
     });
   }
 
-  const filename = fileUrl.split("/").pop() || "download";
+  const fileBytes = await response.arrayBuffer();
 
-  return new Response(response.body, {
+  if (!fileBytes.byteLength) {
+    return new Response("Downloaded file is empty", { status: 502 });
+  }
+
+  const filename =
+    getFilenameFromContentDisposition(
+      response.headers.get("content-disposition"),
+    ) ?? getFilenameFromUrl(response.url) ?? getFilenameFromUrl(fileUrl) ?? "download";
+
+  return new Response(fileBytes, {
     status: 200,
     headers: {
       "Content-Type":
         response.headers.get("content-type") ?? "application/octet-stream",
-
       "Content-Disposition": `attachment; filename="${filename}"`,
+      "Content-Length": String(fileBytes.byteLength),
     },
   });
+}
+
+function getFilenameFromUrl(url: string) {
+  try {
+    const pathname = new URL(url).pathname;
+    return pathname.split("/").pop() || null;
+  } catch {
+    return null;
+  }
+}
+
+function getFilenameFromContentDisposition(header: string | null) {
+  if (!header) return null;
+
+  const utf8Match = header.match(/filename\*=UTF-8''([^;]+)/i);
+  if (utf8Match?.[1]) {
+    return decodeURIComponent(utf8Match[1]);
+  }
+
+  const basicMatch = header.match(/filename="?([^"]+)"?/i);
+  return basicMatch?.[1] ?? null;
 }
