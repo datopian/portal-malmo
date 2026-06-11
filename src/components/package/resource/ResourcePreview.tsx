@@ -133,11 +133,11 @@ function PreviewRenderer({
               ),
             })}
           </p>
-          
+          {/* The built-in preview is often inaccurate for complex DWG files, but can still be useful for a quick glance at the content. 
           <DwgPreview
             url={ckan().getDwgPreviewUrl(resource.id)}
             resourceName={resourceName}
-          />
+          />*/}
         </div>
       );
 
