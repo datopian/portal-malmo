@@ -56,8 +56,6 @@ function PreviewRenderer({
   const t = useTranslations();
 
   const dwgUrl = process.env.NEXT_PUBLIC_SITE_URL +`/api/dwg?url=${encodeURIComponent(resource.url ?? "")}`;
-  const iframeSrc = `https://www.innerscene.com/tools/dwg-viewer?embedded=1&url=${encodeURIComponent(dwgUrl)}`;
-
   switch (previewKind) {
     case "geojson":
       return (
@@ -97,7 +95,7 @@ function PreviewRenderer({
         <div className="space-y-3">
           <Button asChild variant="outline" size="lg" className="">
             <a
-              href={`https://www.innerscene.com/tools/dwg-viewer?embedded=1&url=${resource.url}`}
+              href={`https://www.innerscene.com/tools/dwg-viewer?embedded=1&url=${dwgUrl}`}
               target="_blank"
               rel="noopener noreferrer"
             >
@@ -119,19 +117,10 @@ function PreviewRenderer({
               ),
             })}
           </p>
-          <iframe
-            src={iframeSrc}
-            title={resourceName}
-            width="100%"
-            height="600"
-            style={{ border: "none", marginTop: "1rem" }}
-            allowFullScreen
-            className="hidden"
-          />
-          <DwgPreview
+          {/*<DwgPreview
             url={ckan().getDwgPreviewUrl(resource.id)}
             resourceName={resourceName}
-          />
+          />*/}
         </div>
       );
 
