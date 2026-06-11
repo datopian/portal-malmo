@@ -63,7 +63,7 @@ function PreviewRenderer({
     ).toString();
 
     setExternalViewerUrl(
-      `https://www.innerscene.com/tools/dwg-viewer?embedded=1&url=${dwgProxyUrl}`,
+      `https://www.innerscene.com/tools/dwg-viewer?embedded=1&url=${resource.url}`,
     );
   }, [resource.url]);
   switch (previewKind) {
