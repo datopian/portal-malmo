@@ -54,14 +54,18 @@ function PreviewRenderer({
   notSupportedLabel,
 }: Readonly<PreviewRendererProps>) {
   const t = useTranslations();
+  const [externalViewerUrl, setExternalViewerUrl] = React.useState<string>("");
 
-  const siteOrigin =
-    (typeof window !== "undefined" ? window.location.origin : "");
-  const dwgProxyUrl = new URL(
-    `/api/dwg?url=${encodeURIComponent(resource.url ?? "")}`,
-    `${siteOrigin.replace(/\/$/, "")}/`,
-  ).toString();
-  const externalViewerUrl = `https://www.innerscene.com/tools/dwg-viewer?embedded=1&url=${encodeURIComponent(dwgProxyUrl)}`;
+  React.useEffect(() => {
+    const dwgProxyUrl = new URL(
+      `/api/dwg?url=${encodeURIComponent(resource.url ?? "")}`,
+      `${window.location.origin.replace(/\/$/, "")}/`,
+    ).toString();
+
+    setExternalViewerUrl(
+      `https://www.innerscene.com/tools/dwg-viewer?embedded=1&url=${encodeURIComponent(dwgProxyUrl)}`,
+    );
+  }, [resource.url]);
   switch (previewKind) {
     case "geojson":
       return (
@@ -99,15 +103,21 @@ function PreviewRenderer({
     case "dwg":
       return (
         <div className="space-y-3">
-          <Button asChild variant="outline" size="lg" className="">
-            <a
-              href={externalViewerUrl}
-              target="_blank"
-              rel="noopener noreferrer"
-            >
+          {externalViewerUrl ? (
+            <Button asChild variant="outline" size="lg" className="">
+              <a
+                href={externalViewerUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                {t("Preview.openInnerscenePreview")}
+              </a>
+            </Button>
+          ) : (
+            <Button variant="outline" size="lg" disabled>
               {t("Preview.openInnerscenePreview")}
-            </a>
-          </Button>
+            </Button>
+          )}
           <p className="mb-10 text-muted-foreground text-sm flex items-center gap-1">
             <Info size={16} />
             {t.rich("Preview.externalPreviewNote", {
