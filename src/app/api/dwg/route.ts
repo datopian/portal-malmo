@@ -40,6 +40,26 @@ export async function GET(request: Request) {
   });
 }
 
+export async function HEAD(request: Request) {
+  const { searchParams } = new URL(request.url);
+  const fileUrl = searchParams.get("url");
+
+  if (!fileUrl) {
+    return new Response(null, { status: 400 });
+  }
+
+  return new Response(null, { status: 204 });
+}
+
+export async function OPTIONS() {
+  return new Response(null, {
+    status: 204,
+    headers: {
+      Allow: "GET,HEAD,OPTIONS",
+    },
+  });
+}
+
 function getFilenameFromUrl(url: string) {
   try {
     const pathname = new URL(url).pathname;
