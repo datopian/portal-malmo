@@ -2,6 +2,7 @@ const ALLOWED_CORS_ORIGINS = new Set([
   "https://www.innerscene.com",
   "https://innerscene.com",
 ]);
+const MAX_FILE_BYTES = 20 * 1024 * 1024;
 
 export async function GET(request: Request) {
   const { searchParams } = new URL(request.url);
@@ -28,7 +29,30 @@ export async function GET(request: Request) {
     });
   }
 
-  const fileBytes = await response.arrayBuffer();
+  const contentLength = Number(response.headers.get("content-length") ?? "");
+  if (Number.isFinite(contentLength) && contentLength > MAX_FILE_BYTES) {
+    return new Response("File exceeds 20 MB limit", {
+      status: 413,
+      headers: corsHeaders,
+    });
+  }
+
+  let fileBytes: ArrayBuffer;
+  try {
+    fileBytes = await readResponseWithinLimit(response, MAX_FILE_BYTES);
+  } catch (error) {
+    if (error instanceof Error && error.message === "file_too_large") {
+      return new Response("File exceeds 20 MB limit", {
+        status: 413,
+        headers: corsHeaders,
+      });
+    }
+
+    return new Response("Failed to download file", {
+      status: 502,
+      headers: corsHeaders,
+    });
+  }
 
   if (!fileBytes.byteLength) {
     return new Response("Downloaded file is empty", {
@@ -48,7 +72,7 @@ export async function GET(request: Request) {
       ...corsHeaders,
       "Content-Type":
         response.headers.get("content-type") ?? "application/octet-stream",
-      "Content-Disposition": `attachment; filename="${filename}"`,
+      "Content-Disposition": `inline; filename="${filename}"`,
       "Content-Length": String(fileBytes.byteLength),
     },
   });
@@ -99,6 +123,42 @@ function getCorsHeaders(request: Request): Record<string, string> {
   }
 
   return headers;
+}
+
+async function readResponseWithinLimit(
+  response: Response,
+  maxBytes: number,
+) {
+  if (!response.body) {
+    return new ArrayBuffer(0);
+  }
+
+  const reader = response.body.getReader();
+  const chunks: Uint8Array[] = [];
+  let totalBytes = 0;
+
+  while (true) {
+    const { done, value } = await reader.read();
+    if (done) break;
+    if (!value) continue;
+
+    totalBytes += value.byteLength;
+    if (totalBytes > maxBytes) {
+      await reader.cancel("File exceeds size limit");
+      throw new Error("file_too_large");
+    }
+
+    chunks.push(value);
+  }
+
+  const merged = new Uint8Array(totalBytes);
+  let offset = 0;
+  for (const chunk of chunks) {
+    merged.set(chunk, offset);
+    offset += chunk.byteLength;
+  }
+
+  return merged.buffer;
 }
 
 function getFilenameFromUrl(url: string) {
