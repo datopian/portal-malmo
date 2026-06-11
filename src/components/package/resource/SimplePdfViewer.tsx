@@ -1,9 +1,9 @@
 "use client";
 
+import dynamic from "next/dynamic";
 import { useElementWidth } from "@/hooks/element";
 import { useTranslations } from "next-intl";
 import { useEffect, useMemo, useRef, useState } from "react";
-import { Document, Page, pdfjs } from "react-pdf";
 
 type Props = {
   url: string;
@@ -20,12 +20,44 @@ type Props = {
 
   minFitWidth?: number;
   fitPaddingPx?: number;
+  initialFitWidth?: boolean;
 };
 
-pdfjs.GlobalWorkerOptions.workerSrc = new URL(
-  "pdfjs-dist/build/pdf.worker.min.mjs",
-  import.meta.url
-).toString();
+let reactPdfLoader: Promise<typeof import("react-pdf")> | null = null;
+
+async function loadReactPdf() {
+  if (!reactPdfLoader) {
+    reactPdfLoader = import("react-pdf").then((module) => {
+      module.pdfjs.GlobalWorkerOptions.workerSrc = new URL(
+        "pdfjs-dist/build/pdf.worker.min.mjs",
+        import.meta.url
+      ).toString();
+      return module;
+    });
+  }
+
+  return reactPdfLoader;
+}
+
+const PdfDocument = dynamic(async () => {
+  const { Document } = await loadReactPdf();
+
+  return function PdfDocumentComponent(props: React.ComponentProps<typeof Document>) {
+    return <Document {...props} />;
+  };
+}, {
+  ssr: false,
+});
+
+const PdfPage = dynamic(async () => {
+  const { Page } = await loadReactPdf();
+
+  return function PdfPageComponent(props: React.ComponentProps<typeof Page>) {
+    return <Page {...props} />;
+  };
+}, {
+  ssr: false,
+});
 
 
 export default function SimplePdfViewer({
@@ -40,11 +72,12 @@ export default function SimplePdfViewer({
   renderAnnotationLayer = false,
   minFitWidth = 320,
   fitPaddingPx = 24,
+  initialFitWidth = false,
 }: Props) {
   const [numPages, setNumPages] = useState<number>(0);
   const [page, setPage] = useState<number>(initialPage);
   const [zoom, setZoom] = useState<number>(initialZoom);
-  const [fitWidth, setFitWidth] = useState<boolean>(false);
+  const [fitWidth, setFitWidth] = useState<boolean>(initialFitWidth);
   const t = useTranslations();
 
   const viewerScrollRef = useRef<HTMLDivElement | null>(null);
@@ -58,8 +91,8 @@ export default function SimplePdfViewer({
     setNumPages(0);
     setPage(initialPage);
     setZoom(initialZoom);
-    setFitWidth(false);
-  }, [url, initialPage, initialZoom]);
+    setFitWidth(initialFitWidth);
+  }, [url, initialPage, initialZoom, initialFitWidth]);
 
   const canPrev = page > 1;
   const canNext = numPages > 0 && page < numPages;
@@ -154,7 +187,7 @@ export default function SimplePdfViewer({
         className="overflow-auto border bg-background max-h-[85vh]"
       >
         <div ref={containerRef} className="flex justify-center p-3">
-          <Document
+          <PdfDocument
             loading={<div className="p-4 text-sm">
               {t("Common.loading")}
             </div>}
@@ -165,14 +198,14 @@ export default function SimplePdfViewer({
             file={url}
             onLoadSuccess={(i) => setNumPages(i.numPages)}
           >
-            <Page
+            <PdfPage
               pageNumber={page}
               width={fitWidth ? fitWidthPx : undefined}
               scale={!fitWidth ? zoom : undefined}
               renderTextLayer={renderTextLayer}
               renderAnnotationLayer={renderAnnotationLayer}
             />
-          </Document>
+          </PdfDocument>
         </div>
       </div>
 

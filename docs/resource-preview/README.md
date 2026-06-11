@@ -5,6 +5,9 @@ The resource preview is rendered by `ResourcePreview` and chooses the viewer bas
 Main entry:
 - `src/components/package/resource/ResourcePreview.tsx`
 
+Related guide:
+- `docs/resource-preview/dwg-preview.md`
+
 ### Format routing logic
 
 1. `wms` / `wfs`
@@ -27,7 +30,13 @@ Main entry:
 6. `pdf`
 - Uses `SimplePdfViewer` (client-side `react-pdf`).
 
-7. Fallback
+7. `dwg`
+- Uses `DwgPreview`.
+- Requests a single SVG preview from CKAN.
+- CKAN chooses the richer DWG conversion result internally before returning it.
+- Full flow is documented in `docs/resource-preview/dwg-preview.md`.
+
+8. Fallback
 - If `resource.iframe` is true, uses `IframeWrapper`.
 - Otherwise shows `Preview.notSupported`.
 
