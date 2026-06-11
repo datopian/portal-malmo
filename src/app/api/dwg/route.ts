@@ -1,10 +1,19 @@
+const ALLOWED_CORS_ORIGINS = new Set([
+  "https://www.innerscene.com",
+  "https://innerscene.com",
+]);
+
 export async function GET(request: Request) {
   const { searchParams } = new URL(request.url);
+  const corsHeaders = getCorsHeaders(request);
 
   const fileUrl = searchParams.get("url");
 
   if (!fileUrl) {
-    return new Response("Missing url param", { status: 400 });
+    return new Response("Missing url param", {
+      status: 400,
+      headers: corsHeaders,
+    });
   }
 
   const response = await fetch(fileUrl, {
@@ -15,13 +24,17 @@ export async function GET(request: Request) {
   if (!response.ok) {
     return new Response("Failed to fetch file", {
       status: response.status || 500,
+      headers: corsHeaders,
     });
   }
 
   const fileBytes = await response.arrayBuffer();
 
   if (!fileBytes.byteLength) {
-    return new Response("Downloaded file is empty", { status: 502 });
+    return new Response("Downloaded file is empty", {
+      status: 502,
+      headers: corsHeaders,
+    });
   }
 
   const filename =
@@ -32,6 +45,7 @@ export async function GET(request: Request) {
   return new Response(fileBytes, {
     status: 200,
     headers: {
+      ...corsHeaders,
       "Content-Type":
         response.headers.get("content-type") ?? "application/octet-stream",
       "Content-Disposition": `attachment; filename="${filename}"`,
@@ -43,21 +57,48 @@ export async function GET(request: Request) {
 export async function HEAD(request: Request) {
   const { searchParams } = new URL(request.url);
   const fileUrl = searchParams.get("url");
+  const corsHeaders = getCorsHeaders(request);
 
   if (!fileUrl) {
-    return new Response(null, { status: 400 });
+    return new Response(null, {
+      status: 400,
+      headers: corsHeaders,
+    });
   }
 
-  return new Response(null, { status: 204 });
+  return new Response(null, {
+    status: 204,
+    headers: corsHeaders,
+  });
 }
 
-export async function OPTIONS() {
+export async function OPTIONS(request: Request) {
+  const corsHeaders = getCorsHeaders(request);
+
   return new Response(null, {
     status: 204,
     headers: {
+      ...corsHeaders,
       Allow: "GET,HEAD,OPTIONS",
     },
   });
+}
+
+function getCorsHeaders(request: Request): Record<string, string> {
+  const origin = request.headers.get("origin");
+  const headers: Record<string, string> = {};
+
+  if (origin && ALLOWED_CORS_ORIGINS.has(origin)) {
+    headers["Access-Control-Allow-Origin"] = origin;
+    headers["Access-Control-Allow-Methods"] = "GET,HEAD,OPTIONS";
+    headers["Access-Control-Allow-Headers"] =
+      "Content-Type, Authorization, Range";
+    headers["Access-Control-Expose-Headers"] =
+      "Content-Type, Content-Disposition, Content-Length, Accept-Ranges";
+    headers.Vary = "Origin";
+  }
+
+  return headers;
 }
 
 function getFilenameFromUrl(url: string) {
