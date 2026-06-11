@@ -60,14 +60,8 @@ function PreviewRenderer({
     setShowIframeLoader(true);
     setIframeLoaded(false);
 
-    const dwgProxyUrl = new URL(
-      `/api/dwg?url=${encodeURIComponent(resource.url ?? "")}`,
-      'https://malmo-data-portal-git-feat-dwg-preview-datopian1.vercel.app'
-     // window.location.origin,
-    ).toString();
-
     setExternalViewerUrl(
-      `${innerScene}/pt/tools/dwg-viewer?embedded=1&url=${encodeURIComponent(dwgProxyUrl)}`,
+      `${innerScene}/pt/tools/dwg-viewer?embedded=1&url=${encodeURIComponent(resource.url ?? "")}`,
     );
   }, [resource.url]);
 
@@ -126,7 +120,7 @@ function PreviewRenderer({
 
           <div className="relative overflow-hidden rounded-sm border bg-background">
             {showIframeLoader && (
-              <div className="absolute inset-0 z-10 flex items-center justify-center bg-background/95">
+              <div className="absolute inset-0 z-10 flex items-center justify-center bg-background">
                 <div className="flex flex-col items-center gap-3 px-4 text-center">
                   <div className="h-10 w-10 animate-spin rounded-full border-4 border-muted border-t-theme-green" />
                   <p className="text-sm text-muted-foreground">
