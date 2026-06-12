@@ -23,17 +23,22 @@ type Props = {
   initialFitWidth?: boolean;
 };
 
-let reactPdfLoader: Promise<typeof import("react-pdf")> | null = null;
+let reactPdfLoader: Promise<typeof import("react-pdf")> | undefined;
 
 async function loadReactPdf() {
   if (!reactPdfLoader) {
-    reactPdfLoader = import("react-pdf").then((module) => {
-      module.pdfjs.GlobalWorkerOptions.workerSrc = new URL(
-        "pdfjs-dist/build/pdf.worker.min.mjs",
-        import.meta.url
-      ).toString();
-      return module;
-    });
+    reactPdfLoader = import("react-pdf")
+      .then((module) => {
+        module.pdfjs.GlobalWorkerOptions.workerSrc = new URL(
+          "pdfjs-dist/build/pdf.worker.min.mjs",
+          import.meta.url
+        ).toString();
+        return module;
+      })
+      .catch((error) => {
+        reactPdfLoader = undefined;
+        throw error;
+      });
   }
 
   return reactPdfLoader;

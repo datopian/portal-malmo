@@ -10,7 +10,10 @@ type Props = {
 };
 
 const INNERSCENE_URL = "https://www.innerscene.com";
+const IFRAME_LOAD_DELAY_MS = 2000;
+const IFRAME_LOAD_TIMEOUT_MS = 10000;
 const supportedInnersceneLangs = [
+  "en",
   "es",
   "fr",
   "de",
@@ -33,26 +36,42 @@ export default function DwgPreview({
   const [externalViewerUrl, setExternalViewerUrl] = React.useState("");
   const [showIframeLoader, setShowIframeLoader] = React.useState(true);
   const [iframeLoaded, setIframeLoaded] = React.useState(false);
+  const [iframeLoadError, setIframeLoadError] = React.useState(false);
 
   React.useEffect(() => {
     const localePath = getInnersceneLocalePath();
 
     setShowIframeLoader(true);
     setIframeLoaded(false);
+    setIframeLoadError(false);
     setExternalViewerUrl(
       `${INNERSCENE_URL}${localePath}/tools/dwg-viewer?embedded=1&url=${encodeURIComponent(url)}`,
     );
   }, [url]);
 
   React.useEffect(() => {
-    if (!externalViewerUrl || !iframeLoaded) return;
+    if (!externalViewerUrl || iframeLoadError) return;
 
-    const timer = window.setTimeout(() => {
+    if (iframeLoaded) {
+      const timer = window.setTimeout(() => {
+        setShowIframeLoader(false);
+      }, IFRAME_LOAD_DELAY_MS);
+
+      return () => window.clearTimeout(timer);
+    }
+
+    const timeout = window.setTimeout(() => {
+      setIframeLoadError(true);
       setShowIframeLoader(false);
-    }, 2000);
+    }, IFRAME_LOAD_TIMEOUT_MS);
 
-    return () => window.clearTimeout(timer);
-  }, [externalViewerUrl, iframeLoaded]);
+    return () => window.clearTimeout(timeout);
+  }, [externalViewerUrl, iframeLoaded, iframeLoadError]);
+
+  const handleIframeError = React.useCallback(() => {
+    setIframeLoadError(true);
+    setShowIframeLoader(false);
+  }, []);
 
   return (
     <div className={["space-y-4", className].filter(Boolean).join(" ")}>
@@ -74,13 +93,20 @@ export default function DwgPreview({
           </div>
         )}
 
-        <iframe
-          title={t("Preview.dwgPreviewLabel", { name: resourceName })}
-          src={externalViewerUrl}
-          className="w-full aspect-video border-0"
-          allowFullScreen
-          onLoad={() => setIframeLoaded(true)}
-        />
+        {iframeLoadError ? (
+          <div className="flex aspect-video items-center justify-center p-4 text-center text-sm text-muted-foreground">
+            {t("Preview.failedToLoadDwg")}
+          </div>
+        ) : (
+          <iframe
+            title={t("Preview.dwgPreviewLabel", { name: resourceName })}
+            src={externalViewerUrl}
+            className="w-full aspect-video border-0"
+            allowFullScreen
+            onLoad={() => setIframeLoaded(true)}
+            onError={handleIframeError}
+          />
+        )}
       </div>
 
       <div className="flex flex-wrap items-center justify-between gap-3 text-sm text-muted-foreground">

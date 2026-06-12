@@ -1,46 +1,112 @@
+import { envVars } from "@/lib/env";
+
 const ALLOWED_CORS_ORIGINS = new Set([
   "https://www.innerscene.com",
   "https://innerscene.com",
 ]);
 const MAX_FILE_BYTES = 20 * 1024 * 1024;
+const UPSTREAM_TIMEOUT_MS = Number(process.env.DWG_PROXY_TIMEOUT_MS ?? "10000");
+const ALLOWED_DWG_CONTENT_TYPES = new Set([
+  "application/acad",
+  "application/autocad_dwg",
+  "application/dwg",
+  "application/octet-stream",
+  "application/x-acad",
+  "application/x-dwg",
+  "binary/octet-stream",
+  "image/vnd.dwg",
+]);
 
 export async function GET(request: Request) {
   const { searchParams } = new URL(request.url);
   const corsHeaders = getCorsHeaders(request);
 
-  const fileUrl = searchParams.get("url");
+  const resourceId = searchParams.get("resourceId")?.trim();
 
-  if (!fileUrl) {
-    return new Response("Missing url param", {
+  if (!resourceId) {
+    return new Response("Missing resourceId param", {
       status: 400,
       headers: corsHeaders,
     });
   }
 
-  const response = await fetch(fileUrl, {
-    redirect: "follow",
-    cache: "no-store",
-  });
-
-  if (!response.ok) {
-    return new Response("Failed to fetch file", {
-      status: response.status || 500,
+  if (!isValidResourceId(resourceId)) {
+    return new Response("Invalid resourceId param", {
+      status: 400,
       headers: corsHeaders,
     });
   }
 
-  const contentLength = Number(response.headers.get("content-length") ?? "");
-  if (Number.isFinite(contentLength) && contentLength > MAX_FILE_BYTES) {
-    return new Response("File exceeds 20 MB limit", {
-      status: 413,
+  let upstreamUrl: string;
+  try {
+    upstreamUrl = await resolveResourceUrl(resourceId);
+  } catch {
+    return new Response("Failed to resolve resource", {
+      status: 502,
       headers: corsHeaders,
     });
   }
 
+  if (!isAllowedUpstreamUrl(upstreamUrl)) {
+    return new Response("Resource URL is not allowed", {
+      status: 403,
+      headers: corsHeaders,
+    });
+  }
+
+  const controller = new AbortController();
+  const timeout = setTimeout(() => controller.abort(), UPSTREAM_TIMEOUT_MS);
+  let response!: Response;
   let fileBytes: ArrayBuffer;
   try {
-    fileBytes = await readResponseWithinLimit(response, MAX_FILE_BYTES);
+    response = await fetch(upstreamUrl, {
+      redirect: "follow",
+      cache: "no-store",
+      signal: controller.signal,
+    });
+
+    if (!isAllowedUpstreamUrl(response.url)) {
+      return new Response("Redirected resource URL is not allowed", {
+        status: 403,
+        headers: corsHeaders,
+      });
+    }
+
+    if (!response.ok) {
+      return new Response("Failed to fetch file", {
+        status: response.status || 500,
+        headers: corsHeaders,
+      });
+    }
+
+    if (!isAllowedContentType(response.headers.get("content-type"))) {
+      return new Response("Unsupported content type", {
+        status: 415,
+        headers: corsHeaders,
+      });
+    }
+
+    const contentLength = Number(response.headers.get("content-length") ?? "");
+    if (Number.isFinite(contentLength) && contentLength > MAX_FILE_BYTES) {
+      return new Response("File exceeds 20 MB limit", {
+        status: 413,
+        headers: corsHeaders,
+      });
+    }
+
+    fileBytes = await readResponseWithinLimit(
+      response,
+      MAX_FILE_BYTES,
+      controller.signal,
+    );
   } catch (error) {
+    if (isAbortError(error)) {
+      return new Response("DWG download timed out", {
+        status: 504,
+        headers: corsHeaders,
+      });
+    }
+
     if (error instanceof Error && error.message === "file_too_large") {
       return new Response("File exceeds 20 MB limit", {
         status: 413,
@@ -52,6 +118,8 @@ export async function GET(request: Request) {
       status: 502,
       headers: corsHeaders,
     });
+  } finally {
+    clearTimeout(timeout);
   }
 
   if (!fileBytes.byteLength) {
@@ -64,7 +132,7 @@ export async function GET(request: Request) {
   const filename =
     getFilenameFromContentDisposition(
       response.headers.get("content-disposition"),
-    ) ?? getFilenameFromUrl(response.url) ?? getFilenameFromUrl(fileUrl) ?? "download";
+    ) ?? getFilenameFromUrl(response.url) ?? getFilenameFromUrl(upstreamUrl) ?? "download";
 
   return new Response(fileBytes, {
     status: 200,
@@ -80,10 +148,10 @@ export async function GET(request: Request) {
 
 export async function HEAD(request: Request) {
   const { searchParams } = new URL(request.url);
-  const fileUrl = searchParams.get("url");
+  const resourceId = searchParams.get("resourceId")?.trim();
   const corsHeaders = getCorsHeaders(request);
 
-  if (!fileUrl) {
+  if (!resourceId || !isValidResourceId(resourceId)) {
     return new Response(null, {
       status: 400,
       headers: corsHeaders,
@@ -128,6 +196,7 @@ function getCorsHeaders(request: Request): Record<string, string> {
 async function readResponseWithinLimit(
   response: Response,
   maxBytes: number,
+  signal: AbortSignal,
 ) {
   if (!response.body) {
     return new ArrayBuffer(0);
@@ -138,7 +207,9 @@ async function readResponseWithinLimit(
   let totalBytes = 0;
 
   while (true) {
+    signal.throwIfAborted();
     const { done, value } = await reader.read();
+    signal.throwIfAborted();
     if (done) break;
     if (!value) continue;
 
@@ -159,6 +230,81 @@ async function readResponseWithinLimit(
   }
 
   return merged.buffer;
+}
+
+async function resolveResourceUrl(resourceId: string) {
+  const dmsUrl = getDmsUrl();
+  const url = new URL("api/3/action/resource_show", `${dmsUrl}/`);
+  url.searchParams.set("id", resourceId);
+
+  const response = await fetch(url, {
+    cache: "no-store",
+  });
+
+  if (!response.ok) {
+    throw new Error("resource_show_failed");
+  }
+
+  const payload = await response.json();
+  const resourceUrl = payload?.result?.url;
+  if (typeof resourceUrl !== "string" || !resourceUrl.trim()) {
+    throw new Error("missing_resource_url");
+  }
+
+  return resourceUrl;
+}
+
+function getDmsUrl() {
+  if (!envVars.dms) {
+    throw new Error("DMS URL is not defined");
+  }
+
+  return envVars.dms.replace(/\/$/, "");
+}
+
+function isValidResourceId(resourceId: string) {
+  return /^[a-zA-Z0-9_-]+$/.test(resourceId);
+}
+
+function isAllowedUpstreamUrl(value: string) {
+  let url: URL;
+  try {
+    url = new URL(value);
+  } catch {
+    return false;
+  }
+
+  if (url.protocol !== "http:" && url.protocol !== "https:") {
+    return false;
+  }
+
+  return getAllowedUpstreamHosts().has(url.hostname.toLowerCase());
+}
+
+function getAllowedUpstreamHosts() {
+  const hosts = new Set([
+    "ckan-malmo.dataplatform.se",
+    "acc-ckan-malmo.dataplatform.se",
+    "ckan.city-of-malmo.datopian.com",
+    "ckan.city-of-malmo-staging.datopian.com",
+  ]);
+
+  if (envVars.dms) {
+    hosts.add(new URL(envVars.dms).hostname.toLowerCase());
+  }
+
+  return hosts;
+}
+
+function isAllowedContentType(contentType: string | null) {
+  if (!contentType) return true;
+
+  const normalized = contentType.split(";")[0]?.trim().toLowerCase();
+  return !!normalized && ALLOWED_DWG_CONTENT_TYPES.has(normalized);
+}
+
+function isAbortError(error: unknown) {
+  return error instanceof DOMException && error.name === "AbortError";
 }
 
 function getFilenameFromUrl(url: string) {

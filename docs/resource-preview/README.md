@@ -32,8 +32,9 @@ Related guide:
 
 7. `dwg`
 - Uses `DwgPreview`.
-- Requests a single SVG preview from CKAN.
-- CKAN chooses the richer DWG conversion result internally before returning it.
+- The current UI embeds the InnerScene DWG viewer for `resource.url`.
+- The CKAN DWG conversion helper in `src/lib/ckan/api.ts` builds a `GET` request to `api/3/action/convert_dwg?id=<resource-id>` with no request body.
+- That backend conversion returns the PDF preview produced from the DWG conversion pipeline; any later SVG derivation should happen after that PDF result, not via `dwg_preview_convert?resource_id=...`.
 - Full flow is documented in `docs/resource-preview/dwg-preview.md`.
 
 8. Fallback

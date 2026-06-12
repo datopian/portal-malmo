@@ -19,7 +19,7 @@ export function getResourceFormat(resource: Pick<Resource, "format">) {
 export function hasDwgPreview(resource: Pick<Resource, "format" | "mimetype" | "url">) {
   const format = getResourceFormat(resource);
   const mimetype = resource.mimetype?.toLowerCase() ?? "";
-  const url = resource.url?.toLowerCase() ?? "";
+  const url = getResourceUrlPath(resource.url).toLowerCase();
 
   return (
     format === "dwg" ||
@@ -27,6 +27,17 @@ export function hasDwgPreview(resource: Pick<Resource, "format" | "mimetype" | "
     mimetype.includes("dwg") ||
     url.endsWith(".dwg")
   );
+}
+
+function getResourceUrlPath(url?: string) {
+  const trimmedUrl = url?.trim() ?? "";
+  if (!trimmedUrl) return "";
+
+  try {
+    return new URL(trimmedUrl).pathname;
+  } catch {
+    return trimmedUrl.split(/[?#]/)[0] ?? "";
+  }
 }
 
 export function supportsPreview(resource: Resource) {

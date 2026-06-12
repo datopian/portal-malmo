@@ -6,7 +6,8 @@ The DWG preview flow is intentionally simple:
 2. the backend stages the DWG into a temporary file
 3. ODA File Converter converts `DWG -> DXF`
 4. `ezdxf` renders the selected DXF layout to `PDF`
-5. the frontend fetches that PDF and displays it with `SimplePdfViewer`
+5. the backend returns that PDF conversion result
+6. the frontend can display the converted result, or derive a later SVG preview from it if that flow is reintroduced
 
 ## Frontend files
 
@@ -22,10 +23,13 @@ The DWG preview flow is intentionally simple:
 
 ## Endpoint
 
-The frontend still calls the same CKAN action endpoint:
+The CKAN helper in `src/lib/ckan/api.ts` builds the conversion URL with the
+resource ID as a query parameter:
 
 ```text
-/api/3/action/dwg_preview_convert?resource_id=<id>
+/api/3/action/convert_dwg?id=<resource-id>
 ```
 
-The only internal change is that the endpoint now returns `application/pdf`.
+This is a `GET` URL with no JSON request body. The backend receives the trusted
+resource ID, stages the DWG, runs the conversion pipeline, and returns the PDF
+conversion result.

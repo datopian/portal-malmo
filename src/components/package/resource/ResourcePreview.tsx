@@ -86,7 +86,11 @@ function PreviewRenderer({
       return <CSVExplorerWrapper dataUrl={resource.url ?? ""} />;
 
     case "dwg":
-      return <DwgPreview url={resource.url ?? ""} resourceName={resourceName} />;
+      if (typeof resource.url !== "string" || !resource.url.trim()) {
+        return notSupportedLabel;
+      }
+
+      return <DwgPreview url={resource.url} resourceName={resourceName} />;
 
     case "pdf":
       return <PdfViewerClient url={resource.url ?? ""} />;
