@@ -1,7 +1,7 @@
 "use client";
 
 import { useTranslations } from "next-intl";
-import { useEffect, useState } from "react";
+import * as React from "react";
 
 type Props = {
   url: string;
@@ -9,138 +9,119 @@ type Props = {
   className?: string;
 };
 
-export default function DwgPreview({ url, className, resourceName }: Readonly<Props>) {
+const INNERSCENE_URL = "https://www.innerscene.com";
+const supportedInnersceneLangs = [
+  "es",
+  "fr",
+  "de",
+  "pt",
+  "ja",
+  "it",
+  "sv",
+  "el",
+  "ar",
+] as const;
+
+type SupportedInnersceneLang = (typeof supportedInnersceneLangs)[number];
+
+export default function DwgPreview({
+  url,
+  className,
+  resourceName,
+}: Readonly<Props>) {
   const t = useTranslations();
-  const [previewUrl, setPreviewUrl] = useState<string | null>(null);
-  const [errorMessage, setErrorMessage] = useState<string | null>(null);
-  const [isLoading, setIsLoading] = useState(true);
+  const [externalViewerUrl, setExternalViewerUrl] = React.useState("");
+  const [showIframeLoader, setShowIframeLoader] = React.useState(true);
+  const [iframeLoaded, setIframeLoaded] = React.useState(false);
 
-  useEffect(() => {
-    let isCancelled = false;
-    let blobUrl: string | null = null;
+  React.useEffect(() => {
+    const localePath = getInnersceneLocalePath();
 
-    const loadPreview = async () => {
-      try {
-        const response = await fetch(url);
-        if (!response.ok) {
-          throw new Error(await getPreviewErrorMessage(response, t));
-        }
-
-        const blob = await response.blob();
-        if (!blob.size || !blob.type.includes("png")) {
-          throw new Error("The preview service returned an unexpected response.");
-        }
-
-        blobUrl = URL.createObjectURL(blob);
-        if (!isCancelled) {
-          setPreviewUrl(blobUrl);
-          setErrorMessage(null);
-          setIsLoading(false);
-        }
-      } catch (error) {
-        if (!isCancelled) {
-          setPreviewUrl(null);
-          setErrorMessage(error instanceof Error ? error.message : null);
-          setIsLoading(false);
-        }
-      }
-    };
-
-    setPreviewUrl(null);
-    setErrorMessage(null);
-    setIsLoading(true);
-    loadPreview();
-
-    return () => {
-      isCancelled = true;
-      if (blobUrl) {
-        URL.revokeObjectURL(blobUrl);
-      }
-    };
+    setShowIframeLoader(true);
+    setIframeLoaded(false);
+    setExternalViewerUrl(
+      `${INNERSCENE_URL}${localePath}/tools/dwg-viewer?embedded=1&url=${encodeURIComponent(url)}`,
+    );
   }, [url]);
 
-  if (isLoading) {
-    return (
-      <div className={["overflow-hidden border bg-background max-h-[85vh]", className]
-        .filter(Boolean)
-        .join(" ")}>
-        <div className="space-y-2 p-4 text-sm">
-          <div className="font-medium">{t("Preview.builtInPreviewTitle")}</div>
-          <div>{t("Common.loading")}</div>
-        </div>
-      </div>
-    );
-  }
+  React.useEffect(() => {
+    if (!externalViewerUrl || !iframeLoaded) return;
 
-  if (errorMessage || !previewUrl) {
-    return (
-      <div className={["overflow-hidden border bg-background max-h-[85vh]", className]
-        .filter(Boolean)
-        .join(" ")}>
-        <div className="space-y-2 p-4 text-sm">
-          <div className="font-medium">{t("Preview.builtInPreviewUnavailableTitle")}</div>
-          {errorMessage && (
-            <div className="rounded border border-amber-300 bg-amber-50 px-3 py-2 text-amber-900">
-              {errorMessage}
-            </div>
-          )}
-        </div>
-      </div>
-    );
-  }
+    const timer = window.setTimeout(() => {
+      setShowIframeLoader(false);
+    }, 2000);
+
+    return () => window.clearTimeout(timer);
+  }, [externalViewerUrl, iframeLoaded]);
 
   return (
-    <div
-      className={["overflow-hidden border bg-background max-h-[85vh]", className]
-        .filter(Boolean)
-        .join(" ")}
-    >
-      <div className="border-b px-4 py-3 text-sm font-medium">
-        {t("Preview.builtInPreviewTitle")}
+    <div className={["space-y-4", className].filter(Boolean).join(" ")}>
+      <div className="flex flex-wrap items-start justify-between gap-3">
+        <div className="space-y-1">
+          <p>{t("Preview.externalPreviewInstructions")}</p>
+        </div>
       </div>
-      <img
-        src={previewUrl}
-        alt={resourceName}
-        className="h-auto max-h-[85vh] w-full object-contain bg-white"
-      />
+
+      <div className="relative overflow-hidden rounded-sm border bg-background">
+        {showIframeLoader && (
+          <div className="absolute inset-0 z-10 flex items-center justify-center bg-background">
+            <div className="flex flex-col items-center gap-3 px-4 text-center">
+              <div className="h-10 w-10 animate-spin rounded-full border-4 border-muted border-t-theme-green" />
+              <p className="text-sm text-muted-foreground">
+                {t("Common.loading")}
+              </p>
+            </div>
+          </div>
+        )}
+
+        <iframe
+          title={t("Preview.dwgPreviewLabel", { name: resourceName })}
+          src={externalViewerUrl}
+          className="w-full aspect-video border-0"
+          allowFullScreen
+          onLoad={() => setIframeLoaded(true)}
+        />
+      </div>
+
+      <div className="flex flex-wrap items-center justify-between gap-3 text-sm text-muted-foreground">
+        <p>
+          {t.rich("Preview.externalPreviewAttribution", {
+            link: (chunks) => (
+              <a
+                href="https://www.innerscene.com/tools/dwg-viewer#faq"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-theme-green underline underline-offset-2"
+              >
+                {chunks}
+              </a>
+            ),
+          })}
+        </p>
+      </div>
     </div>
   );
 }
 
-async function getPreviewErrorMessage(
-  response: Response,
-  t: ReturnType<typeof useTranslations>,
-) {
-  try {
-    const payload = await response.json();
-    const previewReason = payload?.error?.preview_reason?.[0];
-    if (typeof previewReason === "string") {
-      const mapped = getTranslatedPreviewReason(previewReason, t);
-      if (mapped) return mapped;
-    }
-
-    const conversionMessage = payload?.error?.conversion?.[0];
-    if (typeof conversionMessage === "string" && conversionMessage.trim()) {
-      return conversionMessage;
-    }
-  } catch {
-    // Ignore JSON parsing errors and use the generic fallback below.
-  }
-
-  return t("Preview.dwgPreviewUnavailable");
+function getInnersceneLocalePath() {
+  const lang = getSupportedBrowserLanguage();
+  return lang ? `/${lang}` : "";
 }
 
-function getTranslatedPreviewReason(
-  reason: string,
-  t: ReturnType<typeof useTranslations>,
-) {
-  switch (reason) {
-    case "modelspace_too_complex":
-      return t("Preview.dwgPreviewTooDetailed");
-    case "preview_too_sparse":
-    case "preview_unavailable":
-      return t("Preview.dwgPreviewUnavailable");
-    default:
-      return null;
+function getSupportedBrowserLanguage(): SupportedInnersceneLang | "" {
+  const browserLanguages = navigator.languages?.length
+    ? navigator.languages
+    : [navigator.language];
+
+  for (const browserLanguage of browserLanguages) {
+    const lang = browserLanguage
+      ?.toLowerCase()
+      .split("-")[0] as SupportedInnersceneLang | undefined;
+
+    if (lang && supportedInnersceneLangs.includes(lang)) {
+      return lang;
+    }
   }
+
+  return "";
 }
