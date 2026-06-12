@@ -115,6 +115,20 @@ function formatResourceSize(value?: number | null) {
   return typeof value === "number" ? formatFileSize(value) : "--";
 }
 
+function buildResourceFallbackMetadata(params: {
+  locale: string;
+  org: string;
+  dataset: string;
+  resource: string;
+}): Metadata {
+  return buildLocalizedMetadata({
+    locale: params.locale,
+    pathname: `/${decodeURIComponent(params.org)}/${params.dataset}/${params.resource}`,
+    title: decodeURIComponent(params.resource),
+    description: "",
+  });
+}
+
 export default async function ResourcePage({ params }: PageProps) {
   const { locale, org, dataset: datasetName, resource: resourceId } = await params;
 
@@ -221,20 +235,21 @@ export default async function ResourcePage({ params }: PageProps) {
 
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
   const { locale, org, dataset, resource } = await params;
-  const resourceData = await ckan().getResourceMetadata(resource);
+  try {
+    ensureSupportedOrganization(org);
+    const { resource: resourceData } = await loadResourcePageData(dataset, resource);
 
-  return buildLocalizedMetadata({
-    locale,
-    pathname: `/${decodeURIComponent(org)}/${dataset}/${resource}`,
-    title: resourceData
-      ? getLocalizedText(resourceData.name_translated, locale, resourceData.name)
-      : decodeURIComponent(resource),
-    description: resourceData
-      ? getLocalizedText(
-          resourceData.description_translated,
-          locale,
-          resourceData.description,
-        )
-      : "",
-  });
+    return buildLocalizedMetadata({
+      locale,
+      pathname: `/${decodeURIComponent(org)}/${dataset}/${resource}`,
+      title: getLocalizedText(resourceData.name_translated, locale, resourceData.name),
+      description: getLocalizedText(
+        resourceData.description_translated,
+        locale,
+        resourceData.description,
+      ),
+    });
+  } catch {
+    return buildResourceFallbackMetadata({ locale, org, dataset, resource });
+  }
 }

@@ -16,6 +16,7 @@ import {
 } from "@/lib/resource-preview";
 import { Dataset, Resource } from "@/schemas/ckan";
 
+import DwgPreview from "./DwgPreview";
 import JsonUrlViewer from "./JSONViewer";
 import ResourceOgcLinks from "./ResourceOgcLinks";
 
@@ -49,7 +50,7 @@ function PreviewRenderer({
   ogcPreview,
   showLegendOnMobile,
   notSupportedLabel,
-}: PreviewRendererProps) {
+}: Readonly<PreviewRendererProps>) {
   switch (previewKind) {
     case "geojson":
       return (
@@ -84,12 +85,23 @@ function PreviewRenderer({
     case "csv":
       return <CSVExplorerWrapper dataUrl={resource.url ?? ""} />;
 
+    case "dwg":
+      if (typeof resource.url !== "string" || !resource.url.trim()) {
+        return notSupportedLabel;
+      }
+
+      return <DwgPreview url={resource.url} resourceName={resourceName} />;
+
     case "pdf":
       return <PdfViewerClient url={resource.url ?? ""} />;
 
     case "iframe":
       return (
-        <IframeWrapper src={resource.url ?? ""} title={resourceName} height={800} />
+        <IframeWrapper
+          src={resource.url ?? ""}
+          title={resourceName}
+          height={800}
+        />
       );
 
     default:
@@ -100,10 +112,10 @@ function PreviewRenderer({
 export default function ResourcePreview({
   resource,
   dataset,
-}: {
+}: Readonly<{
   resource: Resource;
   dataset: Dataset;
-}) {
+}>) {
   const t = useTranslations();
   const locale = useLocale();
   const [showMobileLegend, setShowMobileLegend] = React.useState(false);

@@ -5,6 +5,9 @@ The resource preview is rendered by `ResourcePreview` and chooses the viewer bas
 Main entry:
 - `src/components/package/resource/ResourcePreview.tsx`
 
+Related guide:
+- `docs/resource-preview/dwg-preview.md`
+
 ### Format routing logic
 
 1. `wms` / `wfs`
@@ -27,7 +30,14 @@ Main entry:
 6. `pdf`
 - Uses `SimplePdfViewer` (client-side `react-pdf`).
 
-7. Fallback
+7. `dwg`
+- Uses `DwgPreview`.
+- The current UI embeds the InnerScene DWG viewer for `resource.url`.
+- The CKAN DWG conversion helper in `src/lib/ckan/api.ts` builds a `GET` request to `api/3/action/convert_dwg?id=<resource-id>` with no request body.
+- That backend conversion returns the PDF preview produced from the DWG conversion pipeline; any later SVG derivation should happen after that PDF result, not via `dwg_preview_convert?resource_id=...`.
+- Full flow is documented in `docs/resource-preview/dwg-preview.md`.
+
+8. Fallback
 - If `resource.iframe` is true, uses `IframeWrapper`.
 - Otherwise shows `Preview.notSupported`.
 

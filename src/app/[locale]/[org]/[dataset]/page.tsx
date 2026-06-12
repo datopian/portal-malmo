@@ -162,18 +162,37 @@ export async function generateMetadata({
   params,
 }: DatasetPageProps): Promise<Metadata> {
   const { locale, org, dataset } = await params;
-  const ds = await ckan().getDatasetDetails(dataset);
-  const datasetTitle = ds
-    ? getLocalizedText(ds.title_translated, locale, ds.title ?? ds.name)
-    : decodeURIComponent(dataset);
-  const description = ds
-    ? getLocalizedText(ds.notes_translated, locale, ds.notes)
-    : "";
 
-  return buildLocalizedMetadata({
-    locale,
-    pathname: `/${decodeURIComponent(org)}/${dataset}`,
-    title: datasetTitle,
-    description,
-  });
+  if (decodeURIComponent(org) !== "@malmo") {
+    return buildLocalizedMetadata({
+      locale,
+      pathname: `/${decodeURIComponent(org)}/${dataset}`,
+      title: decodeURIComponent(dataset),
+      description: "",
+    });
+  }
+
+  try {
+    const ds = await ckan().getDatasetDetails(dataset);
+    const datasetTitle = ds
+      ? getLocalizedText(ds.title_translated, locale, ds.title ?? ds.name)
+      : decodeURIComponent(dataset);
+    const description = ds
+      ? getLocalizedText(ds.notes_translated, locale, ds.notes)
+      : "";
+
+    return buildLocalizedMetadata({
+      locale,
+      pathname: `/${decodeURIComponent(org)}/${dataset}`,
+      title: datasetTitle,
+      description,
+    });
+  } catch {
+    return buildLocalizedMetadata({
+      locale,
+      pathname: `/${decodeURIComponent(org)}/${dataset}`,
+      title: decodeURIComponent(dataset),
+      description: "",
+    });
+  }
 }
