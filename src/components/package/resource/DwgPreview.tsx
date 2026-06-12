@@ -101,7 +101,7 @@ export default function DwgPreview({
           <iframe
             title={t("Preview.dwgPreviewLabel", { name: resourceName })}
             src={externalViewerUrl}
-            className="w-full aspect-video border-0"
+            className="w-full aspect-video border-0 min-h-[360px]"
             allowFullScreen
             onLoad={() => setIframeLoaded(true)}
             onError={handleIframeError}
