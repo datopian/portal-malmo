@@ -1,5 +1,6 @@
 import { Resource } from "@/schemas/ckan";
 import { BoundingBox, parseBbox, parseUrlSafely } from "@/lib/geospatial";
+import { getResourceFormat } from "@/lib/resource";
 
 export type OgcType = "wms" | "wfs";
 
@@ -232,7 +233,7 @@ export function getOgcPreviewConfig(
     };
   }
 
-  const format = resource.format?.toLowerCase();
+  const format = getResourceFormat(resource);
   if ((format === "wfs" || format === "wms") && resource.url) {
     return {
       type: format,
@@ -250,7 +251,7 @@ export function hasOgcPreview(resource: Resource) {
 
 export function getOgcLinkGroups(resource: Resource): OgcLinkGroup[] {
   const groups: OgcLinkGroup[] = [];
-  const format = resource.format?.toLowerCase();
+  const format = getResourceFormat(resource);
   const candidates: Array<{ type: OgcType; url?: string }> = [
     { type: "wfs", url: resource.wfs_url ?? (format === "wfs" ? resource.url : undefined) },
     { type: "wms", url: resource.wms_url ?? (format === "wms" ? resource.url : undefined) },

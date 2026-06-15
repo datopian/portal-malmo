@@ -4,7 +4,8 @@ import { Resource } from "@/schemas/ckan";
 import MarkdownRender from "@/components/ui/markdown";
 import { formatFileSize } from "@/lib/utils";
 import { Link } from "@/i18n/navigation";
-import { RESOURCE_COLORS, supportsPreview } from "@/lib/resource";
+import { getResourceColor } from "@/lib/resource";
+import { supportsPreview } from "@/lib/resource-preview";
 
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -42,11 +43,7 @@ export default function DatasetResources({
               locale,
               resource.description
             );
-            const formatKey = (format?: string | null) =>
-              (format ?? "").trim().toLowerCase();
-
-            const fmt = formatKey(resource.format);
-            const hex = RESOURCE_COLORS[fmt] ?? RESOURCE_COLORS.default;
+            const hex = getResourceColor(resource.format);
             return (
               <li
                 className="flex flex-col gap-x-5 gap-y-3 py-[30px]"
@@ -104,7 +101,7 @@ export default function DatasetResources({
                       {t("Common.download")}
                     </Link>
                   </Button>
-                  {supportsPreview(resource) && (
+                  {supportsPreview(resource, resources) && (
                     <Button
                       type="button"
                       asChild

@@ -16,7 +16,8 @@ import {
   getLocalizedText,
   getLocalizedTextWithLang,
 } from "@/lib/ckan-translations";
-import { getResourceColor, supportsPreview } from "@/lib/resource";
+import { getResourceColor } from "@/lib/resource";
+import { supportsPreview } from "@/lib/resource-preview";
 import { buildLocalizedMetadata } from "@/lib/seo";
 import { formatFileSize } from "@/lib/utils";
 import { Dataset, Resource } from "@/schemas/ckan";
@@ -227,7 +228,9 @@ export default async function ResourcePage({ params }: PageProps) {
           </div>
         </div>
 
-        {supportsPreview(resource) && <ResourcePreview resource={resource} dataset={dataset} />}
+        {supportsPreview(resource, dataset.resources) && (
+          <ResourcePreview resource={resource} dataset={dataset} />
+        )}
       </Container>
     </Page>
   );

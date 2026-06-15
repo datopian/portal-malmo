@@ -132,7 +132,7 @@ export default function ResourcePreview({
   const previewContent = (
     <PreviewRenderer
       previewKind={preview.previewKind}
-      resource={resource}
+      resource={preview.sourceResource}
       resourceName={resourceName}
       sldUrl={preview.sldUrl}
       ogcPreview={preview.ogcPreview}
