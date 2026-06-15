@@ -1,35 +1,26 @@
 import { Resource } from "@/schemas/ckan";
-import { hasOgcPreview } from "@/lib/ogc";
 
-export const SUPPORTED_PREVIEW_FORMATS = new Set([
-  "csv",
-  "dwg",
-  "pdf",
-  "geojson",
-  "wms",
-  "wfs",
-  "json",
-  "gpkg",
-]);
+function normalizeResourceFormat(format?: string | null) {
+  const value = format?.trim().toLowerCase() ?? "";
+
+  if (value.includes("geopackage") || value.includes("gpkg")) return "gpkg";
+  if (value.includes("geojson")) return "geojson";
+  if (value.includes("dwg")) return "dwg";
+  if (value.includes("wfs")) return "wfs";
+  if (value.includes("wms")) return "wms";
+  if (value.includes("csv")) return "csv";
+  if (value.includes("pdf")) return "pdf";
+  if (value.includes("json")) return "json";
+  if (value.includes("sld")) return "sld";
+
+  return value;
+}
 
 export function getResourceFormat(resource: Pick<Resource, "format">) {
-  return resource.format?.toLowerCase() ?? "";
+  return normalizeResourceFormat(resource.format);
 }
 
-export function hasDwgPreview(resource: Pick<Resource, "format" | "mimetype" | "url">) {
-  const format = getResourceFormat(resource);
-  const mimetype = resource.mimetype?.toLowerCase() ?? "";
-  const url = getResourceUrlPath(resource.url).toLowerCase();
-
-  return (
-    format === "dwg" ||
-    format.includes("dwg") ||
-    mimetype.includes("dwg") ||
-    url.endsWith(".dwg")
-  );
-}
-
-function getResourceUrlPath(url?: string) {
+export function getResourceUrlPath(url?: string) {
   const trimmedUrl = url?.trim() ?? "";
   if (!trimmedUrl) return "";
 
@@ -38,31 +29,6 @@ function getResourceUrlPath(url?: string) {
   } catch {
     return trimmedUrl.split(/[?#]/)[0] ?? "";
   }
-}
-
-export function supportsPreview(resource: Resource) {
-  const format = getResourceFormat(resource);
-  const hasUrl = typeof resource.url === "string" && resource.url.trim().length > 0;
-
-  if (resource.iframe || resource.datastore_active) {
-    return true;
-  }
-
-  if (hasOgcPreview(resource)) {
-    return true;
-  }
-
-  if (!hasUrl) {
-    return false;
-  }
-
-  return (
-    hasDwgPreview(resource) ||
-    (SUPPORTED_PREVIEW_FORMATS.has(format) &&
-      format !== "wms" &&
-      format !== "wfs" &&
-      format !== "gpkg")
-  );
 }
 
 export const RESOURCE_COLORS: Record<string, string> = {
@@ -122,5 +88,5 @@ export const RESOURCE_COLORS: Record<string, string> = {
 };
 
 export function getResourceColor(format?: string | null) {
-  return RESOURCE_COLORS[format?.toLowerCase() ?? ""] ?? RESOURCE_COLORS.default;
+  return RESOURCE_COLORS[normalizeResourceFormat(format)] ?? RESOURCE_COLORS.default;
 }

@@ -1,44 +1,61 @@
 ## Resource Preview
 
-The resource preview is rendered by `ResourcePreview` and chooses the viewer based on `resource.format`, `resource.url`, and `resource.datastore_active`.
+The resource preview is rendered by `ResourcePreview`. Preview eligibility and
+renderer selection live in `src/lib/resource-preview.ts`; keep new preview rules
+there so the dataset list button and the resource page stay in sync.
 
 Main entry:
 - `src/components/package/resource/ResourcePreview.tsx`
+- `src/lib/resource-preview.ts`
 
 Related guide:
 - `docs/resource-preview/dwg-preview.md`
 
 ### Format routing logic
 
-1. `wms` / `wfs`
-- Uses `OgcServiceMapPreview`.
-- Input: `resource.url`.
+1. `iframe = true`
+- Uses `IframeWrapper`.
+- Requires `resource.url`.
 
 2. `geojson`
 - Uses `GeoJsonViewer`.
+- GeoJSON wins over `datastore_active`, so ingested geospatial resources still
+  render as maps.
 - If the dataset also has an `sld` resource, its URL is passed as `styleUrl`.
 
-3. `json`
-- Uses `JsonUrlViewer`.
+3. OGC service (`wms` / `wfs`, or `wms_url` / `wfs_url`)
+- Uses `OgcServiceMapPreview`.
+- Input: normalized WMS/WFS service URL.
 
 4. `datastore_active = true`
-- Uses `DataExplorer` (CKAN datastore SQL-based table view), regardless of file format.
+- Uses `DataExplorer` (CKAN datastore SQL-based table view) for non-spatial
+  resources.
 
-5. `csv`
-- Uses `CSVExplorerWrapper`.
-
-6. `pdf`
-- Uses `SimplePdfViewer` (client-side `react-pdf`).
-
-7. `dwg`
+5. `dwg`
 - Uses `DwgPreview`.
+- Detected from normalized format, MIME type, or `.dwg` URL extension.
 - The current UI embeds the InnerScene DWG viewer for `resource.url`.
 - The CKAN DWG conversion helper in `src/lib/ckan/api.ts` builds a `GET` request to `api/3/action/convert_dwg?id=<resource-id>` with no request body.
 - That backend conversion returns the PDF preview produced from the DWG conversion pipeline; any later SVG derivation should happen after that PDF result, not via `dwg_preview_convert?resource_id=...`.
 - Full flow is documented in `docs/resource-preview/dwg-preview.md`.
 
-8. Fallback
-- If `resource.iframe` is true, uses `IframeWrapper`.
+6. `json`
+- Uses `JsonUrlViewer`.
+
+7. `csv`
+- Uses `CSVExplorerWrapper`.
+
+8. `pdf`
+- Uses `SimplePdfViewer` (client-side `react-pdf`).
+
+9. `gpkg`
+- Browser-side direct GeoPackage rendering is not supported.
+- If the GPKG resource has OGC metadata, it uses the OGC preview.
+- Otherwise, it borrows a sibling spatial preview resource from the same dataset,
+  preferring GeoJSON first, then OGC. This matches Malmo datasets where the
+  GPKG, Shape, CSV, and GeoJSON resources are export variants of the same layer.
+
+10. Fallback
 - Otherwise shows `Preview.notSupported`.
 
 ### GeoJSON + SLD styling
