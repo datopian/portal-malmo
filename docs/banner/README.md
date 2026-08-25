@@ -9,7 +9,10 @@ To **enable** the disclaimer banner:
 * Navigate to `/content/banner` in your repository
 * Add the [English](../../content/banner/en.md) content to `en.md`
 * Add the [Swedish](../../content/banner/sv.md) content to `sv.md`
-* Commit your changes to `main` (production) or `staging` (staging environment)
+* Add the [Danish](../../content/banner/da.md) content to `da.md`
+* Commit the change through the normal review process. Deployment behavior is
+  not configured in this repository, so confirm which branch targets each
+  environment before publishing.
 
 Note that markdown is supported.
 

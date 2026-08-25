@@ -1,21 +1,28 @@
-## Environment variables
+# Environment variables
 
-This project uses the following environment variables:
+The frontend reads its runtime configuration from these variables.
 
-| Variable                               | Default                                 | Description                                                                                                                                                            | Example                                                 |
-| -------------------------------------- | --------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------- |
-| `NEXT_PUBLIC_DMS`                      | —                                       | Base URL of the PortalJS Cloud API. This must always follow the pattern `https://api.cloud.portaljs.com/@<organization-name>`.                                    | `https://api.cloud.portaljs.com/@datopian` |
-| `ISR_REVALIDATE`                       | `150`                                   | Incremental Static Regeneration (ISR) revalidation interval in seconds. Controls how often static pages are refreshed with new data.                                   | `150`                                                   |
-| `NEXT_PUBLIC_SITE_URL`                 | —                                       | Public base URL of the portal, used for SEO metadata and canonical URLs.                                                                                               | `http://localhost:3000`                                 |
-| `NEXT_PUBLIC_I18N_DEFAULT_LOCALE`    | First language in `LANGUAGES_AVAILABLE` | Default language used when no locale is present in the URL.                                                                                                            | `pt`                                                    |
-| `NEXT_PUBLIC_I18N_SUPPORTED_LOCALES` | `en`                                    | Comma-separated list of supported languages. If only one is provided, routes are not prefixed. If more than one is provided, routes are localized (e.g. `/en`, `/pt`). | `en,pt`                                                 |
+| Variable | Default | Purpose |
+| --- | --- | --- |
+| `NEXT_PUBLIC_DMS` | None | CKAN base URL. The CKAN client throws an error when it is missing. |
+| `ISR_REVALIDATE` | `150` | Cache revalidation time, in seconds, for CKAN requests that use ISR. Invalid or zero values fall back to `150`. |
+| `NEXT_PUBLIC_SITE_URL` | `http://localhost:3000` | Public portal URL used to build canonical and alternate-language metadata. A trailing slash is removed. |
+| `NEXT_PUBLIC_I18N_DEFAULT_LOCALE` | `sv` | Default locale used by `next-intl`. It must also be in the supported locale list. |
+| `NEXT_PUBLIC_I18N_SUPPORTED_LOCALES` | `sv` | Comma-separated locale list. The repository contains messages and content for `sv`, `en`, and `da`. |
+| `NEXT_PUBLIC_MATOMO_URL` | Empty | Matomo base URL. Trailing slashes are removed. |
+| `NEXT_PUBLIC_MATOMO_SITE_ID` | Empty | Matomo site ID. Tracking stays disabled if this or the Matomo URL is empty. |
 
-### Example `.env` file
+## Local example
 
 ```env
-NEXT_PUBLIC_DMS=https://api.cloud.portaljs.com/@datopian
+NEXT_PUBLIC_DMS=https://ckan.city-of-malmo.datopian.com
 ISR_REVALIDATE=150
 NEXT_PUBLIC_SITE_URL=http://localhost:3000
-NEXT_PUBLIC_I18N_DEFAULT_LOCALE=pt
-NEXT_PUBLIC_I18N_SUPPORTED_LOCALES=en,pt
+NEXT_PUBLIC_I18N_DEFAULT_LOCALE=sv
+NEXT_PUBLIC_I18N_SUPPORTED_LOCALES=sv,en,da
+NEXT_PUBLIC_MATOMO_URL=
+NEXT_PUBLIC_MATOMO_SITE_ID=
 ```
+
+The accessibility workflow supplies its own values in
+`.github/workflows/a11y.yml` and reads `NEXT_PUBLIC_DMS` from a GitHub secret.

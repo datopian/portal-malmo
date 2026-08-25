@@ -34,9 +34,9 @@ Related guide:
 5. `dwg`
 - Uses `DwgPreview`.
 - Detected from normalized format, MIME type, or `.dwg` URL extension.
-- The current UI embeds the InnerScene DWG viewer for `resource.url`.
-- The CKAN DWG conversion helper in `src/lib/ckan/api.ts` builds a `GET` request to `api/3/action/convert_dwg?id=<resource-id>` with no request body.
-- That backend conversion returns the PDF preview produced from the DWG conversion pipeline; any later SVG derivation should happen after that PDF result, not via `dwg_preview_convert?resource_id=...`.
+- Embeds the external InnerScene DWG viewer with `resource.url`.
+- The resource URL must be reachable by InnerScene.
+- The current preview does not call the CKAN `convert_dwg` helper.
 - Full flow is documented in `docs/resource-preview/dwg-preview.md`.
 
 6. `json`
