@@ -130,11 +130,10 @@ npm run routes:gen
 
 ## CI behavior
 
-In CI:
-
-- tests run automatically on PRs
-- test status is visible in GitHub
-- PRs cannot be merged if accessibility checks fail
+In CI, the tests run on pull requests and on pushes to `main` and `staging`.
+The result is visible in GitHub Actions. Whether a pull request is blocked by a
+failure depends on the repository's branch protection settings; those settings
+are not stored in this repository.
 
 ## Report example
 

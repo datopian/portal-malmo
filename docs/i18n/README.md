@@ -1,49 +1,34 @@
-## How i18n routing works
+# Languages and routing
 
-This project uses **next-intl with the App Router** to handle internationalized routes.
+The portal uses `next-intl` with the Next.js App Router.
 
-The behavior depends on `NEXT_PUBLIC_I18N_LANGUAGES_AVAILABLE`:
-
-### Single language (no URL prefix)
-
-```env
-NEXT_PUBLIC_I18N_LANGUAGES_AVAILABLE=pt
-```
-
-Routes will be:
-
-* `/`
-* `/search`
-* `/organizations`
-
-No language prefix is added to the URL.
-
----
-
-### Multiple languages (language in the URL)
+The supported locales come from `NEXT_PUBLIC_I18N_SUPPORTED_LOCALES`. The
+default locale comes from `NEXT_PUBLIC_I18N_DEFAULT_LOCALE`. The current
+repository includes Swedish (`sv`), English (`en`), and Danish (`da`) message
+files.
 
 ```env
-NEXT_PUBLIC_I18N_LANGUAGES_AVAILABLE=en,pt
+NEXT_PUBLIC_I18N_DEFAULT_LOCALE=sv
+NEXT_PUBLIC_I18N_SUPPORTED_LOCALES=sv,en,da
 ```
 
-Routes will be:
+All pages live under `src/app/[locale]`. When more than one locale is enabled,
+`next-intl` uses `as-needed` prefixes: the default locale can use an unprefixed
+URL, while the other locales use their locale prefix. With one locale enabled,
+URLs have no locale prefix.
 
-* `/en`
-* `/en/search`
-* `/pt`
-* `/pt/search`
+Interface translations are stored in:
 
-The active language is controlled by the URL prefix and switched dynamically using the language switcher in the header.
+- `messages/sv.json`
+- `messages/en.json`
+- `messages/da.json`
 
----
+Localized Markdown is stored under `content/`. The About page, accessibility
+statement, and disclaimer banner each load the file matching the active locale.
 
-### Notes
+The language switcher uses the localized navigation helpers and keeps the same
+pathname when the locale changes. It is hidden when only one locale is enabled.
 
-* All pages live under `app/[locale]/...`
-* Locale detection is handled by `next-intl` middleware.
-* Translations are loaded dynamically from:
-
-  ```
-  /messages/{locale}.json
-  ```
-* The language switcher updates only the locale prefix in the URL and keeps the user on the same page.
+When adding a locale, add its message file and any Markdown files required by
+the localized content pages. Also include it in
+`NEXT_PUBLIC_I18N_SUPPORTED_LOCALES`.

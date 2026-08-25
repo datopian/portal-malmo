@@ -1,35 +1,35 @@
-# DWG Preview
+# DWG preview
 
-The DWG preview flow is intentionally simple:
+The current frontend previews DWG resources with the external InnerScene DWG
+viewer.
 
-1. CKAN receives a DWG resource ID
-2. the backend stages the DWG into a temporary file
-3. ODA File Converter converts `DWG -> DXF`
-4. `ezdxf` renders the selected DXF layout to `PDF`
-5. the backend returns that PDF conversion result
-6. the frontend can display the converted result, or derive a later SVG preview from it if that flow is reintroduced
+## Current flow
 
-## Frontend files
+1. `src/lib/resource-preview.ts` detects DWG from the normalized format, MIME
+   type, or `.dwg` URL extension.
+2. `ResourcePreview` passes the public resource URL to `DwgPreview`.
+3. `DwgPreview` opens `https://www.innerscene.com/tools/dwg-viewer` in an iframe
+   and sends the encoded resource URL in its `url` query parameter.
+4. The component shows a loader and replaces it with an error message if the
+   iframe does not load within 10 seconds.
 
-- `src/components/package/resource/DwgPreview.tsx`
-- `src/components/package/resource/SimplePdfViewer.tsx`
+The InnerScene language is chosen from the browser language when that language
+is supported by InnerScene. It is not taken from the portal URL locale.
+
+## Requirements and limitations
+
+- The resource must have a URL.
+- InnerScene must be able to reach that URL.
+- The preview depends on an external service and iframe support.
+- The frontend does not call the CKAN conversion endpoint when rendering the
+  current DWG preview.
+
+`src/lib/ckan/api.ts` still contains `getDwgPreviewUrl()`, which builds
+`/api/3/action/convert_dwg?id=<resource-id>`, but the current preview components
+do not call this helper.
+
+## Main files
+
+- `src/lib/resource-preview.ts`
 - `src/components/package/resource/ResourcePreview.tsx`
-
-## Backend files
-
-- `src/ckanext-malmo/ckanext/malmo/dwg_preview.py`
-- `src/ckanext-malmo/ckanext/malmo/views.py`
-- `src/ckanext-malmo/ckanext/malmo/logic/action.py`
-
-## Endpoint
-
-The CKAN helper in `src/lib/ckan/api.ts` builds the conversion URL with the
-resource ID as a query parameter:
-
-```text
-/api/3/action/convert_dwg?id=<resource-id>
-```
-
-This is a `GET` URL with no JSON request body. The backend receives the trusted
-resource ID, stages the DWG, runs the conversion pipeline, and returns the PDF
-conversion result.
+- `src/components/package/resource/DwgPreview.tsx`
