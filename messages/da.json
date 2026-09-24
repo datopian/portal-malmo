@@ -137,6 +137,7 @@
     "externalPreviewInstructions": "Brug Ctrl + musehjulet til at zoome ind eller ud. Klik og træk for at flytte rundt i tegningen.",
     "externalPreviewAttribution": "Drevet af <link>Innerscene</link>",
     "notSupported": "Forhåndsvisning understøttes ikke",
+    "tooLargeToPreview": "Denne ressourcefil er for stor til at blive vist. Du kan stadig downloade ressourcen med download-knappen.",
     "dwgPreviewLabel": "DWG-forhåndsvisning for {name}",
     "zoomIn": "Zoom ind",
     "zoomOut": "Zoom ud",

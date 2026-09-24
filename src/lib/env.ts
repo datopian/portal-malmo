@@ -9,4 +9,5 @@ export const envVars = {
     .split(",")
     .map((l) => l.trim())
     .filter(Boolean),
+  maxPreviewSizeBytes: process.env.NEXT_PUBLIC_MAX_PREVIEW_SIZE_BYTES,
 } as const;

@@ -9,11 +9,17 @@ import { Skeleton } from "../ui/skeleton";
 import { useTranslations } from "next-intl";
 
 const CSVExplorer = () => {
-  const { isSettingsDropdownOpen, isLoading } = useResourceData() || {};
+  const { isSettingsDropdownOpen, isLoading, isTooLarge } =
+    useResourceData() || {};
+  const t = useTranslations();
 
-  return isLoading ? (
-    <ResourcePreviewSkeleton />
-  ) : (
+  if (isLoading) return <ResourcePreviewSkeleton />;
+
+  if (isTooLarge) {
+    return <div>{t("Preview.tooLargeToPreview")}</div>;
+  }
+
+  return (
     <div>
       <div className="flex gap-4">
         <SearchDataForm />
