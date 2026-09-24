@@ -137,6 +137,7 @@
     "externalPreviewInstructions": "Use Ctrl + mouse wheel to zoom in or out. Click and drag to move around the drawing.",
     "externalPreviewAttribution": "Powered by <link>Innerscene</link>",
     "notSupported": "Preview not supported",
+    "tooLargeToPreview": "This resource file is too large to preview. You can still download the resource using the download button.",
     "dwgPreviewLabel": "DWG preview for {name}",
     "zoomIn": "Zoom in",
     "zoomOut": "Zoom out",

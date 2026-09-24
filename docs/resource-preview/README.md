@@ -32,6 +32,76 @@ The selection order matters:
 For example, GeoJSON is checked before `datastore_active`, so an ingested
 GeoJSON resource still opens as a map.
 
+### Size gating
+
+Size gating has two layers. Read both before assuming a resource is protected.
+
+**1. Metadata gate, before rendering.** After a kind is selected, GeoJSON,
+JSON, CSV, PDF, and DWG are checked against `resource.size`. If `size` is set
+and exceeds
+[`MAX_PREVIEW_SIZE_BYTES`](https://github.com/datopian/portal-malmo/blob/main/src/lib/preview-size.ts)
+(from `NEXT_PUBLIC_MAX_PREVIEW_SIZE_BYTES`, see
+[env-vars](../env-vars/README.md)), the kind becomes `tooLarge` and
+[`ResourcePreview.tsx`](https://github.com/datopian/portal-malmo/blob/main/src/components/package/resource/ResourcePreview.tsx)
+shows the `Preview.tooLargeToPreview` message without attempting to render
+the preview at all.
+
+This layer only works when CKAN actually recorded `size`. CKAN does this for
+uploaded resources, but usually not for resources added as an external link,
+so it cannot be the only protection — a large linked file with no recorded
+`size` passes this check regardless of its real size.
+
+**2. Streaming enforcement, during fetch.** GeoJSON, JSON, and CSV previews
+fetch the whole file into the browser tab (confirmed by reading
+[`GeoJsonViewer.tsx`](https://github.com/datopian/portal-malmo/blob/main/src/components/package/resource/GeoJsonViewer.tsx),
+[`JSONViewer.tsx`](https://github.com/datopian/portal-malmo/blob/main/src/components/package/resource/JSONViewer.tsx),
+and [`csv-explorer/DataProvider.tsx`](https://github.com/datopian/portal-malmo/blob/main/src/components/csv-explorer/DataProvider.tsx)),
+so a large file risks freezing or crashing it regardless of what CKAN's
+metadata says. All three now fetch through
+[`fetchTextWithSizeLimit()`](https://github.com/datopian/portal-malmo/blob/main/src/lib/size-limited-fetch.ts),
+which reads the response body in chunks and aborts once real bytes received
+cross `MAX_PREVIEW_SIZE_BYTES`, then shows `Preview.tooLargeToPreview`. It
+does **not** rely on the `Content-Length` header: most cross-origin resource
+hosts never expose that header to the browser (the default
+`Access-Control-Expose-Headers` safelist omits it), so a resource can serve a
+normal GET fine while hiding its size from any header-based probe. Measuring
+real bytes as they arrive works regardless of what the host exposes.
+
+This is the layer that actually guarantees "never fully download an
+oversized GeoJSON/JSON/CSV file," independent of CKAN metadata. Keep new
+GeoJSON/JSON/CSV fetch code going through `fetchTextWithSizeLimit()` rather
+than a raw `fetch()` call, or this guarantee silently stops holding for that
+code path.
+
+**Known gaps, not currently closed:**
+
+- **PDF** relies on the metadata gate only. `SimplePdfViewer.tsx` hands the
+  URL to `react-pdf`/`pdf.js`, which does its own fetching; we don't control
+  it the way we control the three fetches above. Whether pdf.js streams
+  (via HTTP range requests, if the host supports them) or downloads the
+  whole file first depends on the resource host. A PDF with no recorded
+  `size` and a host that doesn't support range requests can still fully
+  download.
+- **DWG** relies on the metadata gate only, for a different reason: it isn't
+  fetched by our tab at all (see below), so there's no fetch of ours to
+  meter. A DWG with no recorded `size` will attempt the InnerScene iframe
+  regardless of its real size.
+
+GeoJSON, JSON, and CSV are covered end to end. DWG previews delegate
+fetching to an external iframe (InnerScene) and don't risk our tab, but a
+very large DWG is unlikely to render well there either; gating it (when
+`size` is known) skips a doomed ~10s iframe timeout
+([`DwgPreview.tsx`](https://github.com/datopian/portal-malmo/blob/main/src/components/package/resource/DwgPreview.tsx))
+and shows the `tooLarge` message immediately instead of the generic
+`Preview.failedToLoadDwg` error.
+
+Datastore, WMS/WFS, and generic iframe previews are not size-gated at all:
+they query or stream data rather than fetching a whole resource file, so
+`resource.size` isn't a meaningful signal for them regardless of which layer
+is used. `supportsPreview()` still returns `true` for a `tooLarge` resource,
+so the preview button and section still render; only the fetch (or, for
+DWG, the iframe embed) is skipped.
+
 Formats are normalized by
 [`normalizeResourceFormat()`](https://github.com/datopian/portal-malmo/blob/main/src/lib/resource.ts#L3-L17).
 Do not add format aliases inside individual preview components.

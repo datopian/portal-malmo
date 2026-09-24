@@ -40,6 +40,7 @@ type PreviewRendererProps = {
   ogcPreview: ReturnType<typeof getResourcePreviewModel>["ogcPreview"];
   showLegendOnMobile: boolean;
   notSupportedLabel: string;
+  tooLargeLabel: string;
 };
 
 function PreviewRenderer({
@@ -50,6 +51,7 @@ function PreviewRenderer({
   ogcPreview,
   showLegendOnMobile,
   notSupportedLabel,
+  tooLargeLabel,
 }: Readonly<PreviewRendererProps>) {
   switch (previewKind) {
     case "geojson":
@@ -104,6 +106,9 @@ function PreviewRenderer({
         />
       );
 
+    case "tooLarge":
+      return tooLargeLabel;
+
     default:
       return notSupportedLabel;
   }
@@ -138,6 +143,7 @@ export default function ResourcePreview({
       ogcPreview={preview.ogcPreview}
       showLegendOnMobile={showMobileLegend}
       notSupportedLabel={t("Preview.notSupported")}
+      tooLargeLabel={t("Preview.tooLargeToPreview")}
     />
   );
 
