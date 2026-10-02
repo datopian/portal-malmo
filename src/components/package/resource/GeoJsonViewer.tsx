@@ -26,6 +26,12 @@ import {
   isProbablyUrl,
   isLeafletReadyGeoJson,
 } from "@/lib/geospatial";
+import { MAX_PREVIEW_SIZE_BYTES } from "@/lib/preview-size";
+import {
+  FetchHttpError,
+  ResourceTooLargeError,
+  fetchTextWithSizeLimit,
+} from "@/lib/size-limited-fetch";
 
 type RLFeature = Feature<Geometry, GeoJsonProperties>;
 type RLStyleFn = (feature?: RLFeature) => PathOptions;
@@ -180,17 +186,13 @@ export default function GeoJsonMap({
       }
 
       try {
-        const response = await fetch(trimmed, { signal: controller.signal });
-        if (!response.ok) {
-          throw new Error(
-            t("Map.geoJson.errors.failedToFetch", {
-              status: response.status,
-              statusText: response.statusText,
-            }),
-          );
-        }
+        const text = await fetchTextWithSizeLimit(
+          trimmed,
+          MAX_PREVIEW_SIZE_BYTES,
+          { signal: controller.signal },
+        );
 
-        const json = (await response.json()) as unknown;
+        const json = JSON.parse(text) as unknown;
         if (!isGeoJsonObject(json)) {
           throw new Error(t("Map.geoJson.errors.invalidResponse"));
         }
@@ -199,11 +201,23 @@ export default function GeoJsonMap({
         setState("ready");
       } catch (loadError) {
         if (controller.signal.aborted) return;
-        setError(
-          loadError instanceof Error
-            ? loadError.message
-            : t("Map.geoJson.errors.failedToLoad"),
-        );
+
+        if (loadError instanceof ResourceTooLargeError) {
+          setError(t("Preview.tooLargeToPreview"));
+        } else if (loadError instanceof FetchHttpError) {
+          setError(
+            t("Map.geoJson.errors.failedToFetch", {
+              status: loadError.status,
+              statusText: loadError.statusText,
+            }),
+          );
+        } else {
+          setError(
+            loadError instanceof Error
+              ? loadError.message
+              : t("Map.geoJson.errors.failedToLoad"),
+          );
+        }
         setState("error");
       }
     }

@@ -6,6 +6,7 @@ import {
   getOgcLinkGroups,
   getOgcPreviewConfig,
 } from "@/lib/ogc";
+import { MAX_PREVIEW_SIZE_BYTES } from "@/lib/preview-size";
 import { getResourceFormat, getResourceUrlPath } from "@/lib/resource";
 
 export type ResourcePreviewKind =
@@ -17,6 +18,7 @@ export type ResourcePreviewKind =
   | "dwg"
   | "pdf"
   | "iframe"
+  | "tooLarge"
   | "unsupported";
 
 export type ResourcePreviewModel = {
@@ -35,6 +37,29 @@ const DIRECT_URL_PREVIEW_FORMATS = new Set<ResourcePreviewKind>([
   "csv",
   "pdf",
 ]);
+
+// Kinds gated on resource size. CSV, JSON, GeoJSON, and PDF previews fetch
+// and parse the whole file in the browser tab, so a very large file risks
+// freezing or crashing it. DWG previews delegate fetching to an external
+// iframe (InnerScene) and don't risk our tab, but a very large DWG is
+// unlikely to render well there either; gating it skips a doomed ~10s
+// iframe timeout and shows a clear message immediately instead of a
+// generic "preview unavailable" error. Datastore, OGC (WMS/WFS), and
+// generic iframe previews query or stream data instead of fetching a whole
+// file, so they are not gated.
+const SIZE_GATED_PREVIEW_KINDS = new Set<ResourcePreviewKind>([
+  "geojson",
+  "json",
+  "csv",
+  "pdf",
+  "dwg",
+]);
+
+function exceedsMaxPreviewSize(resource: Pick<Resource, "size">) {
+  return (
+    typeof resource.size === "number" && resource.size > MAX_PREVIEW_SIZE_BYTES
+  );
+}
 
 function hasResourceUrl(resource: Pick<Resource, "url">) {
   return typeof resource.url === "string" && resource.url.trim().length > 0;
@@ -96,7 +121,7 @@ function resolveDirectUrlPreviewKind(format: string): ResourcePreviewKind {
     : "unsupported";
 }
 
-function resolvePreviewKind(resource: Resource): ResourcePreviewKind {
+function resolveUngatedPreviewKind(resource: Resource): ResourcePreviewKind {
   const format = getResourceFormat(resource);
   const hasUrl = hasResourceUrl(resource);
 
@@ -119,6 +144,16 @@ function resolvePreviewKind(resource: Resource): ResourcePreviewKind {
   if (directUrlPreview !== "unsupported") return directUrlPreview;
 
   return "unsupported";
+}
+
+function resolvePreviewKind(resource: Resource): ResourcePreviewKind {
+  const kind = resolveUngatedPreviewKind(resource);
+
+  if (SIZE_GATED_PREVIEW_KINDS.has(kind) && exceedsMaxPreviewSize(resource)) {
+    return "tooLarge";
+  }
+
+  return kind;
 }
 
 export function supportsPreview(resource: Resource, resources: Resource[] = []) {

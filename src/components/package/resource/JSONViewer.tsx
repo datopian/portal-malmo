@@ -1,18 +1,20 @@
 "use client";
 
-import { JsonViewerUI } from "@/components/json/JSONViewerUI";
+import { useTranslations } from "next-intl";
 import { useEffect, useState } from "react";
+
+import { JsonViewerUI } from "@/components/json/JSONViewerUI";
+import { MAX_PREVIEW_SIZE_BYTES } from "@/lib/preview-size";
+import {
+  ResourceTooLargeError,
+  fetchTextWithSizeLimit,
+} from "@/lib/size-limited-fetch";
 
 type JsonUrlViewerProps = {
   url: string;
   className?: string;
   cache?: RequestCache;
 };
-
-function formatErrorMessage(err: unknown): string {
-  if (err instanceof Error) return err.message;
-  return "Failed to load JSON.";
-}
 
 function parseJson(text: string): unknown {
   return JSON.parse(text) as unknown;
@@ -22,6 +24,7 @@ export default function JsonUrlViewer({
   url,
   cache = "no-store",
 }: JsonUrlViewerProps) {
+  const t = useTranslations();
   const [src, setSrc] = useState<unknown>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
@@ -30,25 +33,32 @@ export default function JsonUrlViewer({
     let mounted = true;
     const controller = new AbortController();
 
+    function formatErrorMessage(err: unknown): string {
+      if (err instanceof ResourceTooLargeError) {
+        return t("Preview.tooLargeToPreview");
+      }
+      if (err instanceof Error) return err.message;
+      return "Failed to load JSON.";
+    }
+
     async function load() {
       setLoading(true);
       setErrorMessage(null);
 
       try {
-        const res = await fetch(url, {
-          method: "GET",
-          cache,
-          signal: controller.signal,
-          headers: {
-            Accept: "application/json",
+        const text = await fetchTextWithSizeLimit(
+          url,
+          MAX_PREVIEW_SIZE_BYTES,
+          {
+            method: "GET",
+            cache,
+            signal: controller.signal,
+            headers: {
+              Accept: "application/json",
+            },
           },
-        });
+        );
 
-        if (!res.ok) {
-          throw new Error(`HTTP ${res.status} ${res.statusText || ""}`.trim());
-        }
-
-        const text = await res.text();
         const parsed = parseJson(text);
         const safeForViewer =
           parsed != null &&

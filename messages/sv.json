@@ -137,6 +137,7 @@
     "externalPreviewInstructions": "Använd Ctrl + mushjulet för att zooma in eller ut. Klicka och dra för att flytta dig i ritningen.",
     "externalPreviewAttribution": "Drivs av <link>Innerscene</link>",
     "notSupported": "Förhandsvisning stöds inte",
+    "tooLargeToPreview": "Den här resursfilen är för stor för att förhandsgranskas. Du kan fortfarande ladda ner resursen med nedladdningsknappen.",
     "dwgPreviewLabel": "DWG-förhandsvisning för {name}",
     "zoomIn": "Zooma in",
     "zoomOut": "Zooma ut",

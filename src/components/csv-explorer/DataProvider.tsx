@@ -13,6 +13,11 @@ import React, {
 } from "react";
 import Papa from "papaparse";
 import { isValidDate } from "./utils";
+import { MAX_PREVIEW_SIZE_BYTES } from "@/lib/preview-size";
+import {
+  ResourceTooLargeError,
+  fetchTextWithSizeLimit,
+} from "@/lib/size-limited-fetch";
 
 export type SortConfig =
   | {
@@ -38,6 +43,7 @@ export interface DataStateContextProps {
   dataUrl: string;
   data: RowData[];
   isLoading: boolean;
+  isTooLarge: boolean;
   filteredData: RowData[];
   filters: Filters;
   pinnedColumns: string[];
@@ -97,6 +103,7 @@ export const DataStateProvider = ({
   const debounceTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   const [isLoading, setIsLoading] = useState<boolean>(true);
+  const [isTooLarge, setIsTooLarge] = useState<boolean>(false);
   const [data, setData] = useState<RowData[]>([]);
   const [filters, setFilters] = useState<Filters>({});
   const [pinnedColumns, setPinnedColumns] = useState<string[]>([]);
@@ -158,20 +165,23 @@ export const DataStateProvider = ({
 
   const fetchData = useCallback(async () => {
     setIsLoading(true);
+    setIsTooLarge(false);
     try {
-      const response = await fetch(dataUrl);
-      if (!response.ok) {
-        throw new Error("Network response was not ok");
-      }
-
-      const csvText = await response.text();
+      const csvText = await fetchTextWithSizeLimit(
+        dataUrl,
+        MAX_PREVIEW_SIZE_BYTES,
+      );
       const parsedData = parseData(csvText);
 
       setData(parsedData.data);
       setVisibleColumns(Object.keys(parsedData.data[0] || {}));
       setCurrentPage(1);
     } catch (err) {
-      console.error("Failed to fetch data for DataStateProvider:", err);
+      if (err instanceof ResourceTooLargeError) {
+        setIsTooLarge(true);
+      } else {
+        console.error("Failed to fetch data for DataStateProvider:", err);
+      }
     } finally {
       setIsLoading(false);
     }
@@ -291,6 +301,7 @@ export const DataStateProvider = ({
     dataUrl,
     data,
     isLoading,
+    isTooLarge,
     filteredData,
     filters,
     pinnedColumns,
