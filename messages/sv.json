@@ -4,6 +4,10 @@
     "description": "Hitta öppna data från Malmö stad.",
     "homeTitle": "Hem"
   },
+  "StagingWarning": {
+    "title": "Testmiljö",
+    "description": "Det här är en testsida. Innehållet kan ändras."
+  },
   "Common": {
     "organization": "Organisation",
     "organizations": "Organisationer",

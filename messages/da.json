@@ -4,6 +4,10 @@
     "description": "Find åbne data fra Malmø stad.",
     "homeTitle": "Hjem"
   },
+  "StagingWarning": {
+    "title": "Testmiljø",
+    "description": "Dette er en testside. Indholdet kan ændre sig."
+  },
   "Common": {
     "organization": "Organisation",
     "organizations": "Organisationer",

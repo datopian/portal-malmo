@@ -10,4 +10,5 @@ export const envVars = {
     .map((l) => l.trim())
     .filter(Boolean),
   maxPreviewSizeBytes: process.env.NEXT_PUBLIC_MAX_PREVIEW_SIZE_BYTES,
+  showStagingWarning: process.env.STAGING_WARNING === "true",
 } as const;
