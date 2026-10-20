@@ -46,6 +46,9 @@ export function buildLocalizedMetadata({
       template: `%s | ${title}`,
     },
     description,
+    ...(envVars.showStagingWarning && {
+      robots: { index: false, follow: true },
+    }),
     alternates: {
       canonical: canonicalPath,
       languages: languageAlternates,

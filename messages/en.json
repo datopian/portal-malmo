@@ -4,6 +4,10 @@
     "description": "Find open data from the City of Malmö.",
     "homeTitle": "Home"
   },
+  "StagingWarning": {
+    "title": "Test environment",
+    "description": "This is a test site. Content may change."
+  },
   "Common": {
     "organization": "Organization",
     "organizations": "Organizations",

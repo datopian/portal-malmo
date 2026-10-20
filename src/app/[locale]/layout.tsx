@@ -16,6 +16,8 @@ import SkipToContent from "@/components/layout/SkipToContent";
 import DisclaimerBanner from "@/components/layout/DisclaimerBanner";
 import { getMarkdownContent } from "@/lib/markdown";
 import { TooltipProvider } from "@/components/ui/tooltip";
+import StagingWarning from "@/components/layout/StagingWarning";
+import { envVars } from "@/lib/env";
 
 
 const mainFont = Open_Sans({
@@ -71,6 +73,7 @@ export default async function RootLayout({
                 </main>
               </QueryProvider>
               <Footer />
+              {envVars.showStagingWarning && <StagingWarning />}
             </TooltipProvider>
           </NextIntlClientProvider>
         </Suspense>

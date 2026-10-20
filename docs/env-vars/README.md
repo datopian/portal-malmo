@@ -7,6 +7,7 @@ The frontend reads its runtime configuration from these variables.
 | `NEXT_PUBLIC_DMS` | None | CKAN base URL. The CKAN client throws an error when it is missing. |
 | `ISR_REVALIDATE` | `150` | Cache revalidation time, in seconds, for CKAN requests that use ISR. Invalid or zero values fall back to `150`. |
 | `NEXT_PUBLIC_SITE_URL` | `http://localhost:3000` | Public portal URL used to build canonical and alternate-language metadata. A trailing slash is removed. |
+| `STAGING_WARNING` | Unset | Set to `true` for the staging deployment to show a persistent, translated warning on every page and add `noindex` to page metadata. Leave unset in production. |
 | `NEXT_PUBLIC_I18N_DEFAULT_LOCALE` | `sv` | Default locale used by `next-intl`. It must also be in the supported locale list. |
 | `NEXT_PUBLIC_I18N_SUPPORTED_LOCALES` | `sv` | Comma-separated locale list. The repository contains messages and content for `sv`, `en`, and `da`. |
 | `NEXT_PUBLIC_MATOMO_URL` | Empty | Matomo base URL. Trailing slashes are removed. |
@@ -28,3 +29,7 @@ NEXT_PUBLIC_MAX_PREVIEW_SIZE_BYTES=524288000
 
 The accessibility workflow supplies its own values in
 `.github/workflows/a11y.yml` and reads `NEXT_PUBLIC_DMS` from a GitHub secret.
+
+In Vercel, set `STAGING_WARNING=true` for the environment or branch that serves
+`malmo-staging.datopian.com`, then redeploy it. The flag is read while pages are
+built, so changing it without a deployment will not update existing pages.

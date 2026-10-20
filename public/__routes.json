@@ -1,0 +1,13 @@
+{
+  "routes": [
+    "/sv",
+    "/sv/data",
+    "/sv/themes",
+    "/sv/about-us",
+    "/sv/accessibility-statement",
+    "/sv/@malmo/vattentemperaturer",
+    "/sv/@malmo/vattentemperaturer/fceaaeae-3257-43d1-9a75-f9d989a86b01"
+  ],
+  "generatedAt": "2026-08-27T10:50:36.183Z",
+  "source": "app-router"
+}
